@@ -87,6 +87,21 @@ def test_the_owning_role_still_succeeds(engine):
     assert result.error is None, f"{engine} refused its owning role: {result.error}"
 
 
+@pytest.mark.parametrize("engine", sorted(ENGINE_BASELINE_PAYLOADS))
+def test_every_canonical_baseline_runs_for_its_owning_role(engine):
+    adapter, _ = ADAPTERS[engine]
+    owner = {
+        "wfm": "ops_gm",
+        "rta": "ops_gm",
+        "cx": "ops_gm",
+        "b2b": "sales_gm",
+        "personnel": "hr_personnel_gm",
+        "crm": "sales_gm",
+    }[engine]
+    result = _call(adapter, ENGINE_BASELINE_PAYLOADS[engine], owner)
+    assert result.error is None, f"{engine} baseline failed: {result.error}"
+
+
 def test_the_wfm_denial_path_still_emits_telemetry_arguments():
     """The denial logging call must keep the signature its helper declares.
 

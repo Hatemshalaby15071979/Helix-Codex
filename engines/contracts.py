@@ -78,21 +78,22 @@ ENGINE_BASELINE_PAYLOADS: Dict[str, Dict[str, Any]] = {
         "data_mode": DATA_MODE_SAMPLE,
     },
     "rta": {
-        "schedule": [
-            {"agent_id": agent, "date": "2026-09-07", "hour": hour, "scheduled_hours": 1.0}
-            for hour in (9, 10, 11)
-            for agent in ("agent-1", "agent-2")
-        ],
-        "actual": [
-            {
-                "agent_id": agent,
-                "date": "2026-09-07",
-                "hour": hour,
-                "actual_hours": 1.0 if agent == "agent-1" else 0.82,
-            }
-            for hour in (9, 10, 11)
-            for agent in ("agent-1", "agent-2")
-        ],
+        "schedule_data": {
+            "agent_id": [agent for hour in (9, 10, 11) for agent in ("agent-1", "agent-2")],
+            "date": ["2026-09-07"] * 6,
+            "hour": [hour for hour in (9, 10, 11) for _ in ("agent-1", "agent-2")],
+            "scheduled_hours": [1.0] * 6,
+        },
+        "actual_data": {
+            "agent_id": [agent for hour in (9, 10, 11) for agent in ("agent-1", "agent-2")],
+            "date": ["2026-09-07"] * 6,
+            "hour": [hour for hour in (9, 10, 11) for _ in ("agent-1", "agent-2")],
+            "actual_hours": [
+                1.0 if agent == "agent-1" else 0.82
+                for hour in (9, 10, 11)
+                for agent in ("agent-1", "agent-2")
+            ],
+        },
         "adherence_threshold": 0.85,
         "variance_threshold": 2.0,
         "data_mode": DATA_MODE_SAMPLE,
