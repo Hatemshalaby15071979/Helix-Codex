@@ -1,0 +1,67 @@
+{
+  "datasets": {
+    "callcenterclient": {
+      "curated_tables": 39,
+      "disclosure_present": true,
+      "files_listed": 1555,
+      "manifest_sha256": "ffc9449f91d96071708c5fdb05d8b2ef6c67fbe4777a4522d98db147a173b961",
+      "mapped_table_rows": {
+        "agents": 1500,
+        "applicants": 6000,
+        "intraday_15min": 118137,
+        "pnl_monthly": 24,
+        "queue_metrics_daily": 10220,
+        "rate_cards": 20,
+        "requisitions": 180,
+        "rosters_daily": 547500,
+        "tickets": 60000
+      },
+      "raw_exports": [
+        "defect_registry.csv",
+        "hr_applicants_export.csv",
+        "itsm_export.csv",
+        "payroll_export.csv",
+        "salesforce_cases_export.csv",
+        "wfm_schedule_export.csv",
+        "zendesk_tickets_export.csv"
+      ],
+      "root": "[LOCAL_PATH]/[REDACTED_VOLUME]/Career/External tenant data/callcenterclient"
+    },
+    "sportacademyclient": {
+      "curated_tables": 40,
+      "disclosure_present": true,
+      "files_listed": 1541,
+      "manifest_sha256": "2869a5e79644167bc58a1a757b37018370caa6b5ee58081a81f2f2037454f2fc",
+      "mapped_table_rows": {
+        "athletes": 3200,
+        "attendance": 421975,
+        "coaches": 168,
+        "feedback_surveys": 20000,
+        "forecast_daily": 5840,
+        "invoices": 66501,
+        "leavers": 104,
+        "sessions": 70680,
+        "squads": 246
+      },
+      "raw_exports": [
+        "applicant_export.csv",
+        "defect_registry.csv",
+        "itsm_export.csv",
+        "payroll_export.csv",
+        "playmetrics_registrations.csv",
+        "session_export.csv"
+      ],
+      "root": "[LOCAL_PATH]/[REDACTED_VOLUME]/Career/External tenant data/sportacademyclient"
+    }
+  },
+  "datasets_digest": "5d88e4d3dbcf99d3ac157c1cf5ca9c4544e6c7b6f697afcbfb6f23740ad219d8",
+  "disclosure": "SYNTHETIC FIXTURE. callcenterclient and sportacademyclient are synthetic, client-shaped datasets built from documented generators. They contain no real client, customer, athlete or employee records. They are used here to exercise ingestion and the six engines against realistic operational shapes; no number in this pack is a claim about a real organisation.",
+  "duration_seconds": 28.95,
+  "finished_at": "2026-10-31T02:23:14.394459+00:00",
+  "git_commit": "9ab87a88aabfa2e43bc32825bfc31ec681a913d9",
+  "host": "[REDACTED_HOST]",
+  "label": "PRODUCTION_READINESS_EVIDENCED",
+  "python": "3.12.15",
+  "run_id": "20261031T022245Z",
+  "started_at": "2026-10-31T02:22:45.444178+00:00"
+}
