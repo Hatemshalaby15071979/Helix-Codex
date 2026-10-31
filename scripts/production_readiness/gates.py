@@ -11,6 +11,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import pathlib
+import sys
 import time
 from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Optional, Tuple
@@ -259,6 +261,7 @@ def gate_raw_defect_detection(context: RunContext) -> GateResult:
             }
             chaos_file = tenant.root / "16_DATA" / "raw_chaos" / name
             overlay: Dict[str, int] = {}
+            overlay_cleaning: Dict[str, int] = {}
             if chaos_file.exists():
                 overlay_frame = pd.read_csv(
                     chaos_file, dtype=str, keep_default_na=False, low_memory=False
@@ -269,6 +272,20 @@ def gate_raw_defect_detection(context: RunContext) -> GateResult:
                         name, overlay_frame, agents=known, sports=sports
                     )
                 }
+                if tenant.name == "callcenterclient" and name == "zendesk_tickets_export.csv":
+                    deduped = ingest.clean_tickets(overlay_frame)
+                    retained, quarantined = ingest.quarantine_unmatched_references(
+                        deduped, "Assignee", known
+                    )
+                    overlay_cleaning = {
+                        "deduplicated_rows": int(len(deduped)),
+                        "orphan_rows_quarantined": int(len(quarantined)),
+                        "joinable_rows_retained": int(len(retained)),
+                    }
+                    if quarantined.empty or len(retained) + len(quarantined) != len(deduped):
+                        problems.append(
+                            f"{tenant.name}/{name}: orphan rows were not quarantined and counted"
+                        )
             found_in: Dict[str, str] = {}
             for code in required[name]:
                 if counts.get(code, 0) > 0:
@@ -282,6 +299,7 @@ def gate_raw_defect_detection(context: RunContext) -> GateResult:
             per_file[name] = {
                 "raw_counts": counts,
                 "chaos_counts": overlay,
+                "overlay_cleaning": overlay_cleaning,
                 "found_in": found_in,
                 "primary_missing": [
                     code for code in required[name] if found_in.get(code) == "raw_chaos"
@@ -304,6 +322,42 @@ def gate_raw_defect_detection(context: RunContext) -> GateResult:
                 problems.append(f"{tenant.name}: duplicate ticket keys were not removed")
             if float(parsed) < 1.0:
                 problems.append(f"{tenant.name}: only {parsed:.2%} of ticket timestamps parsed")
+            chaos_dir = tenant.root / "16_DATA" / "raw_chaos"
+            schema_frame, schema_metadata = ingest.read_vendor_csv(
+                chaos_dir / "zendesk_tickets_export_2025-09.csv"
+            )
+            schema_clean = ingest.clean_tickets(schema_frame)
+            cp_frame, cp_metadata = ingest.read_vendor_csv(chaos_dir / "tickets_cp1252.csv")
+            if (
+                len(schema_clean) != schema_frame.TicketID.nunique()
+                or schema_clean.ticket_id.isna().any()
+            ):
+                problems.append(
+                    "callcenterclient: monthly TicketID schema variant did not normalize cleanly"
+                )
+            if len(cp_frame) != 100 or cp_metadata["encoding"] != "cp1252":
+                problems.append(
+                    "callcenterclient: cp1252 export was not decoded with all rows retained"
+                )
+            if not schema_metadata["bom"] or not schema_metadata["crlf"]:
+                problems.append("callcenterclient: BOM/CRLF variant was not detected")
+            metrics[tenant.name]["format_and_schema_variants"] = {
+                "bom_variant": schema_metadata,
+                "schema_variant_rows_retained": int(len(schema_clean)),
+                "cp1252_variant": cp_metadata,
+                "cp1252_rows_retained": int(len(cp_frame)),
+            }
+    try:
+        workspace = pathlib.Path(__file__).resolve().parents[4]
+        tools_dir = str(workspace / "tools")
+        if tools_dir not in sys.path:
+            sys.path.insert(0, tools_dir)
+        from tenant_fidelity import validate_fidelity
+
+        fidelity = validate_fidelity(context.tenants[0].root.parent)
+        metrics["fidelity_acceptance"] = fidelity
+    except Exception as exc:  # fail closed if a declared scenario cannot be proved
+        problems.append(f"tenant EXT fidelity acceptance failed: {type(exc).__name__}: {exc}")
     ok = not problems
     detail = "all declared raw defects detected and cleaned" if ok else "; ".join(problems)
     return GateResult("PR-G02", "raw-layer defect detection", ok, detail, metrics)
@@ -372,6 +426,27 @@ def gate_wfm_staffing(context: RunContext) -> GateResult:
             "required_to_observed": ratio,
             "provenance": built.provenance,
         }
+        if tenant.name == "callcenterclient":
+            chaos_dir = tenant.root / "16_DATA" / "raw_chaos"
+            wfm_chaos = pd.read_csv(chaos_dir / "wfm_queue_derived.csv", low_memory=False)
+            outages = pd.read_csv(chaos_dir / "telephony_outages.csv", low_memory=False)
+            offered = pd.to_numeric(outages.offered, errors="coerce")
+            handled = pd.to_numeric(outages.handled, errors="coerce")
+            safe_handled_rate = handled.div(offered.where(offered.ne(0))).fillna(0)
+            if outages.date.nunique() != 2 or safe_handled_rate.isna().any():
+                problems.append(
+                    "callcenterclient: outage-day rate handling is incomplete or non-finite"
+                )
+            metrics["callcenterclient_wfm_chaos"] = {
+                "short_abandon_count": int(pd.to_numeric(wfm_chaos["Short Abandon"]).sum()),
+                "abandon_after_threshold_pct": round(
+                    float(pd.to_numeric(wfm_chaos.abandon_after_threshold_pct).mean()), 3
+                ),
+                "outage_days": int(outages.date.nunique()),
+                "outage_offered_contacts": int(offered.sum()),
+                "outage_handled_contacts": int(handled.sum()),
+                "outage_sla_zero_rows": int(pd.to_numeric(outages.sla_pct).eq(0).sum()),
+            }
     ok = not problems
     detail = "Erlang C staffing is plausible on both fixtures" if ok else "; ".join(problems)
     return GateResult("PR-G03", "WFM staffing on real queue-day volume", ok, detail, metrics)
@@ -419,6 +494,27 @@ def gate_rta_adherence(context: RunContext) -> GateResult:
             "agents_or_sessions": built.provenance.get("rows"),
             "provenance": built.provenance,
         }
+        if tenant.name == "callcenterclient":
+            chaos_dir = tenant.root / "16_DATA" / "raw_chaos"
+            split = pd.read_csv(chaos_dir / "split_shift_rosters.csv", low_memory=False)
+            source = tenant.read_curated("rosters_daily")
+            hours = ["scheduled_hours", "actual_hours", "handle_hours", "aux_hours"]
+            split[hours] = split[hours].apply(pd.to_numeric, errors="coerce").fillna(0)
+            source[hours] = source[hours].apply(pd.to_numeric, errors="coerce").fillna(0)
+            split_totals = split.groupby(["agent_id", "roster_date"])[hours].sum().sort_index()
+            source_totals = source.groupby(["agent_id", "roster_date"])[hours].sum().sort_index()
+            totals_match = split_totals.round(3).equals(source_totals.round(3))
+            if not totals_match:
+                problems.append(
+                    "callcenterclient: split-shift daily aggregation changed roster hours"
+                )
+            metrics["callcenterclient_split_shift"] = {
+                "source_agent_days": int(len(source_totals)),
+                "overlay_agent_days": int(len(split_totals)),
+                "daily_hours_match_source": totals_match,
+                "split_shift_agents": int(split.loc[split.split_marker == 1, "agent_id"].nunique()),
+                "swap_marked_rows": int(pd.to_numeric(split.swap_marker).sum()),
+            }
     ok = not problems
     detail = "adherence reproduces the fixture within 2pp" if ok else "; ".join(problems)
     return GateResult("PR-G04", "RTA adherence on roster/attendance data", ok, detail, metrics)

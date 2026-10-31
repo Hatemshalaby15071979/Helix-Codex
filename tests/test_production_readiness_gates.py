@@ -9,6 +9,7 @@ label check that must refuse a result claiming live data.
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
 from scripts.production_readiness import gates, ingest
 
@@ -71,6 +72,48 @@ def test_clean_tickets_dedupes_and_parses_mixed_offsets():
     assert len(cleaned) == 2
     assert cleaned["created_at"].notna().all()
     assert set(cleaned["status"]) == {"solved", "open"}
+
+
+def test_orphan_references_are_quarantined_without_silent_loss():
+    frame = _frame(
+        {"Assignee": ["A-1", "A-999", "A-2", "A-999"], "Ticket ID": ["1", "2", "3", "4"]}
+    )
+    retained, quarantined = ingest.quarantine_unmatched_references(
+        frame, "Assignee", {"A-1", "A-2"}
+    )
+    assert len(retained) == 2
+    assert len(quarantined) == 2
+    assert len(retained) + len(quarantined) == len(frame)
+    assert set(quarantined["Assignee"]) == {"A-999"}
+
+
+def test_vendor_reader_detects_bom_crlf_and_cp1252(tmp_path):
+    bom_file = tmp_path / "bom.csv"
+    bom_file.write_bytes("Name,Value\r\nsynthetic,caf\u00e9\r\n".encode("utf-8-sig"))
+    frame, metadata = ingest.read_vendor_csv(bom_file)
+    assert metadata == {"encoding": "utf-8-sig", "bom": True, "crlf": True}
+    assert frame.loc[0, "Value"] == "caf\u00e9"
+
+    legacy_file = tmp_path / "legacy.csv"
+    legacy_file.write_bytes("Name,Value\r\nsynthetic,caf\u00e9\r\n".encode("cp1252"))
+    frame, metadata = ingest.read_vendor_csv(legacy_file)
+    assert metadata["encoding"] == "cp1252"
+    assert frame.loc[0, "Value"] == "caf\u00e9"
+
+
+def test_schema_variant_ticketid_is_normalized():
+    frame = _frame({"TicketID": ["T-1", "T-2"], "Created at": ["2026-10-01T00:00:00Z"] * 2})
+    cleaned = ingest.clean_tickets(frame)
+    assert cleaned.ticket_id.tolist() == ["T-1", "T-2"]
+
+
+def test_attendance_reconciliation_refuses_outside_coverage():
+    frame = _frame({"session_date": ["2026-06-01", "2026-06-02"]})
+    assert (
+        len(ingest.reconcile_with_coverage(frame, "session_date", "2026-06-01", "2026-06-02")) == 2
+    )
+    with pytest.raises(ValueError, match="outside the declared"):
+        ingest.reconcile_with_coverage(frame, "session_date", "2026-06-02", "2026-06-02")
 
 
 class _StubTenant:

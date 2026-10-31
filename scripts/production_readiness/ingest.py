@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence
 
 import pandas as pd
@@ -22,6 +23,38 @@ DATE_LOCALE_RE = re.compile(r"^\d{1,2}/\d{1,2}/\d{4}$")
 PERIOD_SLASH_RE = re.compile(r"^\d{4}/\d{2}$")
 TZ_OFFSET_RE = re.compile(r"([+-]\d{2}:?\d{2})$")
 MOJIBAKE_TOKENS = ("Ã", "Â", "â€™", "â€œ", "â€")
+
+
+def read_vendor_csv(path: Path) -> tuple[pd.DataFrame, Dict[str, object]]:
+    """Read UTF-8/BOM or cp1252 CSVs and report detected encoding/line endings."""
+    data = path.read_bytes()
+    encoding = "utf-8-sig"
+    frame = None
+    for candidate in ("utf-8-sig", "cp1252"):
+        try:
+            frame = pd.read_csv(path, encoding=candidate, dtype=str, keep_default_na=False)
+            encoding = candidate
+            break
+        except UnicodeDecodeError:
+            continue
+    if frame is None:
+        raise UnicodeError(f"unsupported CSV encoding: {path}")
+    return frame, {
+        "encoding": encoding,
+        "bom": data.startswith(b"\xef\xbb\xbf"),
+        "crlf": b"\r\n" in data,
+    }
+
+
+def reconcile_with_coverage(
+    frame: pd.DataFrame, date_column: str, coverage_start: str, coverage_end: str
+) -> pd.DataFrame:
+    """Fail closed when any requested row falls outside a declared coverage window."""
+    dates = pd.to_datetime(frame[date_column], errors="coerce")
+    start, end = pd.Timestamp(coverage_start), pd.Timestamp(coverage_end)
+    if dates.isna().any() or (dates.lt(start) | dates.gt(end)).any():
+        raise ValueError("reconciliation date is outside the declared attendance coverage window")
+    return frame.copy()
 
 
 @dataclass
@@ -268,6 +301,18 @@ def find_orphans(
     )
 
 
+def quarantine_unmatched_references(
+    frame: pd.DataFrame, column: str, known: Iterable[str]
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Split a vendor frame into joinable rows and counted orphan quarantine rows."""
+    if column not in frame.columns:
+        return frame.copy(), frame.iloc[0:0].copy()
+    known_ids = {str(value).strip() for value in known}
+    values = _values(frame[column]).str.strip()
+    orphan_mask = values.ne("") & values.str.lower().ne("nan") & ~values.isin(known_ids)
+    return frame.loc[~orphan_mask].copy(), frame.loc[orphan_mask].copy()
+
+
 def normalize_period(series: pd.Series) -> pd.Series:
     """Return YYYY-MM for both YYYY/MM and YYYY-MM inputs."""
     values = _values(series).str.strip().str.replace("/", "-", regex=False)
@@ -288,6 +333,7 @@ def clean_tickets(frame: pd.DataFrame) -> pd.DataFrame:
     cleaned = cleaned.rename(
         columns={
             "Ticket ID": "ticket_id",
+            "TicketID": "ticket_id",
             "Created at": "created_at",
             "Solved at": "solved_at",
             "Subject": "subject",
