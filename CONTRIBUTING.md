@@ -39,7 +39,7 @@ build the deployment profile in `infra/docker/`.
 
 ```bash
 # Clone the repo
-git clone https://github.com/HatemIsmailShalaby1979/Helix-Prime.git
+git clone https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime.git
 cd Helix-Prime
 
 # Create virtual environment

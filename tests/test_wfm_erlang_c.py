@@ -10,7 +10,7 @@ engine, from the standard formulas:
 
 The anchor values additionally reproduce the self-test of
 wfm-forecasting-calculator (shared_utils/erlang_c.py,
-github.com/HatemIsmailShalaby1979/wfm-forecasting-calculator) exactly:
+github.com/<YOUR_GITHUB_ORG>/wfm-forecasting-calculator) exactly:
 C(10, 8.5) = 0.5299, SL(12, 8.5, t=20 s, AHT=180 s) = 86.70%,
 ASA(12, 8.5, 180 s) = 10.09 s, occupancy(8.5, 12) = 70.83%, and
 required_agents(100 calls, 180 s AHT, 30 min interval, 80/20) = 14.

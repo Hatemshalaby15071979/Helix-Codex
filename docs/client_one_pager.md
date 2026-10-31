@@ -36,7 +36,7 @@ This is not another booking app. This is an **operating system** — it runs you
 
 ## Who am I
 
-Built by Hatem Ismail Shalaby, Contact Centre Operations & AI Implementation Lead | WFM & CX Transformation. Background: https://github.com/HatemIsmailShalaby1979
+Built by Hatem Shalaby, Contact Centre Operations & AI Implementation Lead | WFM & CX Transformation. Background: https://github.com/<YOUR_GITHUB_ORG>
 
 ## Next step
 

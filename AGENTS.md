@@ -38,12 +38,12 @@
 > 2. **Repository visibility.** Recorded as closed on 2026-09-21 with the
 >    repository set to private; that record was superseded. Measured 2026-09-25,
 >    an unauthenticated request to
->    `https://api.github.com/repos/HatemIsmailShalaby1979/Helix-Prime` returns
+>    `https://api.github.com/repos/<YOUR_GITHUB_ORG>/Helix-Prime` returns
 >    HTTP 200 and `"private": false`. **The repository is public, and the owner
 >    confirmed on 2026-09-25 that public is the intended state.** See §20.5.
 >
 > **CI is green for the first time — 2026-09-29.** Run
-> [`36497766876`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/36497766876)
+> [`36497766876`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/36497766876)
 > on `839507e` passed **all 17 steps**: `1,897 passed, 19 deselected`, coverage
 > 86.91%. The workflow had failed at **step 5 on every push from 2026-09-20 to
 > 2026-09-28**, which is why steps 6–17 had never executed once and why several
@@ -457,9 +457,9 @@ Exit gate: CI green in a clean container; no unauthenticated route; no high band
       **line-number range**, not a test count. Full suite 620 passed/0 failed; ruff
       N/A (docs-only).
 - [x] **H3.3** Security docs (G36, G37) — **Completed 2026-09-12.**
-      (a) G36 SECURITY.md: the fabricated contact (`github.com/HatemShelby/Helix-Prime` +
+      (a) G36 SECURITY.md: the fabricated contact block (a non-existent account handle +
       "security@helixprime.io mailbox … fabricated and are void" self-contradiction)
-      replaced with the REAL repository + maintainer (`github.com/HatemIsmailShalaby1979/`
+      replaced with the REAL repository + maintainer (`github.com/<YOUR_GITHUB_ORG>/`
       — verified against `git remote -v` and `pyproject.toml [project.urls]`); the
       "static analysis (bandit, safety)" claims made to match exactly what CI runs
       (bandit + pip-audit + Dependabot; safety is NOT in CI — scrubbed the fabricated
@@ -2726,7 +2726,7 @@ finish (`count: 3036`).
 
 #### The GitHub remote was PUBLIC — anything committed is published (a 2026-09-21 note recorded it as private; that was superseded, and public is confirmed intended)
 
-`origin` is `https://github.com/HatemIsmailShalaby1979/Helix-Prime.git` and
+`origin` is `https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime.git` and
 GitHub reports `"private": false`. The last pushed commit is `1ab9bea`
 (2026-08-29), so the project has been public since August, and 174 local commits
 are unpublished. Treat every commit as public disclosure: internal-only material
@@ -2773,9 +2773,9 @@ of it. So the bulk of the work is published and only a small delta is local.
 exposure of the two, and it is a GitHub UI action because `gh` is not installed.
 
 **2026-09-21 — closed. The owner made the repository private.** Verified from this
-sandbox: an unauthenticated `GET https://api.github.com/repos/HatemIsmailShalaby1979/Helix-Prime`
+sandbox: an unauthenticated `GET https://api.github.com/repos/<YOUR_GITHUB_ORG>/Helix-Prime`
 returns **404**, while a known-public control (`torvalds/linux`) returns 200 on the
-same connection, and `https://github.com/HatemIsmailShalaby1979/Helix-Prime` also
+same connection, and `https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime` also
 returns 404. Note the limit of that evidence: an unauthenticated probe cannot
 distinguish *private* from *deleted*, so the owner's statement is the authoritative
 source and the 404 is corroboration, not proof. The 174 commits that were published
@@ -3806,7 +3806,7 @@ Changed files: `AGENTS.md` only
 Provider: Supabase Auth with GitHub OAuth.
 Project: `https://cgowfiyzqqqjrytxwmfa.supabase.co`
 Provider callback: `https://cgowfiyzqqqjrytxwmfa.supabase.co/auth/v1/callback`
-Helix redirect: `https://helix-codex.hatemshalaby2025.workers.dev/app/auth/supabase/callback`
+Helix redirect: `https://helix-codex.<YOUR_CLOUDFLARE_SUBDOMAIN>.workers.dev/app/auth/supabase/callback`
 Secrets/configuration: project URL and publishable anon key remain environment-only; GitHub client credentials and any service-role/database credentials are not committed or recorded here.
 Boundary: no Supabase application data tables were created or moved; `db.py` and the SQLite layer are untouched. A3 identity-to-app-account bridging is the next separate step.
 Tests run: `git diff --check`; ledger-only change.
@@ -3816,7 +3816,7 @@ Open questions / halts hit: A3 remains pending and must include a fresh-account/
 
 ### 20.15 A2 verification correction — HALTED
 
-The prior A2 provisioning report was not sufficient evidence of a working public auth front door. Live verification of `https://helix-codex.hatemshalaby2025.workers.dev/app/healthz` and `/app/auth/supabase/callback?code=test` returned the same static Cloudflare Worker placeholder: “Your app is live! Replace this placeholder with your Helix Codex application code.” The Worker is not forwarding requests to `helix_codex_app`, its origin is not dynamically configured, and no Worker source or Wrangler configuration exists under `deploy/` or elsewhere in the repository.
+The prior A2 provisioning report was not sufficient evidence of a working public auth front door. Live verification of `https://helix-codex.<YOUR_CLOUDFLARE_SUBDOMAIN>.workers.dev/app/healthz` and `/app/auth/supabase/callback?code=test` returned the same static Cloudflare Worker placeholder: “Your app is live! Replace this placeholder with your Helix Codex application code.” The Worker is not forwarding requests to `helix_codex_app`, its origin is not dynamically configured, and no Worker source or Wrangler configuration exists under `deploy/` or elsewhere in the repository.
 
 A2 is therefore **not verified** and A3 must not start. The earlier A2 COMPLETE label is superseded by this correction. A committed Worker proxy, an explicit origin update mechanism, and a real proxied health/callback proof are required before the Supabase flow can be treated as live.
 
@@ -3824,14 +3824,14 @@ A2 is therefore **not verified** and A3 must not start. The earlier A2 COMPLETE 
 
 Failure shape: the callback URL was configured in Supabase **before the Worker that should serve it was built**. The hostname was registered as a destination before the destination existed; it was not merely a Worker with additional configuration missing.
 
-Origin decision: use a committed Cloudflare Worker plus Workers KV. The Worker will read the current Quick Tunnel origin from KV on every request, and a small version-controlled update command will replace that value after each `cloudflared` restart. No hardcoded rotating origin is acceptable. Re-verification must restart the tunnel, update KV, then make a real external request through `helix-codex.hatemshalaby2025.workers.dev` and capture the actual response.
+Origin decision: use a committed Cloudflare Worker plus Workers KV. The Worker will read the current Quick Tunnel origin from KV on every request, and a small version-controlled update command will replace that value after each `cloudflared` restart. No hardcoded rotating origin is acceptable. Re-verification must restart the tunnel, update KV, then make a real external request through `helix-codex.<YOUR_CLOUDFLARE_SUBDOMAIN>.workers.dev` and capture the actual response.
 
 Named-tunnel option rejected for now: current Cloudflare documentation requires a named tunnel's DNS hostname to live in a Cloudflare zone controlled by the account; the existing `workers.dev` hostname is a Worker route, not that owned zone. Acquiring a zone would add a separate domain dependency. A future named tunnel remains possible if a zone is obtained.
 
 ### 20.17 A2 Worker front door — RE-VERIFIED
 
 The committed Worker front door is `helix-codex`, deployed at
-`https://helix-codex.hatemshalaby2025.workers.dev`, with KV namespace
+`https://helix-codex.<YOUR_CLOUDFLARE_SUBDOMAIN>.workers.dev`, with KV namespace
 `4ca6dd96e86749698983f998dbadbddf`. Commit `e7ca9d1` contains the Worker source,
 Wrangler binding, remote KV updater, and bundled tunnel launcher; generated
 Wrangler state is ignored and not committed.
@@ -3891,7 +3891,7 @@ returns it to green.
 App on `127.0.0.1:8100`; Cloudflare Quick Tunnel
 `https://supplement-curves-innocent-change.trycloudflare.com`; Workers KV
 `HELIX_ORIGIN` repointed to it; all requests below made against
-`https://helix-codex.hatemshalaby2025.workers.dev`.
+`https://helix-codex.<YOUR_CLOUDFLARE_SUBDOMAIN>.workers.dev`.
 
 | # | request | status | observed |
 |---|---|---|---|
@@ -3963,7 +3963,7 @@ is **not** evidence about the real flow.
 #### A3.6 Open — the two owner-held artifacts
 
 1. **The Supabase dashboard allowlist.** The entry
-   `https://helix-codex.hatemshalaby2025.workers.dev/app/auth/supabase/callback**`
+   `https://helix-codex.<YOUR_CLOUDFLARE_SUBDOMAIN>.workers.dev/app/auth/supabase/callback**`
    was not added: this environment has no Supabase dashboard or Management API
    credential. Which of the two entries to keep is the owner's call; removing the
    old exact-match entry would make the flow depend on the wildcard alone, so
@@ -4147,7 +4147,7 @@ session and the identity bridge, read from the database:
 |---|---|
 | session | `session-2aef4631f5784cacb24a81bd1600fb19`, issued `2026-09-26T22:43:42Z`, expires `2026-10-26` |
 | account | `account-c27e7988cd544c798288d92168d5cf83`, username `demo` |
-| email / display name | `[REDACTED_EMAIL]` |
+| email / display name | `you@example.com` |
 | role | `demo` |
 | session IP | `2a06:98c0:3600::103` (Cloudflare egress) |
 | user agent | `WorkBuddyAI/5.6.2 … Electron/37.10.3` — the owner's built-in browser |
@@ -4220,7 +4220,7 @@ The README is corrected to state this. The Worker code is **not** changed: treat
 5xx from the origin as an offline signal is a behaviour decision, not a doc fix, and
 it was not in scope here. Recorded as an open option.
 
-Operationally: **a 530 through `helix-codex.hatemshalaby2025.workers.dev` means
+Operationally: **a 530 through `helix-codex.<YOUR_CLOUDFLARE_SUBDOMAIN>.workers.dev` means
 "origin registered, tunnel dead", not a Worker fault** — which is the ordinary state
 after any `cloudflared` restart, and it is not self-healing.
 
@@ -4387,7 +4387,7 @@ and `is invalid` (malformed), so the operator can tell which path fired.
 
 **Verified live on the deployed Worker**, not by reasoning about the code. Deployed as
 version `ebdca03f-1d92-4042-b33d-cf111f5fc15a`, then each path probed through
-`https://helix-codex.hatemshalaby2025.workers.dev/app/healthz`:
+`https://helix-codex.<YOUR_CLOUDFLARE_SUBDOMAIN>.workers.dev/app/healthz`:
 
 | KV `HELIX_ORIGIN` | Result |
 |---|---|
@@ -4577,7 +4577,7 @@ run:
 
 So those POSTs were authorised by the session the **A5** sign-in created. The mechanism
 is ordinary and not a defect: the session cookie is scoped to
-`helix-codex.hatemshalaby2025.workers.dev` — a stable hostname — and lives until
+`helix-codex.<YOUR_CLOUDFLARE_SUBDOMAIN>.workers.dev` — a stable hostname — and lives until
 `2026-10-26`, so it survives a Quick Tunnel restart, which is exactly what changed
 between A5 and this run.
 
@@ -5105,7 +5105,7 @@ client secret appears nowhere in the range.
 **Result:**
 
 ```text
-To https://github.com/HatemIsmailShalaby1979/Helix-Prime.git
+To https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime.git
    6b7d923..1c8c19d  main -> main
 ```
 
@@ -5122,7 +5122,7 @@ To https://github.com/HatemIsmailShalaby1979/Helix-Prime.git
 cause is that the global config explicitly disables the credential helper — `~/.gitconfig`
 carries `[credential] helper =` (an empty value, which resets the helper list) and
 `helperselector selected = <no helper>` — even though `~/.git-credentials` holds a valid
-entry for `https://HatemIsmailShalaby1979@github.com`. The push was made with a
+entry for `https://<YOUR_GITHUB_ORG>@github.com`. The push was made with a
 **per-invocation** override, `git -c credential.helper=store push origin main`. **No
 persistent git configuration was changed**, and the stored token was never printed.
 
@@ -5186,7 +5186,7 @@ so the lock gained exactly two entries and no existing pin moved.
 
 ### 21.4 Verification
 
-CI run [`36497766876`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/36497766876)
+CI run [`36497766876`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/36497766876)
 on `839507e` — **all 17 steps success**, `1,897 passed, 19 deselected in 595.21s`,
 coverage **86.91%**, zero `FAILED` lines, `Dependency check passed: no drift`.
 

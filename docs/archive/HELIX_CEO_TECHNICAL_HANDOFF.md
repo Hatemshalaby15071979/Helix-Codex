@@ -11,6 +11,6 @@
 > - Real company names (VF UK, Lufthansa) must never appear as simulated accounts.
 >
 > The workspace has since been consolidated into a single public repository
-> (`github.com/HatemShelby/Helix-Prime`). For the current architecture, see
+> (`github.com/<YOUR_GITHUB_ORG>/Helix-Prime`). For the current architecture, see
 > `docs/SYSTEM_ARCHITECTURE.md`; for the current structure, see
 > `docs/architecture/REPO_GRAPH.md`. The single source of truth is `MASTER_STORY.md`.

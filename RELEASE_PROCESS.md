@@ -263,7 +263,7 @@ Track the following quality metrics:
 
 The release process is critical for delivering value to customers. By following this structured approach, we can ensure that releases are high-quality, secure, and on schedule.
 
-For more information about the release process, contact the maintainer via the GitHub profile: `github.com/HatemIsmailShalaby1979`. The email addresses listed in earlier drafts (release-manager@, engineering-lead@, ceo@helixprime.io) were fabricated and are void.
+For more information about the release process, contact the maintainer via the GitHub profile: `github.com/<YOUR_GITHUB_ORG>`. The email addresses listed in earlier drafts (release-manager@, engineering-lead@, ceo@helixprime.io) were fabricated and are void.
 
 > **Scope note.** The generic timeline, stakeholder, and metrics sections above are the
 > template this project started from. The process that is actually enforced is the C8

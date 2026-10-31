@@ -8,7 +8,7 @@
 >
 > **Correction, 2026-09-27.** That figure is a dated snapshot, not the current state. Re-measured on 2026-09-27 the suite is **1,897 passed / 0 failed** (940 app chunk + 957 parent, 19 deselected as a quarantined UI tier), and `ruff check` was **not** clean (3 errors across the CI paths) while `ruff format --check .` would have reformatted 346 files.
 >
-> **Resolved, 2026-09-29.** The lint debt that note recorded is cleared, and CI is **green for the first time in the repository's history**: run [36497766876](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/36497766876) on `839507e` passed **all 17 steps** — `1,897 passed, 19 deselected`, coverage 86.91%. `ruff check` on the CI path list exits 0 and `ruff format --check .` reports 429 files already formatted. The workflow had failed at step 5 on **every push since 2026-09-20**, which is why steps 6–17 had never executed once; the repair is recorded in `AGENTS.md`. The "ruff clean, mypy clean, bandit clean" cell below is therefore true again, not merely historical.
+> **Resolved, 2026-09-29.** The lint debt that note recorded is cleared, and CI is **green for the first time in the repository's history**: run [36497766876](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/36497766876) on `839507e` passed **all 17 steps** — `1,897 passed, 19 deselected`, coverage 86.91%. `ruff check` on the CI path list exits 0 and `ruff format --check .` reports 429 files already formatted. The workflow had failed at step 5 on **every push since 2026-09-20**, which is why steps 6–17 had never executed once; the repair is recorded in `AGENTS.md`. The "ruff clean, mypy clean, bandit clean" cell below is therefore true again, not merely historical.
 >
 > **Commit:** `003709b` (the 2026-09-20 snapshot) · `1830f30` (current `main`)
 
@@ -40,7 +40,7 @@
 
 | Property | Value |
 |---|---|
-| Repository | `https://github.com/HatemIsmailShalaby1979/Helix-Prime.git` (private) |
+| Repository | `https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime.git` (private) |
 | Branch | `main` (`origin/main` is `b9d8fb6`; the unpushed backlog is measured with `git rev-list --count origin/main..HEAD`) |
 | Python | 3.12 (requires `>=3.12,<3.13`) |
 | Package version | `0.9.0` (single-sourced from `pyproject.toml`) |
@@ -1137,7 +1137,7 @@ Produces sdist + wheel in dist/. Entry point `helix-api` is canonical.
 
 ### 12.4 Repository Access Notice
 
-⚠️ The repository is **private** (GitHub: HatemIsmailShalaby1979/Helix-Prime); the owner changed it from public on 2026-09-21, so access is restricted to authenticated collaborators and everything committed is no longer world-readable. Two caveats carry over from the public period. First, the ~174 commits published while the repository was public are **not** un-published — private hides content from new anonymous readers and does not retract what was already fetched. Second, internal-only material (status documents, client names, commercial figures) therefore still exists in that fetched history. The last public push published docs/handoff/00-project-handover.html, docs/Helix_Codex_System_Analysis_and_Design.pdf, docs/client_one_pager.md, docs/scoach_academy_hub_opportunity_report.md. No secrets were found in the content scan; internal material disclosure remains a governance consideration, now mitigated by restricted access rather than by retraction.
+⚠️ The repository is **private** (GitHub: <YOUR_GITHUB_ORG>/Helix-Prime); the owner changed it from public on 2026-09-21, so access is restricted to authenticated collaborators and everything committed is no longer world-readable. Two caveats carry over from the public period. First, the ~174 commits published while the repository was public are **not** un-published — private hides content from new anonymous readers and does not retract what was already fetched. Second, internal-only material (status documents, client names, commercial figures) therefore still exists in that fetched history. The last public push published docs/handoff/00-project-handover.html, docs/Helix_Codex_System_Analysis_and_Design.pdf, docs/client_one_pager.md, docs/scoach_academy_hub_opportunity_report.md. No secrets were found in the content scan; internal material disclosure remains a governance consideration, now mitigated by restricted access rather than by retraction.
 
 ---
 

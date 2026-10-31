@@ -401,7 +401,7 @@ I'd like to do this as a **pilot** — free for the first 60 days. You pay nothi
 | "How much does it cost?" | "The pilot is free for 60 days. After that, we'd talk about $350-600/month depending on how many athletes and coaches you have. But let's see if it's worth anything to you first." |
 | "We already use WhatsApp and spreadsheets" | "Those work when you have 20 athletes. At 100+, the information is scattered and you lose track. How many athletes do you have now? And how many do you want next year?" |
 | "Can it do [feature X]?" | "Tell me what problem that feature would solve. If it's a top-3 pain, I'll build it in the pilot. If it's nice-to-have, let's focus on the burning issues first." |
-| "Are you a company? How long have you been doing this?" | "Built by Hatem Ismail Shalaby, Contact Centre Operations & AI Implementation Lead | WFM & CX Transformation. Background: https://github.com/HatemIsmailShalaby1979" |
+| "Are you a company? How long have you been doing this?" | "Built by Hatem Shalaby, Contact Centre Operations & AI Implementation Lead | WFM & CX Transformation. Background: https://github.com/<YOUR_GITHUB_ORG>" |
 | "What about [competitor X]?" | "They're good at [one thing]. But they don't give you an operating system — they give you a tool. If you want to manage one thing, use them. If you want to run the whole academy from one dashboard, that's what I build." |
 | "I need to think about it" | "Of course. Here's what I'd suggest: let me come in for one day, shadow your operations, and write up a specific plan for your academy. No cost, no commitment. Then you decide." |
 

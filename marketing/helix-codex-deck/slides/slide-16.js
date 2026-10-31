@@ -59,7 +59,7 @@ function createSlide(pres, theme) {
     });
   }
 
-  slide.addText("Hatem Shalaby   ·   Helix Codex OS   ·   github.com/HatemIsmailShalaby1979/Helix-Prime", {
+  slide.addText("Hatem Shalaby   ·   Helix Codex OS   ·   github.com/<YOUR_GITHUB_ORG>/Helix-Prime", {
     x: 0.75, y: 4.92, w: 8.5, h: 0.34,
     fontSize: 12, fontFace: BODY, color: theme.secondary,
     align: "left", valign: "middle"

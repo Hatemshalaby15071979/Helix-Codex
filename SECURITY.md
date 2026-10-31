@@ -20,7 +20,7 @@ If you discover a security vulnerability in our code, please report it responsib
 
 ### Contact Information
 
-Report security issues by opening a private advisory on the GitHub repository: `github.com/HatemIsmailShalaby1979/Helix-Prime`. If private advisory reporting is unavailable, email the repository maintainer (contact details on the GitHub profile under the same URL).
+Report security issues by opening a private advisory on the GitHub repository: `github.com/<YOUR_GITHUB_ORG>/Helix-Prime`. If private advisory reporting is unavailable, email the repository maintainer (contact details on the GitHub profile under the same URL).
 
 Please include "SECURITY VULNERABILITY" in the subject line.
 
@@ -154,4 +154,4 @@ Generate and submit compliance reports as required by:
 
 Security is everyone's responsibility in the Helix Prime project. By following these guidelines, we can ensure that our systems and applications are secure, compliant, and ready to protect our users' data and privacy.
 
-To learn more about our security practices, contact the maintainer via the GitHub profile: `github.com/HatemIsmailShalaby1979`.
+To learn more about our security practices, contact the maintainer via the GitHub profile: `github.com/<YOUR_GITHUB_ORG>`.

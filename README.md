@@ -5,9 +5,9 @@
 
 <!-- badges:start -->
 
-[![CI](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/workflows/CI/badge.svg)](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions)
+[![CI](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/workflows/CI/badge.svg)](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions)
 ![licence](https://img.shields.io/badge/licence-MIT-blue)
-[![last commit](https://img.shields.io/github/last-commit/HatemIsmailShalaby1979/Helix-Prime)](https://github.com/HatemIsmailShalaby1979/Helix-Prime/commits/main)
+[![last commit](https://img.shields.io/github/last-commit/<YOUR_GITHUB_ORG>/Helix-Prime)](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/commits/main)
 ![status](https://img.shields.io/badge/ci-success-brightgreen?label=success%20(2026-10-05))
 
 *Measured 2026-10-06 — CI **success**; head `d48166f` (2026-10-05); Python.*
@@ -20,7 +20,7 @@
 **The governed operations core of Helix Codex.**
 
 ![Status](https://img.shields.io/badge/status-pre--pilot-blue)
-![CI](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/workflows/ci.yml/badge.svg)
 ![Production](https://img.shields.io/badge/production-NOT__READY-red)
 ![Licence](https://img.shields.io/badge/licence-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.12%2B-3776ab)
@@ -148,13 +148,13 @@ with it.
 
 ## Production status & test coverage
 
-Checked 2026-10-05: the project remains pre-pilot and production is `NOT_READY`. GitHub Actions passed all 17 CI steps on [`c0b85a6`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/commit/c0b85a60a651034ed5ac765b31cd82d225c08b3e) in [run `37340320781`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/37340320781).
+Checked 2026-10-05: the project remains pre-pilot and production is `NOT_READY`. GitHub Actions passed all 17 CI steps on [`c0b85a6`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/commit/c0b85a60a651034ed5ac765b31cd82d225c08b3e) in [run `37340320781`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37340320781).
 
 | Check | Result | Measured |
 |---|---|---|
-| CI, end to end | **All 17 steps pass** — run [`37340320781`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/37340320781) on `c0b85a6` | 2026-10-05 |
-| Full test suite | **1,967 passed, 0 failures, 19 deselected** (CI run [`37340320781`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/37340320781)) | 2026-10-05 |
-| Coverage (`--cov=server --cov=connectors`, 80% floor) | **86.91%** (CI run [`37340320781`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/37340320781)) | 2026-10-05 |
+| CI, end to end | **All 17 steps pass** — run [`37340320781`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37340320781) on `c0b85a6` | 2026-10-05 |
+| Full test suite | **1,967 passed, 0 failures, 19 deselected** (CI run [`37340320781`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37340320781)) | 2026-10-05 |
+| Coverage (`--cov=server --cov=connectors`, 80% floor) | **86.91%** (CI run [`37340320781`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37340320781)) | 2026-10-05 |
 | CI lint (`ruff check`, the 17 paths CI names) | **0 errors** (exit 0) | 2026-10-05 |
 | CI format (`ruff format --check .`, repo-wide) | **Clean** — 438 files already formatted | 2026-10-05 |
 | Governance checker (`GOVERNANCE/governance_check.py`) | **PASS** (exit 0) | 2026-10-05 |
@@ -192,8 +192,8 @@ shown at all.
 | Fail-closed gate: unknown role / unknown classification / forbidden classification / non-owned engine → `dead_letter` | enforced; 4 hard-deny branches | `control_plane/governance.py:972-1022`; `tests/test_governance_fail_closed.py` |
 | Gate boundaries → `awaiting_approval`: financial limit exceeded, confidence < `0.75`, explicit approval | 3 boundary branches | `control_plane/governance.py:1027-1065`; `MIN_AUTONOMY_CONFIDENCE` at `:64` |
 | Every governance decision is written to the hash-chained `audit_events` ledger before it runs | emit at submit | `control_plane/engine.py:839-840` |
-| Full test suite passes | **1,967 passed, 0 failures, 19 deselected** (CI run [`37371376357`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/37371376357) on `fa150cb`, 2026-10-05) | `pytest tests/ -q -m "not smoke"`; `AGENTS.md` §24 |
-| Coverage floor (80%) met | **86.91%** (CI run [`37371376357`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/37371376357), 2026-10-05) | `.github/workflows/ci.yml` test step |
+| Full test suite passes | **1,967 passed, 0 failures, 19 deselected** (CI run [`37371376357`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37371376357) on `fa150cb`, 2026-10-05) | `pytest tests/ -q -m "not smoke"`; `AGENTS.md` §24 |
+| Coverage floor (80%) met | **86.91%** (CI run [`37371376357`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37371376357), 2026-10-05) | `.github/workflows/ci.yml` test step |
 | `ruff check` clean on the 17 CI paths | **0 errors** (exit 0) | local run, 2026-10-05 |
 | `ruff format --check .` clean repo-wide | **438 files formatted** (exit 0) | local run, 2026-10-05 |
 | WFM demo returns an Erlang C answer through the gate, recorded in the audit trail | four-number input → answer; demonstrated end to end on a real server 2026-09-30 (`POST /app/api/ops/demo/wfm` → 201, `GET /app/ops/audit/{correlation_id}` → 200) | `helix_codex_app/integration/engine_bridge.py:529-587`; `helix_codex_app/modules/ops/router.py:207`; `docs/verification/2026-09-30.md` |
@@ -318,11 +318,11 @@ A reviewer without the install or credentials can still run the test suite and
 
 ## Related work
 
-- [Full portfolio](https://github.com/HatemIsmailShalaby1979/HatemIsmailShalaby1979) — how this project fits the wider work
+- [Full portfolio](https://github.com/<YOUR_GITHUB_ORG>/<YOUR_GITHUB_ORG>) — how this project fits the wider work
 
 ## Author
 
-Built by Hatem Ismail Shalaby, Contact Centre Operations & AI Implementation Lead | WFM & CX Transformation. Background: https://github.com/HatemIsmailShalaby1979
+Built by Hatem Shalaby, Contact Centre Operations & AI Implementation Lead | WFM & CX Transformation. Background: https://github.com/<YOUR_GITHUB_ORG>
 
 ## Licence
 

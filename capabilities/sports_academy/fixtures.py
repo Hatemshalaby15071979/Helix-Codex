@@ -124,7 +124,7 @@ def build_synthetic_academy(tenant_id: str, client_id: str, as_of: str) -> dict:
     checkins = []
     facility_slots = []
     session_seq = 0
-    rng = random.Random(_ATTENDANCE_SEED)
+    rng = random.Random(_ATTENDANCE_SEED)  # noqa: S311 - deterministic fixture data, not security-sensitive
     for day_idx, date in enumerate(_SESSION_DATES):
         for prog_idx, program_id in enumerate(("prog-u12", "prog-u15")):
             coach = coaches[(day_idx + prog_idx) % len(coaches)]

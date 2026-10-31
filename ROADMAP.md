@@ -18,8 +18,8 @@ Helix Prime is a governed operations platform. It is `CONTROLLED_PILOT_READY`, n
 - **Helix Codex App** — the first daily-use product layer (`helix_codex_app/`): identity, chat, documents, tasks, calendar, attendance, governed memory, and a low-code capability loader
 - **2 vertical capability packs**: `capabilities/restaurant/` (the reference pattern) and `capabilities/sports_academy/` (first real vertical, built for Scoach Academy Hub)
 - **C8 release gate** — `release/gate.py`, 29 gate implementations (14 core + 6 app + 9 production-only) across 5 named profiles
-- A public repository at `github.com/HatemIsmailShalaby1979/Helix-Prime`
-- **CI pipeline green** — `.github/workflows/ci.yml`, **all 17 steps passing** on `main` (run [`36497766876`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/36497766876), 2026-09-29): ruff check, ruff format check, mypy, the full suite (**1,897 passed, 19 deselected**, coverage **86.91%** against an 80% floor), bandit, pip-audit, the six drift/registry/governance checks, package build, and both container steps. It had failed at step 5 on **every push from 2026-09-20 to 2026-09-28**, so steps 6–17 were never exercised until this run; see `AGENTS.md` for the repair record.
+- A public repository at `github.com/<YOUR_GITHUB_ORG>/Helix-Prime`
+- **CI pipeline green** — `.github/workflows/ci.yml`, **all 17 steps passing** on `main` (run [`36497766876`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/36497766876), 2026-09-29): ruff check, ruff format check, mypy, the full suite (**1,897 passed, 19 deselected**, coverage **86.91%** against an 80% floor), bandit, pip-audit, the six drift/registry/governance checks, package build, and both container steps. It had failed at step 5 on **every push from 2026-09-20 to 2026-09-28**, so steps 6–17 were never exercised until this run; see `AGENTS.md` for the repair record.
 
 **What is explicitly NOT real yet — do not claim otherwise:**
 
@@ -75,7 +75,7 @@ This is a **one-person** effort. Everything below is sized for that reality.
 
 ## Contact
 
-Helix Prime is built and maintained by Hatem Shalaby. Public contact is via the GitHub profile: `github.com/HatemIsmailShalaby1979`.
+Helix Prime is built and maintained by Hatem Shalaby. Public contact is via the GitHub profile: `github.com/<YOUR_GITHUB_ORG>`.
 
 *Any email addresses ending in `helixprime.io` found in older versions of this repository are fabricated and void.*
 

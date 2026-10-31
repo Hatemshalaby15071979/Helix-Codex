@@ -53,3 +53,16 @@ Flask>=3.0.0,<4.0.0
 flask-cors>=4.0.0,<7.0.0
 ollama>=0.4.0,<1.0.0
 python-multipart>=0.0.9
+
+# ── API service (helix-api) ─────────────────────────────────────────────────
+# The canonical deployable artifact. These are mirrored in pyproject.toml's
+# `web` extra so `pip install -r requirements.txt` and
+# `pip install 'helix-codex-os[web]'` install the same runtime. Before this,
+# the web framework lived only in the extra and a clean `-r requirements.txt`
+# install could not start `helix-api`.
+fastapi>=0.115
+uvicorn[standard]>=0.30
+jinja2>=3.1
+sse-starlette>=2.1
+pydantic-settings>=2.5
+httpx>=0.27

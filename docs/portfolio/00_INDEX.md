@@ -38,7 +38,7 @@ dated earlier runs are kept as the audit trail in
   (`pytest tests/ -q -m "not smoke"`). The 445- and 621-test figures in this package are
   dated snapshots (2026-08-29 and 2026-09-12) and are retained as history, not as current.
 - **Coverage:** **86.91%** over `server/` and `connectors/`, against an 80% floor.
-- **CI:** **green on all 17 steps** — run [`36497766876`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/36497766876).
+- **CI:** **green on all 17 steps** — run [`36497766876`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/36497766876).
   The pipeline had failed at step 5 on every push since 2026-09-20, so steps 6–17 had never
   executed once; the repair is recorded in `AGENTS.md` §21.
 - **Lint / format / types / dependencies:** `ruff check` 0 findings on the CI path list;

@@ -45,7 +45,7 @@ service level is 0. ``A <= 0`` returns a probability of waiting of 0.
 Provenance
 ----------
 The formulation follows ``shared_utils/erlang_c.py`` in
-https://github.com/HatemIsmailShalaby1979/wfm-forecasting-calculator (the
+https://github.com/<YOUR_GITHUB_ORG>/wfm-forecasting-calculator (the
 owner's reference implementation, factorial closed form), re-expressed here on
 the Erlang B recursion so large agent counts cannot overflow, and integrated
 with this repository's parameter/result contracts. The reference's self-test

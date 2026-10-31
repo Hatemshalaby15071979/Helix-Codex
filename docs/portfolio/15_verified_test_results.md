@@ -10,7 +10,7 @@
 |---|---|
 | Full suite | **1,897 passed / 0 failed**, 19 deselected as a quarantined UI tier |
 | Coverage (`--cov=server --cov=connectors`, 80% floor) | **86.91%** |
-| CI | **green on all 17 steps** — run [`36497766876`](https://github.com/HatemIsmailShalaby1979/Helix-Prime/actions/runs/36497766876) |
+| CI | **green on all 17 steps** — run [`36497766876`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/36497766876) |
 | `ruff check` (the 17 CI paths) / `ruff format --check .` | 0 findings / 429 files already formatted |
 | `governance_check` | `governance=PASS` |
 
