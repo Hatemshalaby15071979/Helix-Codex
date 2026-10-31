@@ -173,13 +173,22 @@ class RiskScorer:
         return total_score / total_weight if total_weight > 0 else 0.0
 
     def classify_risk_level(self, weighted_score: float) -> str:
-        """Classify overall risk level from the configured ``risk_bands``."""
+        """Classify overall risk level from the configured ``risk_bands``.
+
+        ``weighted_score`` is a *goodness* score: every KPI contributes its
+        normalized "higher is better" score, so 1.0 is perfect and 0.0 is worst.
+        The bands are risk thresholds (0.8 = critical), so the score is inverted
+        before the comparison. Classifying the goodness score directly inverted
+        the label: measured on the tenant run, a cohort with weighted 0.998 was
+        reported "critical" while one with 0.699 was reported "high".
+        """
+        risk_score = 1.0 - max(0.0, min(1.0, float(weighted_score)))
         bands = self.risk_bands
-        if weighted_score >= bands.get("critical", 0.8):
+        if risk_score >= bands.get("critical", 0.8):
             return "critical"
-        elif weighted_score >= bands.get("high", 0.6):
+        elif risk_score >= bands.get("high", 0.6):
             return "high"
-        elif weighted_score >= bands.get("medium", 0.4):
+        elif risk_score >= bands.get("medium", 0.4):
             return "medium"
         else:
             return "low"
@@ -218,6 +227,7 @@ class RiskScorer:
             "customer_id": customer_data.get("customer_id", "unknown"),
             "kpi_data": kpi_data,
             "kpi_analysis": kpi_analysis,
+            "risk_score": round(1.0 - float(kpi_analysis["weighted_score"]), 6),
             "risk_level": risk_level,
             "risk_factors": risk_factors,
             "recommendations": recommendations,
@@ -337,7 +347,9 @@ class RiskScorer:
 
         # Calculate overall statistics
         total_customers = len(customer_data)
-        overall_risk_score = np.mean([r["kpi_analysis"]["weighted_score"] for r in customer_risks])
+        overall_risk_score = float(
+            np.mean([1.0 - r["kpi_analysis"]["weighted_score"] for r in customer_risks])
+        )
 
         # Identify high-risk customers
         high_risk_customers = [r for r in customer_risks if r["risk_level"] in ["critical", "high"]]
@@ -503,8 +515,10 @@ class RiskScorerEngine:
 
             # Calculate overall risk score
             if result.customer_risks:
-                result.overall_risk_score = np.mean(
-                    [r["kpi_analysis"]["weighted_score"] for r in result.customer_risks]
+                result.overall_risk_score = float(
+                    np.mean(
+                        [1.0 - r["kpi_analysis"]["weighted_score"] for r in result.customer_risks]
+                    )
                 )
 
             # Calculate risk distribution

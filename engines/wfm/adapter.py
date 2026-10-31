@@ -185,7 +185,6 @@ def adapt(
                 "wfm_authorization_denied",
                 correlation_id,
                 actor,
-                None,
                 "denied",
                 error_code=decision.code,
                 tenant_id=tenant_id,
@@ -232,27 +231,34 @@ def adapt(
                 duration_ms=int((time.time() - start) * 1000),
             )
     except Exception as e:
-        # If policy check itself fails, fail closed
-        if "unauthorized" in str(e).lower() or "tenant" in str(e).lower():
-            return EngineResult.failure(
-                engine_id=ENGINE_ID,
-                display_name=DISPLAY_NAME,
-                capability_ids=CAPABILITY_IDS,
-                tenant_id=tenant_id,
-                client_id=client_id,
-                correlation_id=correlation_id,
-                causation_id=causation_id,
-                actor=actor,
-                owning_role_id=owning_role_id,
-                input_payload=input_payload,
-                error_code="unauthorized",
-                error_message=str(e),
-                warnings=warnings,
-                data_classification=data_class,
-                data_mode="sample" if is_sample else "real",
-                is_sample=is_sample,
-                duration_ms=int((time.time() - start) * 1000),
-            )
+        # Any failure inside the authorization block is a denial.
+        #
+        # This used to deny only when the exception's text mentioned
+        # "unauthorized" or "tenant". A TypeError raised by the denial's own
+        # logging call therefore escaped the handler, execution continued, and a
+        # refused request returned a successful result — the one direction a
+        # fail-closed gate must never fail in. Measured before the fix:
+        # `adapt(..., actor="unknown_role", owning_role_id="unknown_role")`
+        # returned `error=None` while the policy decision was "denied".
+        return EngineResult.failure(
+            engine_id=ENGINE_ID,
+            display_name=DISPLAY_NAME,
+            capability_ids=CAPABILITY_IDS,
+            tenant_id=tenant_id,
+            client_id=client_id,
+            correlation_id=correlation_id,
+            causation_id=causation_id,
+            actor=actor,
+            owning_role_id=owning_role_id,
+            input_payload=input_payload,
+            error_code="unauthorized",
+            error_message=str(e),
+            warnings=warnings,
+            data_classification=data_class,
+            data_mode="sample" if is_sample else "real",
+            is_sample=is_sample,
+            duration_ms=int((time.time() - start) * 1000),
+        )
 
     # Validate WFM specific inputs
     try:
