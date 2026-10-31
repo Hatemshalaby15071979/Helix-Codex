@@ -5685,3 +5685,38 @@ test `test_every_canonical_baseline_runs_for_its_owning_role` covers all six eng
 baselines. Proof: `../../.venvs/helix-prime/bin/python -m pytest
 tests/test_engine_authorization_failclosed.py -q` — 19 passed. Commit:
 `35f34b5` (`fix(rta): align canonical baseline with adapter`).
+
+## 27. Tenant fidelity closure and fresh readiness evidence (2026-10-31)
+
+The deterministic tenant overlay builder now implements all 24 declared `EXT-CC-01..12`
+and `EXT-SA-01..12` acceptance conditions. `tools/build_chaos_overlay.py` and
+`tools/tenant_fidelity.py` generate and validate the overlays; repeat generation kept
+36 overlay/registry artifacts byte-identical. CallCenterClient validation passed 98/98;
+SportAcademyClient passed 121/121.
+
+The ingestion gates now detect BOM/CRLF and cp1252 vendor CSVs, normalize the monthly
+`TicketID` schema variant, quarantine orphan assignees while accounting for every row,
+refuse date reconciliation outside declared attendance coverage, and include all 24
+fidelity acceptance results in PR-G02. PR-G03 measures short abandonment and zero-safe
+outage days; PR-G04 checks split-shift daily hours against the source. Regression tests
+cover encoding, schema normalization, orphan quarantine, and coverage refusal.
+
+**Fresh run:** `docs/production_readiness/evidence/2026-10-31-final/`, run
+`20261031T034017Z`, label `PRODUCTION_READINESS_EVIDENCED`, 12/12 gates, 20 engine calls.
+Checksum verification: `cd docs/production_readiness/evidence/2026-10-31-final &&
+sha256sum -c checksums.sha256` — all four payload files OK. The summary explicitly
+labels both tenant datasets synthetic.
+
+**Release profiles:** non-writing C8 API run for `controlled_pilot` returned
+`CONTROLLED_PILOT_READY`, all required gates green, exit 0. The `production` profile
+returned `NOT_READY`, exit 1, with all nine production-only evidence gates missing.
+No production classification was claimed. Avoid the CLI's default write path in
+read-only checks: it writes `release/release-manifest.json` and records the local pilot
+approval state.
+
+**Verification:** focused readiness/auth/CX tests passed 33/33; changed readiness files
+pass `ruff check` and `ruff format --check`; dependency check passes. Full repository
+Ruff still reports 21 existing findings and format check reports 346 files needing
+format; these are pre-existing repository-wide debt outside this narrow readiness
+change. Full pytest was running at 43% at last captured progress; see workspace
+`agents.md` for its final recorded result.
