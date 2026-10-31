@@ -1,6 +1,6 @@
 # Production-readiness evidence pack
 
-**Run:** `20261031T022245Z`  
+**Run:** `20261031T023033Z`  
 **Label:** `PRODUCTION_READINESS_EVIDENCED`  
 **Gates:** 12/12 green  
 **Engine calls:** 20  
@@ -28,26 +28,26 @@
 
 | Engine | Tenant | Client | Capability | Mode | ms | Error |
 | --- | --- | --- | --- | --- | --- | --- |
-| wfm | callcenterclient | teleclient | wfm_forecast | sample | 99 | - |
-| wfm | sportacademyclient | academy | wfm_forecast | sample | 36 | - |
-| rta | callcenterclient | teleclient | rta_adherence | sample | 763 | - |
-| rta | sportacademyclient | academy | rta_adherence | sample | 53 | - |
-| cx | callcenterclient | travbookclient | churn_risk_scoring | sample | 39 | - |
-| cx | sportacademyclient | academy | churn_risk_scoring | sample | 80 | - |
-| b2b | callcenterclient | teleclient | b2b_onboarding | sample | 35 | - |
-| b2b | sportacademyclient | academy | b2b_onboarding | sample | 45 | - |
-| personnel | callcenterclient | teleclient | talent_acquisition | sample | 35 | - |
-| personnel | sportacademyclient | academy | talent_acquisition | sample | 36 | - |
-| crm | callcenterclient | teleclient | sales_pipeline | sample | 36 | - |
-| crm | sportacademyclient | academy | sales_pipeline | sample | 36 | - |
-| wfm | callcenterclient | teleclient | wfm_forecast | sample | 36 | - |
-| wfm | callcenterclient | teleclient | wfm_forecast | sample | 35 | - |
-| rta | callcenterclient | teleclient | rta_adherence | sample | 64 | - |
-| rta | callcenterclient | teleclient | rta_adherence | sample | 63 | - |
-| wfm | sportacademyclient | academy | wfm_forecast | sample | 37 | - |
-| wfm | sportacademyclient | academy | wfm_forecast | sample | 36 | - |
-| rta | sportacademyclient | academy | rta_adherence | sample | 54 | - |
+| wfm | callcenterclient | teleclient | wfm_forecast | sample | 64 | - |
+| wfm | sportacademyclient | academy | wfm_forecast | sample | 39 | - |
+| rta | callcenterclient | teleclient | rta_adherence | sample | 859 | - |
+| rta | sportacademyclient | academy | rta_adherence | sample | 56 | - |
+| cx | callcenterclient | travbookclient | churn_risk_scoring | sample | 47 | - |
+| cx | sportacademyclient | academy | churn_risk_scoring | sample | 74 | - |
+| b2b | callcenterclient | teleclient | b2b_onboarding | sample | 39 | - |
+| b2b | sportacademyclient | academy | b2b_onboarding | sample | 39 | - |
+| personnel | callcenterclient | teleclient | talent_acquisition | sample | 39 | - |
+| personnel | sportacademyclient | academy | talent_acquisition | sample | 39 | - |
+| crm | callcenterclient | teleclient | sales_pipeline | sample | 40 | - |
+| crm | sportacademyclient | academy | sales_pipeline | sample | 42 | - |
+| wfm | callcenterclient | teleclient | wfm_forecast | sample | 39 | - |
+| wfm | callcenterclient | teleclient | wfm_forecast | sample | 37 | - |
+| rta | callcenterclient | teleclient | rta_adherence | sample | 66 | - |
+| rta | callcenterclient | teleclient | rta_adherence | sample | 65 | - |
+| wfm | sportacademyclient | academy | wfm_forecast | sample | 39 | - |
+| wfm | sportacademyclient | academy | wfm_forecast | sample | 38 | - |
 | rta | sportacademyclient | academy | rta_adherence | sample | 55 | - |
+| rta | sportacademyclient | academy | rta_adherence | sample | 58 | - |
 
 ## Reproduce
 

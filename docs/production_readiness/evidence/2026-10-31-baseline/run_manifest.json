@@ -56,12 +56,12 @@
   },
   "datasets_digest": "5d88e4d3dbcf99d3ac157c1cf5ca9c4544e6c7b6f697afcbfb6f23740ad219d8",
   "disclosure": "SYNTHETIC FIXTURE. callcenterclient and sportacademyclient are synthetic, client-shaped datasets built from documented generators. They contain no real client, customer, athlete or employee records. They are used here to exercise ingestion and the six engines against realistic operational shapes; no number in this pack is a claim about a real organisation.",
-  "duration_seconds": 28.95,
-  "finished_at": "2026-10-31T02:23:14.394459+00:00",
-  "git_commit": "9ab87a88aabfa2e43bc32825bfc31ec681a913d9",
+  "duration_seconds": 27.588,
+  "finished_at": "2026-10-31T02:31:00.741585+00:00",
+  "git_commit": "2fb5db8fd71901990c7929f002c9c2d0075f05d3",
   "host": "[REDACTED_HOST]",
   "label": "PRODUCTION_READINESS_EVIDENCED",
   "python": "3.12.15",
-  "run_id": "20261031T022245Z",
-  "started_at": "2026-10-31T02:22:45.444178+00:00"
+  "run_id": "20261031T023033Z",
+  "started_at": "2026-10-31T02:30:33.153213+00:00"
 }

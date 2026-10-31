@@ -557,15 +557,15 @@
       "metrics": {
         "budget_ms": 5000,
         "calls": 20,
-        "max_ms": 763,
-        "mean_ms": 83.65
+        "max_ms": 859,
+        "mean_ms": 88.7
       },
       "ok": true,
       "title": "engine latency budget"
     }
   ],
   "label": "PRODUCTION_READINESS_EVIDENCED",
-  "run_id": "20261031T022245Z",
+  "run_id": "20261031T023033Z",
   "summary": {
     "failed": 0,
     "gates": 12,
