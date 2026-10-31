@@ -11,7 +11,6 @@
 * text=auto eol=lf
 
 # Git LFS. Must come after the general rule so that it wins for these paths.
-marketing/assets/fonts/*.ttf filter=lfs diff=lfs merge=lfs -text
 
 # Detached signatures are binary artifacts, not text: the verifier hashes their
 # exact bytes. Under `text=auto` Git would strip CRLF from a signature that
