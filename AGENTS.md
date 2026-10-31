@@ -5677,3 +5677,11 @@ and the `0.0.0.0:8000` default bind.
 
 ### 25.5 Final Merge (2026-10-05) — COMPLETE
 Merged fix/cockpit-approve-auth into main. Verified with tests/test_cockpit_approve_auth.py (6/6 passed).
+## 26. Production-readiness follow-up — RTA baseline
+
+`ENGINE_BASELINE_PAYLOADS["rta"]` now supplies `schedule_data` and `actual_data` as
+column-oriented mappings, which the adapter converts to DataFrames. The regression
+test `test_every_canonical_baseline_runs_for_its_owning_role` covers all six engine
+baselines. Proof: `../../.venvs/helix-prime/bin/python -m pytest
+tests/test_engine_authorization_failclosed.py -q` — 19 passed. Commit:
+`35f34b5` (`fix(rta): align canonical baseline with adapter`).
