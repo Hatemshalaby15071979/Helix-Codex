@@ -234,7 +234,7 @@ protobuf==7.36.2
     # via streamlit
 py-serializable==2.1.0
     # via cyclonedx-python-lib
-pyarrow==18.1.0
+pyarrow==25.0.1
     # via
     #   -r requirements.txt
     #   -r requirements.txt
