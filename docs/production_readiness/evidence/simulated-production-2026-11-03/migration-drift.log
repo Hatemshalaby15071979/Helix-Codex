@@ -1,0 +1,4 @@
+Migration drift check: store objects=21, migration objects=21
+No drift: control_plane/store.py and migrations/ head agree.
+App migration drift check: db.py objects=70, migration objects=70
+No drift: helix_codex_app/db.py and helix_codex_app/migrations/ head agree.

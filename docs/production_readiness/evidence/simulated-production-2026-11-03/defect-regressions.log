@@ -1,0 +1,23 @@
+....................................................................     [100%]
+============================= slowest 20 durations =============================
+1.15s call     tests/helix_codex_app/test_route_limits.py::test_exhausting_one_route_does_not_lock_another
+0.58s call     tests/test_dependency_bounds.py::test_numeric_stack_imports[sklearn]
+0.32s call     tests/helix_codex_app/test_route_limits.py::test_the_demo_screen_refuses_past_its_ceiling
+0.28s call     tests/helix_codex_app/test_route_limits.py::test_a_normal_visit_never_trips_a_limit
+0.21s call     tests/helix_codex_app/test_bootstrap_client_id.py::test_password_via_env_only
+0.20s call     tests/helix_codex_app/test_bootstrap_client_id.py::test_bootstrap_defaults_client_id_to_domain
+0.20s call     tests/helix_codex_app/test_bootstrap_client_id.py::test_bootstrap_explicit_client_id_is_honoured
+0.16s call     tests/test_dependency_bounds.py::test_numeric_stack_imports[pandas]
+0.11s call     tests/test_dependency_bounds.py::test_pyarrow_imports_with_installed_numpy
+0.11s setup    tests/helix_codex_app/test_imports_routes.py::test_wrong_fixture_tenant_is_quarantined_without_rows
+0.11s setup    tests/helix_codex_app/test_imports_routes.py::test_import_permission_and_csrf_are_enforced
+0.11s setup    tests/helix_codex_app/test_imports_routes.py::test_preview_does_not_write_and_commit_is_tenant_scoped
+0.11s setup    tests/helix_codex_app/test_imports_routes.py::test_discard_is_tenant_scoped_and_audited
+0.11s setup    tests/helix_codex_app/test_imports_routes.py::test_import_page_discloses_simulation_and_owner_can_open
+0.10s teardown tests/test_agent_dispatch.py::test_read_document_fails_closed_without_reader
+0.09s teardown tests/helix_codex_app/test_imports_service.py::test_batch_reads_and_discard_are_tenant_scoped
+0.07s teardown tests/test_connector_activation.py::test_unknown_status_object_fails_closed
+0.07s call     tests/helix_codex_app/test_route_limits.py::test_the_sign_in_entry_refuses_past_its_ceiling
+0.07s setup    tests/helix_codex_app/test_route_limits.py::test_the_sign_in_entry_refuses_past_its_ceiling
+0.07s teardown tests/helix_codex_app/test_imports_routes.py::test_import_page_discloses_simulation_and_owner_can_open
+68 passed in 8.39s
