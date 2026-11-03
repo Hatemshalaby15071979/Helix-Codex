@@ -293,7 +293,7 @@ def test_rollback_is_red_when_the_previous_identity_is_not_restored(monkeypatch)
 
     def _writes_the_wrong_identity(prev, cur, target_path=None):
         pathlib.Path(target_path).write_text(
-            json.dumps({"git_commit": "BBBB", "classification": "PRODUCTION_CANDIDATE"}),
+            json.dumps({"git_commit": "BBBB", "classification": "SIMULATED_PRODUCTION_READY"}),
             encoding="utf-8",
         )
 
@@ -308,7 +308,7 @@ def test_rollback_is_red_when_the_provenance_marker_is_missing(monkeypatch):
 
     def _drops_provenance(prev, cur, target_path=None):
         pathlib.Path(target_path).write_text(
-            json.dumps({"git_commit": "AAAA", "classification": "PRODUCTION_CANDIDATE"}),
+            json.dumps({"git_commit": "AAAA", "classification": "SIMULATED_PRODUCTION_READY"}),
             encoding="utf-8",
         )
 

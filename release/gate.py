@@ -340,8 +340,16 @@ def _gate_rollback() -> tuple[bool, str]:
     """
     from release import backup
 
-    prev = {"git_commit": "AAAA", "classification": "PRODUCTION_CANDIDATE", "version": "0.9.0-c8"}
-    cur = {"git_commit": "BBBB", "classification": "PRODUCTION_CANDIDATE", "version": "0.9.0-c8"}
+    prev = {
+        "git_commit": "AAAA",
+        "classification": "SIMULATED_PRODUCTION_READY",
+        "version": "0.9.0-c8",
+    }
+    cur = {
+        "git_commit": "BBBB",
+        "classification": "SIMULATED_PRODUCTION_READY",
+        "version": "0.9.0-c8",
+    }
 
     work = tempfile.mkdtemp(prefix="hp_gate_rb_")
     try:

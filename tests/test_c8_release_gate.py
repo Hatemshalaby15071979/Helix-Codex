@@ -472,12 +472,12 @@ def test_rollback_manifest():
     prev = {
         "git_commit": "AAAAAAAA",
         "version": "0.9.0-c7",
-        "classification": "PRODUCTION_CANDIDATE",
+        "classification": "SIMULATED_PRODUCTION_READY",
     }
     cur = {
         "git_commit": "BBBBBBBB",
         "version": "0.9.0-c8",
-        "classification": "PRODUCTION_CANDIDATE",
+        "classification": "SIMULATED_PRODUCTION_READY",
     }
     backup.rollback_manifest(prev, cur, target_path=target)
     out = json.load(open(target, encoding="utf-8"))
