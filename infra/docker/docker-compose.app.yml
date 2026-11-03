@@ -12,12 +12,13 @@
 # After startup, create the first owner with the bootstrap script:
 #   docker compose -f infra/docker/docker-compose.app.yml exec \
 #       helix-app python helix_codex_app/scripts/bootstrap_owner.py \
-#       --db-path /data/app.db --domain mycompany \
+#       --db-path /data/helix_codex_app/app.db --domain mycompany \
 #       --username admin --password mypassword
 #
 # Then open http://127.0.0.1:8100 and log in as admin@mycompany.
 services:
   helix-app:
+    image: helix-prime-codex-app:${HELIX_APP_IMAGE_TAG:-local}
     build:
       context: ../..
       dockerfile: infra/docker/Dockerfile.app
@@ -25,12 +26,12 @@ services:
     environment:
       HELIX_APP_HOST: "127.0.0.1"
       HELIX_APP_PORT: "8100"
-      HELIX_APP_DB_PATH: /data/app.db
-      HELIX_APP_MEMORY_ROOT: /data/memory_stores
+      HELIX_APP_DB_PATH: /data/helix_codex_app/app.db
+      HELIX_APP_MEMORY_ROOT: /data/helix_codex_app/memory_stores
       HELIX_ENV: local
       HELIX_SAMPLE_DATA_MODE: "false"
-      HELIX_DB_PATH: /data/workflow.db
-      HELIX_AUDIT_DB_PATH: /data/audit.db
+      HELIX_DB_PATH: /data/control_plane/workflow.db
+      HELIX_AUDIT_DB_PATH: /data/security/audit.db
     volumes:
       - helix_app_data:/data
     restart: unless-stopped

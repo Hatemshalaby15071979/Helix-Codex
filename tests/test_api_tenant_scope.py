@@ -165,6 +165,43 @@ def test_omitted_tenant_defaults_to_identity_scope(client, monkeypatch):
     assert client.get("/api/docs/", headers=_auth()).json() == []
 
 
+@pytest.mark.parametrize(
+    ("create_path", "create_params", "list_path", "body_key"),
+    [
+        ("/api/docs/", {"title": "Synthetic tenant record"}, "/api/docs/", "title"),
+        ("/api/tasks/", {"title": "Synthetic tenant record"}, "/api/tasks/", "title"),
+        (
+            "/api/chat/messages",
+            {"message": "Synthetic tenant record"},
+            "/api/chat/messages",
+            "content",
+        ),
+    ],
+)
+def test_concurrent_tenant_writes_keep_distinct_records(
+    client, monkeypatch, create_path, create_params, list_path, body_key
+):
+    created_a = client.post(create_path, params=create_params, headers=_auth())
+    assert created_a.status_code == 200
+    node_a = created_a.json()["node_id"]
+
+    _as_tenant(monkeypatch, TENANT_B, client="client-scope-b")
+    created_b = client.post(create_path, params=create_params, headers=_auth())
+    assert created_b.status_code == 200
+    node_b = created_b.json()["node_id"]
+    assert node_b != node_a
+
+    rows_b = client.get(list_path, headers=_auth()).json()
+    assert {row["node_id"] for row in rows_b} == {node_b}
+    assert rows_b[0]["body"][body_key] == create_params[next(iter(create_params))]
+    assert client.get(f"{list_path}{node_a}", headers=_auth()).status_code in {404, 405}
+
+    _as_tenant(monkeypatch, TENANT_A)
+    rows_a = client.get(list_path, headers=_auth()).json()
+    assert {row["node_id"] for row in rows_a} == {node_a}
+    assert rows_a[0]["body"][body_key] == create_params[next(iter(create_params))]
+
+
 def test_workflows_and_approvals_are_scope_safe(client, monkeypatch):
     submitted = client.post("/api/workflows", json=_workflow_payload(TENANT_A), headers=_auth())
     assert submitted.status_code == 409

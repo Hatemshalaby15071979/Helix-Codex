@@ -9,6 +9,7 @@ would still pass and only the hash check fails it.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import pathlib
@@ -57,6 +58,8 @@ def ctx(tmp_path: pathlib.Path):
         memory_root=memory_root,
         audit_db_path=audit_db_path,
         release_manifest_path=str(release_manifest),
+        workflow_db_path=str(tmp_path / "control_plane" / "workflow.db"),
+        node_db_path=str(tmp_path / "control_plane" / "nodes.db"),
     )
     db.close(conn)
 
@@ -130,6 +133,8 @@ def _take_backup(ctx, tmp_path: pathlib.Path, name: str = "backup") -> str:
         target_dir=target,
         audit_db_path=ctx.audit_db_path,
         release_manifest_path=ctx.release_manifest_path,
+        workflow_db_path=ctx.workflow_db_path,
+        node_db_path=ctx.node_db_path,
     )
     return target
 
@@ -138,6 +143,42 @@ def _seed(ctx) -> None:
     _write_node(ctx.conn)
     _make_memory_record(ctx)
     _make_audit_db(ctx.audit_db_path)
+    from control_plane.store import Store
+    from server.models.node import (
+        Classification,
+        DocumentNode,
+        Nature,
+        NodeEnvelope,
+        Provenance,
+    )
+    from server.models.store import NodeStore
+
+    workflow_store = Store(ctx.workflow_db_path)
+    workflow_store.close()
+    node_store = NodeStore(pathlib.Path(ctx.node_db_path))
+    node_store.connect()
+    node_store.create(
+        DocumentNode(
+            envelope=NodeEnvelope(
+                node_id="api-doc-backup",
+                tenant_id="tenant-c",
+                client_id="client-c",
+                correlation_id="api-doc-backup",
+                causation_id=None,
+                classification=Classification.INTERNAL,
+                provenance=Provenance(
+                    source="backup-test",
+                    data_mode="simulated_realistic",
+                    retrieved_at="",
+                ),
+                nature=Nature.USER_CLAIM,
+                created_by="backup-test",
+                created_at="2026-10-31T00:00:00Z",
+            ),
+            body={"title": "Synthetic API document"},
+        )
+    )
+    node_store.close()
 
 
 def test_backup_captures_audit_and_metadata_and_round_trips(ctx, tmp_path) -> None:
@@ -151,6 +192,8 @@ def test_backup_captures_audit_and_metadata_and_round_trips(ctx, tmp_path) -> No
     assert manifest["audit_db"]["captured"] is True
     assert manifest["audit_db"]["chain_valid"] is True
     assert manifest["release_metadata"]["captured"] is True
+    assert "control_plane/workflow.db" in manifest["captured_state"]
+    assert "control_plane/nodes.db" in manifest["captured_state"]
     assert manifest["files"], "integrity inventory must not be empty"
     restore_dir = tmp_path / "restored"
     restore_dir.mkdir()
@@ -159,6 +202,46 @@ def test_backup_captures_audit_and_metadata_and_round_trips(ctx, tmp_path) -> No
     assert report["audit"]["ok"] is True
     assert report["metadata"]["ok"] is True
     assert report["file_problems"] == []
+    restored_nodes = sqlite3.connect(restore_dir / "control_plane" / "nodes.db")
+    try:
+        rows = restored_nodes.execute("SELECT tenant_id, node_id FROM nodes").fetchall()
+    finally:
+        restored_nodes.close()
+    assert rows == [("tenant-c", "api-doc-backup")]
+
+
+def test_backup_fails_when_requested_core_database_is_missing(ctx, tmp_path) -> None:
+    from helix_codex_app.scripts.backup_app import backup_app
+    from release.backup import BackupError
+
+    _seed(ctx)
+    pathlib.Path(ctx.node_db_path).unlink()
+    with pytest.raises(BackupError, match="nodes database not found"):
+        backup_app(
+            db_path=ctx.db_path,
+            memory_root=ctx.memory_root,
+            target_dir=str(tmp_path / "incomplete"),
+            audit_db_path=ctx.audit_db_path,
+            release_manifest_path=ctx.release_manifest_path,
+            workflow_db_path=ctx.workflow_db_path,
+            node_db_path=ctx.node_db_path,
+        )
+
+
+def test_backup_refuses_a_nonempty_target(ctx, tmp_path) -> None:
+    from helix_codex_app.scripts.backup_app import backup_app
+    from release.backup import BackupError
+
+    _seed(ctx)
+    target = tmp_path / "existing-backup"
+    target.mkdir()
+    (target / "unrelated.txt").write_text("leave this alone", encoding="utf-8")
+    with pytest.raises(BackupError, match="must be clean/empty"):
+        backup_app(
+            db_path=ctx.db_path,
+            memory_root=ctx.memory_root,
+            target_dir=str(target),
+        )
 
 
 def test_tampered_backup_fails_restore(ctx, tmp_path) -> None:
@@ -286,9 +369,20 @@ def test_verify_only_rehearsal_passes_and_fails(ctx, tmp_path) -> None:
 
     _seed(ctx)
     backup_dir = _take_backup(ctx, tmp_path)
+    state_root = pathlib.Path(backup_dir) / "state"
+    original_hashes = {
+        path.relative_to(state_root): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in state_root.rglob("*")
+        if path.is_file()
+    }
     assert verify_backup(backup_dir=backup_dir)["verified"] is True
     assert restore_main(["--backup", backup_dir, "--verify-only"]) == 0
-    state_db = pathlib.Path(backup_dir) / "state" / "helix_codex_app" / "app.db"
+    assert {
+        path.relative_to(state_root): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in state_root.rglob("*")
+        if path.is_file()
+    } == original_hashes
+    state_db = state_root / "helix_codex_app" / "app.db"
     conn = sqlite3.connect(state_db)
     try:
         conn.execute("UPDATE nodes SET body = ?", (json.dumps({"text": "tampered"}),))

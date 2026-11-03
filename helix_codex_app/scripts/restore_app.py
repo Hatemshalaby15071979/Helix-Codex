@@ -19,7 +19,9 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
+import shutil
 import sys
+import tempfile
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -42,9 +44,11 @@ def _check_version(manifest: dict) -> None:
 def _check_files(state_root: pathlib.Path, manifest: dict) -> list[dict]:
     import hashlib
 
+    from release.backup import _backup_path
+
     mismatches: list[dict] = []
     for entry in manifest.get("files", []):
-        path = state_root / entry["rel"]
+        path = _backup_path(state_root, entry.get("rel"))
         if not path.is_file():
             mismatches.append({"rel": entry["rel"], "problem": "missing"})
             continue
@@ -64,7 +68,7 @@ def restore_app(*, backup_dir: str, target_dir: str) -> dict:
     manifest_path = pathlib.Path(backup_dir) / "backup-manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     _check_version(manifest)
-    restore_state(backup_dir=backup_dir, target_dir=target_dir)
+    restore_state(backup_dir=backup_dir, target_dir=target_dir, verify_files=False)
 
     restored = _verify_restored(target_dir=target_dir, manifest=manifest)
     file_problems = _check_files(pathlib.Path(target_dir), manifest)
@@ -90,7 +94,7 @@ def restore_app(*, backup_dir: str, target_dir: str) -> dict:
 
 
 def verify_backup(*, backup_dir: str) -> dict:
-    """Verify a backup in place without restoring it (rehearsal check)."""
+    """Verify a backup without modifying it (rehearsal check)."""
     from release.backup import BackupError
 
     backup_root = pathlib.Path(backup_dir)
@@ -100,8 +104,13 @@ def verify_backup(*, backup_dir: str) -> dict:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     _check_version(manifest)
     state_root = backup_root / "state"
+    if not state_root.is_dir():
+        raise BackupError(f"missing backup state directory: {state_root}")
     file_problems = _check_files(state_root, manifest)
-    restored = _verify_restored_against(state_root, manifest)
+    with tempfile.TemporaryDirectory(prefix="helix-app-backup-verify-") as temp_dir:
+        verification_state = pathlib.Path(temp_dir) / "state"
+        shutil.copytree(state_root, verification_state)
+        restored = _verify_restored_against(verification_state, manifest)
     audit_ok = restored["audit"].get("ok", True)
     metadata_ok = restored["metadata"].get("ok", True)
     node_ok = restored["actual_node_count"] == int(manifest["node_count"])

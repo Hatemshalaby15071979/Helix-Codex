@@ -23,6 +23,7 @@ CLEAN temp destination — the live control-plane/audit DBs are never mutated.
 from __future__ import annotations
 
 import datetime
+import hashlib
 import json
 import pathlib
 import shutil
@@ -34,6 +35,7 @@ from release import manifest as manifest_mod
 # Relative paths of the local durable state (defaults, overridable).
 DEFAULT_STATE_RELS = [
     "control_plane/workflow.db",
+    "control_plane/nodes.db",
     "security/audit.db",
 ]
 
@@ -61,6 +63,27 @@ def _sqlite_backup(src_path: pathlib.Path, dst_path: pathlib.Path) -> None:
     finally:
         src_conn.close()
         dst_conn.close()
+
+
+def _file_sha256(path: pathlib.Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(65536), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _backup_path(root: pathlib.Path, rel: str) -> pathlib.Path:
+    if not isinstance(rel, str) or not rel or "\\" in rel or ":" in rel:
+        raise BackupError(f"restore rejected: unsafe backup path {rel!r}")
+    rel_path = pathlib.PurePosixPath(rel)
+    if rel_path.is_absolute() or any(part in {".", ".."} for part in rel_path.parts):
+        raise BackupError(f"restore rejected: unsafe backup path {rel!r}")
+    resolved_root = root.resolve()
+    resolved_path = root.joinpath(*rel_path.parts).resolve(strict=False)
+    if not resolved_path.is_relative_to(resolved_root):
+        raise BackupError(f"restore rejected: unsafe backup path {rel!r}")
+    return root.joinpath(*rel_path.parts)
 
 
 def backup_state(
@@ -109,10 +132,20 @@ def backup_state(
                     shutil.copy2(child, dst)
                 captured.append(f"evidence/{child.name}")
 
+    files = [
+        {
+            "rel": path.relative_to(state_root).as_posix(),
+            "sha256": _file_sha256(path),
+            "bytes": path.stat().st_size,
+        }
+        for path in sorted(state_root.rglob("*"))
+        if path.is_file()
+    ]
     backup_manifest = {
         "backup_version": "1.0",
         "created_at": _now(),
         "captured_state": captured,
+        "files": files,
         "schema_versions": manifest_mod.data_schema_versions(),
     }
     (backup_root / "backup-manifest.json").write_text(
@@ -126,6 +159,7 @@ def restore_state(
     target_dir: str,
     repo_root: Optional[str] = None,
     schema_ok: bool = True,
+    verify_files: bool = True,
 ) -> Dict[str, Any]:
     """
     Restore a backup into a CLEAN target_dir.
@@ -148,6 +182,20 @@ def restore_state(
     if not schema_ok:
         raise BackupError("restore rejected: backup schema incompatible with current release")
 
+    captured_state = backup_manifest.get("captured_state", [])
+    for rel in captured_state:
+        source = _backup_path(state_root, rel)
+        if verify_files and not source.exists():
+            raise BackupError(f"restore rejected: captured state is missing {rel!r}")
+    for entry in backup_manifest.get("files", []):
+        source = _backup_path(state_root, entry.get("rel"))
+        if not verify_files:
+            continue
+        if not source.is_file():
+            raise BackupError(f"restore rejected: inventoried file is missing {entry['rel']!r}")
+        if _file_sha256(source) != entry.get("sha256"):
+            raise BackupError(f"restore rejected: checksum mismatch for {entry['rel']!r}")
+
     target = pathlib.Path(target_dir)
     if target.exists() and any(target.iterdir()):
         raise BackupError(f"restore target must be clean/empty: {target_dir}")
@@ -155,10 +203,10 @@ def restore_state(
 
     restored = []
     for rel in backup_manifest.get("captured_state", []):
-        src = state_root / rel
+        src = _backup_path(state_root, rel)
         if not src.exists():
             continue
-        dst = target / rel
+        dst = _backup_path(target, rel)
         dst.parent.mkdir(parents=True, exist_ok=True)
         if src.is_dir():
             shutil.copytree(src, dst)
@@ -230,7 +278,30 @@ def verify_restored_dbs(
     results["replay_in_order"] = bool(replay_ok)
     results["event_count"] = event_count
 
-    results["verified"] = bool(results["audit_chain_valid"]) and bool(results["replay_in_order"])
+    nodes_db = target / "control_plane" / "nodes.db"
+    node_store_ok = True
+    node_count = 0
+    if nodes_db.exists():
+        try:
+            node_conn = sqlite3.connect(str(nodes_db))
+            try:
+                integrity = node_conn.execute("PRAGMA integrity_check").fetchone()
+                node_count = int(node_conn.execute("SELECT COUNT(*) FROM nodes").fetchone()[0])
+                tenantless = int(
+                    node_conn.execute(
+                        "SELECT COUNT(*) FROM nodes WHERE tenant_id IS NULL OR trim(tenant_id) = ''"
+                    ).fetchone()[0]
+                )
+                node_store_ok = bool(integrity and integrity[0] == "ok" and tenantless == 0)
+            finally:
+                node_conn.close()
+        except sqlite3.Error:
+            node_store_ok = False
+    results["node_store_integrity"] = node_store_ok
+    results["node_store_rows"] = node_count
+    results["verified"] = (
+        bool(results["audit_chain_valid"]) and bool(results["replay_in_order"]) and node_store_ok
+    )
     return results
 
 

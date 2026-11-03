@@ -1,6 +1,8 @@
 """Document feature — document storage and retrieval."""
 from __future__ import annotations
 
+import uuid
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from security.identity import Identity
@@ -27,7 +29,7 @@ async def create_document(
     with deps.node_store() as store:
         node = DocumentNode(
             envelope=NodeEnvelope(
-                node_id=f"doc_{len(store.list_by_tenant(tenant))}",
+                node_id=f"doc_{uuid.uuid4().hex}",
                 tenant_id=tenant,
                 client_id=None,
                 correlation_id=f"docs_{tenant}",

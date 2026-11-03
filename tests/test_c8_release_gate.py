@@ -12,6 +12,7 @@ import json
 import os
 import pathlib
 import shutil
+import sqlite3
 import tempfile
 
 import pytest
@@ -303,6 +304,14 @@ def _make_synthetic_state():
     from contracts.task import CorrelationContext
     from control_plane.store import Store
     from control_plane.workflow import Workflow
+    from server.models.node import (
+        Classification,
+        DocumentNode,
+        Nature,
+        NodeEnvelope,
+        Provenance,
+    )
+    from server.models.store import NodeStore
 
     db = os.path.join(work, "control_plane", "workflow.db")
     store = Store(db_path=db)
@@ -329,6 +338,30 @@ def _make_synthetic_state():
     )
     store.create_workflow(wf)
     store.close()
+    nodes = NodeStore(pathlib.Path(work) / "control_plane" / "nodes.db")
+    nodes.connect()
+    nodes.create(
+        DocumentNode(
+            envelope=NodeEnvelope(
+                node_id="doc-synthetic-backup",
+                tenant_id="tenant-synthetic",
+                client_id="client-synthetic",
+                correlation_id="corr-doc-synthetic",
+                causation_id=None,
+                classification=Classification.INTERNAL,
+                provenance=Provenance(
+                    source="release-test",
+                    data_mode="simulated_realistic",
+                    retrieved_at="",
+                ),
+                nature=Nature.USER_CLAIM,
+                created_by="release-test",
+                created_at="2026-10-31T00:00:00Z",
+            ),
+            body={"title": "synthetic tenant data"},
+        )
+    )
+    nodes.close()
     from security.audit import AuditRecord, AuditTrail
 
     trail = AuditTrail(db_path=os.path.join(work, "security", "audit.db"))
@@ -352,9 +385,20 @@ def test_backup_restore_verify():
     backup_dir = os.path.join(work, "backup")
     m = backup.backup_state(backup_dir, repo_root=work)
     assert m["captured_state"]
+    assert "control_plane/nodes.db" in m["captured_state"]
     restore_dir = os.path.join(work, "restored")
     report = backup.restore_state(backup_dir, restore_dir, repo_root=work, schema_ok=True)
     assert report["restore_count"] > 0
+    node_db = sqlite3.connect(os.path.join(restore_dir, "control_plane", "nodes.db"))
+    try:
+        restored_nodes = node_db.execute("SELECT tenant_id, node_id FROM nodes").fetchall()
+    finally:
+        node_db.close()
+    assert restored_nodes == [("tenant-synthetic", "doc-synthetic-backup")]
+    verification = backup.verify_restored_dbs(restore_dir, workflow_aggregate="wf-1")
+    assert verification["verified"] is True
+    assert verification["node_store_integrity"] is True
+    assert verification["node_store_rows"] == 1
     from security.audit import AuditTrail
 
     t = AuditTrail(db_path=os.path.join(restore_dir, "security", "audit.db"))
@@ -375,6 +419,38 @@ def test_restore_rejects_dirty_target():
         f.write("occupied")
     with pytest.raises(backup.BackupError):
         backup.restore_state(backup_dir, dirty, repo_root=work, schema_ok=True)
+
+
+def test_restore_rejects_tampered_api_node_database(tmp_path):
+    work = _make_synthetic_state()
+    backup_dir = pathlib.Path(work) / "backup"
+    backup.backup_state(str(backup_dir), repo_root=work)
+    copied_db = backup_dir / "state" / "control_plane" / "nodes.db"
+    conn = sqlite3.connect(copied_db)
+    try:
+        conn.execute("UPDATE nodes SET body = ?", ('{"title":"tampered"}',))
+        conn.commit()
+    finally:
+        conn.close()
+    target = pathlib.Path(work) / "restore-target"
+    with pytest.raises(backup.BackupError, match="checksum mismatch"):
+        backup.restore_state(str(backup_dir), str(target), repo_root=work, schema_ok=True)
+    assert not target.exists()
+
+
+def test_restore_rejects_unsafe_backup_paths(tmp_path):
+    work = _make_synthetic_state()
+    backup_dir = pathlib.Path(work) / "backup"
+    backup.backup_state(str(backup_dir), repo_root=work)
+    manifest_path = backup_dir / "backup-manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["captured_state"].append("../../outside")
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    target = pathlib.Path(work) / "restore-target"
+    with pytest.raises(backup.BackupError, match="unsafe backup path"):
+        backup.restore_state(str(backup_dir), str(target), repo_root=work, schema_ok=True)
+    assert not target.exists()
 
 
 def test_schema_compatible_fail_closed():

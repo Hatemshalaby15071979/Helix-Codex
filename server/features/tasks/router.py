@@ -1,6 +1,8 @@
 """Task feature — task management with status tracking."""
 from __future__ import annotations
 
+import uuid
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from security.identity import Identity
@@ -28,7 +30,7 @@ async def create_task(
     with deps.node_store() as store:
         node = TaskNode(
             envelope=NodeEnvelope(
-                node_id=f"task_{len(store.list_by_tenant(tenant))}",
+                node_id=f"task_{uuid.uuid4().hex}",
                 tenant_id=tenant,
                 client_id=None,
                 correlation_id=f"tasks_{tenant}",

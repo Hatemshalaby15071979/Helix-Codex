@@ -12,7 +12,8 @@ passed, and every captured file is hashed into the manifest for integrity.
 `prune_backups` deletes aged backup directories under a keep-newest safety
 policy for the retention schedule.
 
-Exit 0 = backup written. Exit 1 = nothing was captured or an error occurred.
+Exit 0 = backup written and integrity checks passed. Exit 1 = required state
+is missing, backup integrity failed, or an error occurred.
 """
 from __future__ import annotations
 
@@ -54,12 +55,16 @@ def backup_app(
     target_dir: str,
     audit_db_path: str | None = None,
     release_manifest_path: str | None = None,
+    workflow_db_path: str | None = None,
+    node_db_path: str | None = None,
 ) -> dict:
-    """Copy db_path + memory_root into target_dir/state and write the manifest."""
+    """Capture app state and explicitly requested core files into a clean target."""
     from release.backup import BackupError, _now, _sqlite_backup
     from scripts.export_evidence_pack import now_iso
 
     backup_root = pathlib.Path(target_dir)
+    if backup_root.exists() and any(backup_root.iterdir()):
+        raise BackupError(f"backup target must be clean/empty: {target_dir}")
     state_root = backup_root / "state"
     state_root.mkdir(parents=True, exist_ok=True)
 
@@ -75,39 +80,59 @@ def backup_app(
         raise BackupError(f"app database not found: {db_path}")
 
     src_memory = pathlib.Path(memory_root)
-    if src_memory.exists():
-        dst_memory = state_root / MEMORY_STORES_REL
-        dst_memory.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(src_memory, dst_memory)
-        captured.append(str(MEMORY_STORES_REL))
+    if not src_memory.exists():
+        src_memory.mkdir(parents=True)
+    if not src_memory.is_dir():
+        raise BackupError(f"memory store directory not found: {memory_root}")
+    dst_memory = state_root / MEMORY_STORES_REL
+    dst_memory.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(src_memory, dst_memory)
+    captured.append(str(MEMORY_STORES_REL))
 
     audit_record: dict = {"captured": False}
     if audit_db_path:
         src_audit = pathlib.Path(audit_db_path)
-        if src_audit.exists():
-            dst_audit = state_root / AUDIT_DB_REL
-            dst_audit.parent.mkdir(parents=True, exist_ok=True)
-            _sqlite_backup(src_audit, dst_audit)
-            captured.append(str(AUDIT_DB_REL))
-            audit_record = {"captured": True, "rel": str(AUDIT_DB_REL)}
-            audit_record.update(_audit_chain_status(str(dst_audit)))
+        if not src_audit.is_file():
+            raise BackupError(f"audit database not found: {audit_db_path}")
+        dst_audit = state_root / AUDIT_DB_REL
+        dst_audit.parent.mkdir(parents=True, exist_ok=True)
+        _sqlite_backup(src_audit, dst_audit)
+        captured.append(str(AUDIT_DB_REL))
+        audit_record = {"captured": True, "rel": str(AUDIT_DB_REL)}
+        audit_record.update(_audit_chain_status(str(dst_audit)))
+
+    core_databases = {
+        "workflow": (workflow_db_path, pathlib.Path("control_plane") / "workflow.db"),
+        "nodes": (node_db_path, pathlib.Path("control_plane") / "nodes.db"),
+    }
+    for label, (source_path, relative_path) in core_databases.items():
+        if source_path is None:
+            continue
+        src_core = pathlib.Path(source_path)
+        if not src_core.is_file():
+            raise BackupError(f"{label} database not found: {source_path}")
+        dst_core = state_root / relative_path
+        dst_core.parent.mkdir(parents=True, exist_ok=True)
+        _sqlite_backup(src_core, dst_core)
+        captured.append(str(relative_path))
 
     metadata_record: dict = {"captured": False}
     if release_manifest_path:
         src_meta = pathlib.Path(release_manifest_path)
-        if src_meta.exists():
-            dst_meta = state_root / RELEASE_MANIFEST_REL
-            dst_meta.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src_meta, dst_meta)
-            captured.append(str(RELEASE_MANIFEST_REL))
-            metadata_record = {
-                "captured": True,
-                "rel": str(RELEASE_MANIFEST_REL),
-                "sha256": _sha256(dst_meta),
-            }
+        if not src_meta.is_file():
+            raise BackupError(f"release manifest not found: {release_manifest_path}")
+        dst_meta = state_root / RELEASE_MANIFEST_REL
+        dst_meta.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src_meta, dst_meta)
+        captured.append(str(RELEASE_MANIFEST_REL))
+        metadata_record = {
+            "captured": True,
+            "rel": str(RELEASE_MANIFEST_REL),
+            "sha256": _sha256(dst_meta),
+        }
 
     node_count = _count_nodes(str(dst_db))
-    memory_chains = _memory_chain_status(str(dst_memory)) if src_memory.exists() else []
+    memory_chains = _memory_chain_status(str(dst_memory))
     all_verified = all(chain["verified"] for chain in memory_chains)
 
     files = _file_inventory(state_root)
@@ -236,6 +261,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--memory-root", default="helix_codex_app/memory_stores")
     parser.add_argument("--target", default=None, help="backup directory to create")
     parser.add_argument("--audit-db-path", default=None, help="audit database to capture")
+    parser.add_argument("--workflow-db-path", default=None, help="control-plane workflow database")
+    parser.add_argument("--node-db-path", default=None, help="API document/task/chat database")
     parser.add_argument("--release-manifest", default=None, help="release manifest file to capture")
     parser.add_argument(
         "--prune-root",
@@ -271,6 +298,8 @@ def main(argv: list[str] | None = None) -> int:
             target_dir=args.target,
             audit_db_path=args.audit_db_path,
             release_manifest_path=args.release_manifest,
+            workflow_db_path=args.workflow_db_path,
+            node_db_path=args.node_db_path,
         )
     except BackupError as exc:
         print(f"app backup failed: {exc}", file=sys.stderr)
@@ -280,7 +309,23 @@ def main(argv: list[str] | None = None) -> int:
         f"wrote {args.target} (captured={len(manifest['captured_state'])} "
         f"nodes={manifest['node_count']} memory_verified={manifest['memory_chains_verified']})"
     )
-    return 0 if manifest["captured_state"] else 1
+    if not manifest["memory_chains_verified"]:
+        print(
+            f"app backup integrity failed: memory chains {manifest['memory_chains']}",
+            file=sys.stderr,
+        )
+    audit_ok = not manifest["audit_db"].get("captured") or manifest["audit_db"].get(
+        "chain_valid", False
+    )
+    if not audit_ok:
+        print(
+            f"app backup integrity failed: audit chain "
+            f"{manifest['audit_db'].get('chain_message', 'invalid')}",
+            file=sys.stderr,
+        )
+    return (
+        0 if manifest["captured_state"] and manifest["memory_chains_verified"] and audit_ok else 1
+    )
 
 
 if __name__ == "__main__":

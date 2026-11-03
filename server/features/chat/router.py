@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import uuid
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import StreamingResponse
@@ -74,7 +75,7 @@ async def create_message(
     with deps.node_store() as store:
         node = ChatMessage(
             envelope=NodeEnvelope(
-                node_id=f"msg_{len(store.list_by_tenant(tenant))}",
+                node_id=f"msg_{uuid.uuid4().hex}",
                 tenant_id=tenant,
                 client_id=client,
                 correlation_id=f"chat_{tenant}",

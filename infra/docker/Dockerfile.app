@@ -40,6 +40,7 @@ RUN /opt/venv/bin/pip install '.[web]' \
 FROM python:3.12-slim AS runtime
 
 ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONPATH=/app \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     HELIX_APP_HOST=127.0.0.1 \

@@ -232,16 +232,50 @@ def _gate_backup_restore() -> tuple[bool, str]:
     the comparison is only falsifiable by a backup carrying different versions —
     which is exactly what the can-fail test constructs.
     """
+    import sqlite3
+
     from release import backup
 
     work = tempfile.mkdtemp(prefix="hp_gate_br_")
     try:
         from control_plane.store import Store
         from security.audit import AuditRecord, AuditTrail
+        from server.models.node import (
+            Classification,
+            DocumentNode,
+            Nature,
+            NodeEnvelope,
+            Provenance,
+        )
+        from server.models.store import NodeStore
 
         db = os.path.join(work, "control_plane", "workflow.db")
         store = Store(db_path=db)
         store.close()
+        node_store = NodeStore(pathlib.Path(work) / "control_plane" / "nodes.db")
+        node_store.connect()
+        node_store.create(
+            DocumentNode(
+                envelope=NodeEnvelope(
+                    node_id="backup-gate-doc",
+                    tenant_id="backup-gate-tenant",
+                    client_id="backup-gate-client",
+                    correlation_id="backup-gate-correlation",
+                    causation_id=None,
+                    classification=Classification.INTERNAL,
+                    provenance=Provenance(
+                        source="release.gate",
+                        data_mode="simulated_realistic",
+                        retrieved_at="",
+                    ),
+                    nature=Nature.USER_CLAIM,
+                    created_by="release-gate",
+                    created_at="2026-10-31T00:00:00Z",
+                ),
+                body={"title": "synthetic backup acceptance"},
+            )
+        )
+        node_store.close()
         audit_db = os.path.join(work, "security", "audit.db")
         trail = AuditTrail(db_path=audit_db)
         prev = None
@@ -257,20 +291,32 @@ def _gate_backup_restore() -> tuple[bool, str]:
             prev = rec.current_hash
         trail.close()
         backup_dir = os.path.join(work, "backup")
-        backup.backup_state(backup_dir, repo_root=work)
+        backup_manifest = backup.backup_state(backup_dir, repo_root=work)
+        if "control_plane/nodes.db" not in backup_manifest.get("captured_state", []):
+            return False, "backup_restore: API node database not captured"
         restore_dir = os.path.join(work, "restored")
         recorded = json.loads(
             pathlib.Path(backup_dir, "backup-manifest.json").read_text(encoding="utf-8")
         )
         schema_ok = recorded.get("schema_versions") == manifest_mod.data_schema_versions()
         backup.restore_state(backup_dir, restore_dir, repo_root=work, schema_ok=schema_ok)
+        node_db = sqlite3.connect(os.path.join(restore_dir, "control_plane", "nodes.db"))
+        try:
+            restored_nodes = node_db.execute("SELECT tenant_id, node_id FROM nodes").fetchall()
+        finally:
+            node_db.close()
+        if restored_nodes != [("backup-gate-tenant", "backup-gate-doc")]:
+            return False, "backup_restore: API node database did not round-trip"
         # verify restored audit chain
         from security.audit import AuditTrail as AT2
 
         t2 = AT2(db_path=os.path.join(restore_dir, "security", "audit.db"))
         valid, msg = t2.verify_chain()
         t2.close()
-        detail = f"backup_restore: restored audit chain valid={valid} schema_ok={schema_ok} ({msg})"
+        detail = (
+            f"backup_restore: audit_chain={valid} api_nodes={len(restored_nodes)} "
+            f"schema_ok={schema_ok} ({msg})"
+        )
         return valid, detail
     except Exception as e:  # noqa: BLE001
         return False, f"backup_restore: {type(e).__name__}: {e}"

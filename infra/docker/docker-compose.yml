@@ -1,19 +1,25 @@
 # Helix Codex OS — local deployment profile (C8)
 services:
   helix-api:
+    image: helix-prime-api:${HELIX_API_IMAGE_TAG:-local}
     build:
       context: ../..
       dockerfile: infra/docker/Dockerfile
     command: >
       uvicorn server.app:create_app --factory --host 0.0.0.0 --port 8000
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
       HELIX_ENV: local
-      HELIX_DB_PATH: /data/workflow.db
-      HELIX_AUDIT_DB_PATH: /data/audit.db
+      HELIX_DB_PATH: /data/control_plane/workflow.db
+      HELIX_AUDIT_DB_PATH: /data/security/audit.db
       HELIX_HOST: "0.0.0.0"
       HELIX_SAMPLE_DATA_MODE: "false"
+      HELIX_API_TOKEN: "${HELIX_API_TOKEN:?Set HELIX_API_TOKEN in the environment}"
+      HELIX_API_TOKEN_ROLE: "${HELIX_API_TOKEN_ROLE:-sami}"
+      HELIX_API_TOKEN_TENANT_ID: "${HELIX_API_TOKEN_TENANT_ID:?Set HELIX_API_TOKEN_TENANT_ID in the environment}"
+      HELIX_API_TOKEN_CLIENT_ID: "${HELIX_API_TOKEN_CLIENT_ID:-}"
+      HELIX_API_ALLOW_GLOBAL_OPERATOR: "false"
     volumes:
       - helix_data:/data
     restart: unless-stopped
@@ -36,11 +42,11 @@ services:
       context: ../..
       dockerfile: infra/docker/Dockerfile
     ports:
-      - "8501:8501"
+      - "127.0.0.1:8501:8501"
     environment:
       HELIX_ENV: local
-      HELIX_DB_PATH: /data/workflow.db
-      HELIX_AUDIT_DB_PATH: /data/audit.db
+      HELIX_DB_PATH: /data/control_plane/workflow.db
+      HELIX_AUDIT_DB_PATH: /data/security/audit.db
       # Never enable sample data in a production/local operational profile.
       HELIX_SAMPLE_DATA_MODE: "false"
       # auto chooses CUDA when visible, DirectML on Windows hosts where the
