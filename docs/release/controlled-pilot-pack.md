@@ -1,6 +1,13 @@
 # Helix Prime Codex C8 — Controlled Pilot Pack
 
-Status: ready for a **controlled pilot** (AND production candidate), NOT production.
+Status: the local C8 profile can return `CONTROLLED_PILOT_READY` and
+`PRODUCTION_CANDIDATE`; this is not evidence that a real customer pilot has run.
+The 2026-10-31 local synthetic drills passed their stated scopes. Production is
+still `NOT_READY`.
+
+No real design partner, customer data, or production deployment is recorded. The
+simulated design-partner drill is not customer acceptance or independent review;
+see [`../PRODUCTION_STATUS.md`](../PRODUCTION_STATUS.md).
 
 ## What the controlled pilot is
 

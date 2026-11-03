@@ -1,14 +1,15 @@
 # Case study — Helix Prime
 
 **data_mode: "simulated_realistic".** Every number below is a measurement on synthetic
-data or a reading of source, with the repo path it comes from. There is no design
-partner and no customer traffic; the demo data is synthetic by design.
+data or a reading of source. There is no real design partner or customer traffic. A
+two-tenant simulated design-partner drill passed locally on 2026-10-31; it is not a
+customer engagement, independent audit, or legal review.
 
-**Positioning.** Pre-pilot governed operations core: a verified fail-closed gate and a
-live WFM demo, backed by a green CI and a large test suite — all six engines now drive a
-real computation end-to-end, and CX's risk thresholds load from
-`config/risk_thresholds.yaml` rather than hardcoded values. Not production-ready: nine
-production-only gates are red by design.
+**Positioning (2026-10-31).** Locally verified, governed operations core with six
+engines exercised on synthetic tenant fixtures, plus App/API tenant and operations
+drills. The current local test run reported 2,000 passed and 19 deselected. The
+production profile remains `NOT_READY`; nine production-only gates still require
+external evidence and human authority.
 
 ## The problem
 
@@ -45,16 +46,23 @@ a request carrying `data_classification` or `confidence_score` is refused with `
 append-only, hash-chained `audit_events` ledger before it runs
 (`control_plane/engine.py:839-840`).
 
-## How I tested it
+## How it was tested
 
-- The full suite passes on the repo's CI (1,897 passed / 0 failed, snapshot
-  2026-09-29; `README.md:131`), with coverage at 86.91% against the 80% floor. This
-  session re-ran a claims-relevant subset — **122 passed / 0 failed** in 102s — but the
-  full run did not terminate locally (killed at ~55 min, blocked on `tests/integration`
-  network/browser paths requiring external services unavailable in this sandbox).
-  Coverage was not re-measured here.
-- `ruff check` is clean on the 17 CI paths (exit 0, this run); `ruff format --check .`
-  reports 429 files already formatted (exit 0, this run).
+- The local Python 3.12 suite run on 2026-10-31 reported **2,000 passed / 19 deselected**.
+  The earlier 2026-09 subset and CI measurements in the original case-study run are
+  historical, not current local results.
+- The fresh fixture/engine readiness pack passed **12/12 gates**, with 20 calls across
+  six engines and two synthetic tenants. The tenant-fidelity checks passed 24/24.
+- The App/API tenant and operations drill passed its focused set (**128 tests**) and
+  covered persistence, backup/restore, migrations, rollback and cross-tenant controls.
+- The simulated design-partner drill passed **14/14 combined checks**. It used the real
+  local App HTTP routes, but raw CSV ingestion happened in the readiness harness; the
+  App has no CSV upload endpoint. Reviewer checks were deterministic, not independent
+  reviews.
+- Changed-path Ruff checks passed. Repository-wide Ruff still has 21 existing findings
+  and 346 files needing format; do not describe the repository-wide checks as clean.
+- Coverage remains at 86.91% only as a historical CI measurement (2026-10-05); it was
+  not re-measured in this local run.
 - The fail-closed gate has its own tests: `tests/test_governance_fail_closed.py` and
   `tests/test_governance.py` exercise the dead-letter and awaiting-approval branches.
 - The WFM demo path is covered by the shared suite (demo bridge at
@@ -100,22 +108,24 @@ append-only, hash-chained `audit_events` ledger before it runs
   fixtures). The suite and the container steps now actually execute. The two container
   steps (16–17) still cannot be reproduced on this machine (Docker is not running here),
   so they rest on the remote green run alone (`AGENTS.md:5152-5153`).
-- **Do not claim engine correctness the tests do not show.** The 80% coverage floor
-  measures code execution, not result correctness. I have recorded the scaffolding gap
-  openly rather than letting "1,897 tests pass" imply the engines compute right answers.
+- **Do not claim engine correctness the tests do not show.** Coverage measures code
+  execution, not result correctness. I have recorded the former scaffolding gap openly
+  rather than letting a passing test count imply that every engine computes correct
+  real-world answers.
 - **Keep production red by construction.** Nine production-only gates
   (`AGENTS.md:1516-1519`) read external signed evidence and refuse without it. No code
   change can unblock them; they need signatures from keys held outside this repository.
 
 ## What is not proven
 
-- No production readiness, accuracy, adoption, or reliability beyond the WFM path. The
-  demo data is synthetic by design.
-- No real customer traffic, no live design-partner run (Scoach Academy Hub is a named
-  first vertical via `capabilities/sports_academy/`, but no live traffic is recorded).
-- The engines are not yet independently validated for accuracy; all six now return
-  computed results (issue 3), but correctness is unproven.
+- No production readiness, customer adoption, or reliability under real customer traffic.
+  The six-engine measurements are synthetic-fixture results.
+- No real customer traffic or live design-partner run. Scoach Academy Hub remains a
+  named opportunity and vertical-pack target, not a participating design partner.
+- The engines are exercised on fixtures, but are not independently validated for
+  accuracy on real operational data.
 - No independent tenant-isolation audit, no external security review, no certified data
   isolation. The 19 cockpit UI tests are quarantined (`AGENTS.md:3454`).
-- The WFM "Erlang C" result is a non-standard closed-form approximation, not the textbook
-  formula (`engines/wfm/src/erlang_c.py:8,124`).
+- The WFM implementation now uses the textbook Erlang B recursion and Erlang C
+  probability-of-waiting expression, covered by 42 reference tests; fixture results
+  still do not establish accuracy on real customer data.

@@ -39,6 +39,37 @@ helix-cockpit                  # Streamlit dashboard (secondary)
 
 `launch.py --port 8501` remains as a legacy cockpit path.
 
+The API requires one bearer token and one tenant scope per process; it fails
+closed when the token is missing. Generate a unique token and export its scope
+before launching:
+
+```bash
+export HELIX_API_TOKEN="$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')"
+export HELIX_API_TOKEN_ROLE=sami
+export HELIX_API_TOKEN_TENANT_ID=your-tenant-id
+export HELIX_API_TOKEN_CLIENT_ID=your-client-id
+helix-api
+```
+
+Keep the token in the environment or an approved secret manager, not in source
+control, shell transcripts, or logs. For the Docker Compose deployment, the
+token and tenant ID are required environment variables; Compose binds its API
+and diagnostic cockpit ports to host loopback only. Run a separately scoped
+instance with a separate durable data volume for each tenant.
+
+The Compose API image is tagged with `HELIX_API_IMAGE_TAG` (default `local`).
+For upgrades, back up first, build with a new unique tag, record its image ID,
+and retain the previous tag until rollback is no longer needed:
+
+```bash
+export HELIX_API_IMAGE_TAG=20261031T080000Z
+docker compose -f infra/docker/docker-compose.yml build
+docker compose -f infra/docker/docker-compose.yml up -d --no-build --force-recreate
+```
+
+Rollback by selecting the recorded previous tag and recreating with
+`--no-build`; never remove the named data volume during a rollback.
+
 ## Config validation
 
 Configuration (release profiles + manifest schema) is validated before startup

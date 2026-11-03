@@ -11,6 +11,12 @@
 > millions. The rendered `educational_audiobook.mp3` still contains the OLD
 > fabricated narration. Rebuild the audio from THIS script before using it; see
 > `README.md`.
+>
+> **Current use status (2026-10-31):** the script is historical educational material,
+> not current release evidence or an approved product claim. Local synthetic-data
+> drills passed their stated scopes, but no real customer pilot, durable public service,
+> independent security review, compliance certification, or cloud-scale operation is
+> established. Revise this script and rebuild the audio before distribution.
 
 ---
 
@@ -85,14 +91,14 @@ These roles work together to support operational excellence.
 **Narrator:** Helix Prime stands out from other solutions for several reasons:
 
 1. **Operational Truth:** It focuses on delivering real operational insights rather than relying on generic AI models.
-2. **On-Premises Deployment:** Helix Prime can run entirely on-premises, ensuring data security and compliance.
-3. **Scalability:** It can scale from a single laptop to a full cloud deployment with ease.
-4. **Honest Alpha Status:** Helix Prime is a public alpha. Its real capabilities and its real limits are documented honestly in its README, rather than dressed up as a finished product.
+2. **Local-first architecture:** Helix Prime has been exercised in local configurations; this does not certify security or regulatory compliance.
+3. **Deployment limits:** cloud-scale operation and production deployment have not been validated.
+4. **Honest status:** local synthetic-data validation has passed for stated scopes, but the project has no recorded real customer pilot or durable public deployment. The production profile remains `NOT_READY`.
 5. **Trust and Accountability:** The system is designed to be trusted by users, ensuring they rely on it rather than working around it.
 
 **Key Points:**
 - Helix Prime delivers **actionable insights** based on real-world domain experience.
-- It ensures **data security and compliance** with on-premises deployment.
+- It is designed to support local operation; no security or compliance certification is claimed.
 - The system is **open and auditable** — anyone can read the code and verify the claims.
 
 ---

@@ -10,7 +10,9 @@
 > - No client deployments and no customer accounts exist.
 > - Real company names (VF UK, Lufthansa) must never appear as simulated accounts.
 >
-> The workspace has since been consolidated into a single public repository
-> (`github.com/<YOUR_GITHUB_ORG>/Helix-Prime`). For the current architecture, see
+> The former handoff asserted that the workspace had been consolidated into a single
+> public repository (`github.com/<YOUR_GITHUB_ORG>/Helix-Prime`). That publication
+> assertion is historical and does not establish current repository visibility; the
+> current local checkout has no configured remote. For the current architecture, see
 > `docs/SYSTEM_ARCHITECTURE.md`; for the current structure, see
 > `docs/architecture/REPO_GRAPH.md`. The single source of truth is `MASTER_STORY.md`.

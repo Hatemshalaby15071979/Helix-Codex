@@ -1,6 +1,8 @@
 # MASTER_STORY.md
-**Last verified:** 2026-08-29 (via direct command execution, not agent summary) — **Reconciled 2026-08-29**
-**Verification method:** Every figure below was independently confirmed by running real commands and reading raw output — not by trusting a prior AI session's report. See "Verification Log" at the bottom for the audit trail.
+**Last status reconciliation:** 2026-10-31. The dated verification entries below remain
+historical unless explicitly superseded here.
+**Verification method:** Current claims are tied to the local test and evidence records
+cited below; older figures remain dated snapshots and are not current measurements.
 
 ---
 
@@ -12,14 +14,32 @@ This is the single source of truth for the Helix Codex workspace's actual, curre
 
 ---
 
-## Current status — release-candidate track opened 2026-09-24
+## Current status — locally verified 2026-10-31
 
-This block supersedes the dated §1 entries below wherever they disagree. The
-sections after it are a **historical log** and are kept as written; several of
-their counts have since moved, and those movements are recorded here rather than
-by rewriting the log.
+| Field | Current local result |
+|---|---|
+| Full test suite | **2,000 passed, 19 deselected** (Python 3.12; local run recorded in `AGENTS.md` §28) |
+| Synthetic fixture/engine readiness | **12/12 gates**, 20 calls, six engines, two synthetic tenants, zero engine errors |
+| Tenant fidelity | **24/24 acceptance checks**; CallCenterClient 98/98; SportAcademyClient 121/121 |
+| App/API tenant and operations drill | Passed; focused test set **128 passed** |
+| Simulated design-partner drill | `PASS_SIMULATED`, **14/14 combined checks**; reviewer assertions are deterministic simulations |
+| C8 profiles | `controlled_pilot` → `CONTROLLED_PILOT_READY`; `production` → `NOT_READY` |
+| Real customer/pilot/deployment | None recorded; all current tenant scenarios use synthetic data |
+| Production-only gates | Nine remain open; no external audit, certification, or human production sign-off is claimed |
+| Git remote / publication | No remote is configured in this local checkout; publication state is not asserted by this file |
 
-| Field | Value (measured 2026-09-20) |
+This simulation is evidence about the tested local paths, not a real customer engagement,
+independent auditor/legal review, or production certification. The App has no CSV upload
+route: fixture ingestion ran through the readiness harness, while the App drill used its
+authenticated document/task APIs. See [`docs/PRODUCTION_STATUS.md`](docs/PRODUCTION_STATUS.md)
+and [`docs/production_readiness/simulated-design-partner-drill-2026-10-31.md`](docs/production_readiness/simulated-design-partner-drill-2026-10-31.md).
+
+## Historical status snapshot — release-candidate track opened 2026-09-24
+
+The table below records figures measured on 2026-09-20/25. It is retained as a
+historical snapshot; the current local status above supersedes it where they differ.
+
+| Field | Historical value (measured 2026-09-20/25) |
 |---|---|
 | HEAD | **Regenerate this row from the candidate commit before release** |
 | Full suite | **Run the canonical release command against the candidate commit; do not reuse historical counts** |
@@ -28,7 +48,7 @@ by rewriting the log.
 | Gate verdicts | `app_pilot` and `controlled_pilot` → `CONTROLLED_PILOT_READY` (exit 0); `production_candidate` → `PRODUCTION_CANDIDATE` (exit 0); `production` → `NOT_READY` (exit 1) |
 | Evidence files | **2,181** JSON files (gitignored by design) |
 | Evidence release dirs | **714** (`evidence/releases/`), plus 18 pilot dirs — the 2026-08-28 "29 directories" figure in §1 is long superseded |
-| Commits ahead of `origin/main` | **0** (`origin/main` = `50fd69f`, measured 2026-09-25 with `git ls-remote` and `git rev-list --count`). The repository is **public** — an unauthenticated request to the GitHub API returns HTTP 200 and `"private": false`, and the owner confirmed on 2026-09-25 that public is the **intended** state. This supersedes the 2026-09-21 private record. Earlier rows in this block quoted `b9d8fb6` and 7 commits; both were correct when written and have moved |
+| Commits ahead of `origin/main` | **0** at the time, measured 2026-09-25; the repository was public at that time. Current local checkout has no configured remote; current publication state is not asserted |
 | Total commits on `main` | **237** |
 | `release_approved` | **false** (`release/release-manifest.json`); `go-no-go.json` records pilot-scoped consent with `approved_at: "PENDING-GATE-RUN"` |
 | `production_readiness` | **`NOT_ESTABLISHED`** on every governed record |
@@ -44,18 +64,21 @@ incorrectly and are superseded:
   *point* of that entry still holds: the count is a measure of repeated harness
   runs, not of elapsed production operation.
 
-**What has not changed.** The §1 status label still governs: this is an internally
-governed pre-pilot system, self-tested, with no external party and no real client.
-Every pack runs `DATA_MODE = "simulated_realistic"`. There is no revenue, no
-pricing, no certification, and no independent audit. The nine production-only
-gates are red because the external evidence they check does not exist.
+**What has not changed.** There is no real customer pilot, production deployment,
+external customer traffic, independent audit, or certification recorded. The local
+simulation uses synthetic data and does not change those facts. The §1 status label
+below is a historical description and is superseded by the current status table above.
+Commercial pricing and revenue are not verified; the nine production-only gates remain
+red because the external evidence they check does not exist.
 
 ---
 
 ## 1. Helix Prime (Codex Core)
 
 **Location:** `E:\Helix-Prime`
-**Accurate status label:** Internally governed pre-pilot system, self-tested, not yet used by any external party or real client. Synthetic/internal data only.
+**Historical status label (superseded 2026-10-31):** Internally governed pre-pilot
+system, self-tested, not yet used by any external party or real client. Synthetic/internal
+data only. The later local simulation still involved no external party or real client.
 
 Avoid the phrase "controlled pilot candidate" as a status label — it implies an external pilot exists. None does yet. The correct description is: governance and evidence scaffolding is built and internally self-approved (`approver: "operator-pilot-consent"` — a self-approval, not a third-party sign-off).
 

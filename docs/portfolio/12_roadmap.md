@@ -3,9 +3,15 @@
 Sequenced so each step is gated by evidence. Items below the line are **not yet started** and
 depend on the red production gates being satisfied by real evidence.
 
+> **Current state (2026-10-31):** local synthetic tenant/engine and App/API operations
+> drills have passed their stated scopes. This does not constitute a real design-partner
+> pilot or close any external production gate. The App has no CSV upload/import workflow.
+
 ## Near term (within the controlled pilot)
-- Onboard the first real design partner; exit the read-only period under explicit, consented
-  approval (see 10_pilot_plan.md).
+- If an in-App file import is required, design and test a tenant-scoped CSV import path;
+  the current drill ingested fixture files through the readiness harness instead.
+- Only if a real design-partner engagement is authorized, onboard the participant and
+  exit the read-only period under explicit, consented approval (see 10_pilot_plan.md).
 - Activate **consented live connectors** for the design partner only, behind the same read-only /
   approval / tenant-isolation controls; keep `live_customer` data mode scoped and audited.
 - Add durable memory persistence to the pilot runtime (wire `control_plane.store` or equivalent)

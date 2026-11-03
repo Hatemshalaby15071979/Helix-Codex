@@ -1,71 +1,101 @@
-# Helix Prime — production status
+# Helix Prime — current release and verification status
 
-**Positioning.** Pre-pilot governed operations core: a verified fail-closed gate and a
-live WFM demo, backed by a green CI and a large test suite — all six engines now drive a
-real computation end-to-end, and CX's risk thresholds load from
-`config/risk_thresholds.yaml` rather than hardcoded values. Not production-ready: nine
-production-only gates are red by design.
+**Status measured:** 2026-10-31
+**Release classification:** `CONTROLLED_PILOT_READY` in the local C8 profile;
+`NOT_READY` for production.
+**Deployment position:** not authorized for first-customer or production deployment.
 
-**What it does.** Helix Prime is the governed, local-first operations core of Helix
-Codex. Identity, role-based access, a deterministic fail-closed gate, the Erlang C
-forecasting engine, the CRM, the workflow engine, and the audit ledger live behind one
-enforced surface. A decision is gated, recorded, and inspectable before it runs. There
-is no generative model in the execution path.
+This page is the concise current-status summary. Dated logs and evidence packs are
+historical snapshots and remain unchanged. The detailed implementation ledger is
+[`AGENTS.md`](../AGENTS.md); the production boundary is
+[`release-boundary.md`](release/release-boundary.md).
+The broader documentation map is [`DOCUMENTATION_STATUS.md`](DOCUMENTATION_STATUS.md).
 
-**Proof it works.** A stranger can drive the governed path end to end on their own
-machine: sign in with the demo identity (one permission, `ops.view`), submit four
-numbers, and receive an Erlang C staffing answer produced by the same gate, workflow
-record, and audit trail the internal pilot uses — then open the recorded decision chain
-behind their own run (`helix_codex_app/modules/ops/router.py:207`,
-`helix_codex_app/integration/engine_bridge.py:529-587`). The gate's four hard-deny
-checks and three approval branches are covered by `tests/test_governance_fail_closed.py`.
+## What was verified
 
-**Live / demo — local only.** The public surface is the demo, which by default requires
-`HELIX_APP_ENABLE_PASSWORDLESS_DEMO=true` and is a development/test fixture; it must not
-be enabled on a deployed instance (`README.md:174-175`). A Cloudflare Quick Tunnel can
-front the demo, but it is "not left running between sessions" (`README.md:122`) — there
-is **no durable public deployment**. A reviewer without a local install can read the
-audit ledger and run the test suite (see below); there is no guest account to click
-through remotely.
+- **Full test suite:** 2,000 passed, 19 deselected, on the workspace Python 3.12
+  environment. The 19 deselected tests belong to the separately quarantined cockpit
+  UI tier; this result does not include that tier.
+- **Tenant fidelity:** all 24 declared CallCenterClient and SportAcademyClient chaos
+  acceptance checks passed. Fixture validation reported 98/98 and 121/121 checks;
+  regenerating the overlays left 36 generated artifacts byte-identical.
+- **Engine readiness:** the fresh synthetic-fixture pack passed 12/12 gates and made
+  20 calls across WFM, RTA, CX, B2B, Personnel and CRM, for both tenants, with zero
+  errors. Results are disclosed as sample data and are not measurements about real
+  organizations. Evidence: [`2026-10-31-final/`](production_readiness/evidence/2026-10-31-final/).
+- **App/API tenant and operations drill:** authenticated tenant-scoped HTTP workflows,
+  cross-tenant denials, persistence across restart, backup verification, staged
+  restore, migration checks and rollback passed. The focused set reported 128 passing
+  tests. Evidence: [`app-tenant-ops-drill-2026-10-31.md`](release/app-tenant-ops-drill-2026-10-31.md).
+- **Simulated design-partner drill:** `PASS_SIMULATED`, 14/14 combined checks. It
+  processed the synthetic fixtures through the existing readiness harness, then used
+  the real local App HTTP routes for tenant-scoped incident summaries and action tasks.
+  The simulated reviewer checks are deterministic assertions, not separate LLM
+  opinions, an independent audit, or legal advice. The App has no CSV upload endpoint;
+  raw fixture ingestion was not performed through the App. See
+  [`simulated-design-partner-drill-2026-10-31.md`](production_readiness/simulated-design-partner-drill-2026-10-31.md).
+- **Changed-path code checks:** Ruff lint and format checks passed for the changed
+  readiness/simulation paths. Repository-wide Ruff still reports 21 existing findings
+  and 346 files needing formatting; that debt is not a clean full-repository result.
 
-**Signing in.** The demo identity is scoped to exactly one synthetic tenant and the
-single `ops.view` permission; it cannot create, approve, execute, or delete anything but
-the purpose-built demo endpoint (`README.md:58-63`,
-`helix_codex_app/security/permissions.py`).
+## What these results establish
 
-**Commercial status.** No billing integration is present. The repository's own records
-state zero paying users and zero revenue (`AGENTS.md:140`, `README.md:140`). There is no
-independent verification of current commercial activity because there is no production
-deployment.
+They establish that the exercised local paths worked against documented synthetic
+fixtures and disposable local deployments under the stated test conditions. The App
+HTTP drill demonstrates tenant-scoped behavior for its tested routes; it is not an
+independent certification or a production-scale isolation audit. The synthetic review
+personas test explicit controls; they do not supply independent human authority.
 
-**SIMULATED DATA — evaluation.** Every behavioural number in this repo is synthetic or
-author-written:
-- Full suite: **1,897 passed / 0 failed**, coverage **86.91%** against an 80% floor
-  (repo CI, snapshot 2026-09-29; `README.md:131-132`). This session re-ran a
-  claims-relevant subset — **122 passed / 0 failed** — but the full run did not
-  terminate locally (blocked on `tests/integration`). The suite asserts the
-  adapter/contract/gate plumbing and the WFM math; it does **not** validate that the
-  engines compute correct results — all six adapters now return computed results, but the
-  suite asserts contracts, not accuracy (`docs/KNOWN_ISSUES.md` issue 3).
-- WFM demo produces an Erlang C answer through the gate on synthetic four-number input.
-  The "Erlang C" formula is a non-standard closed form
-  (`engines/wfm/src/erlang_c.py:8,124`), not the textbook expression.
-- The cockpit UI tier is quarantined: 19 tests deselected (`README.md:131`,
-  `AGENTS.md:3454`).
+The local `CONTROLLED_PILOT_READY` result is a gate classification based on this
+repository's configured pilot scope. Its approval is internally generated and does
+not mean that a real design partner participated or that a customer pilot occurred.
+No live customer data, real customer traffic, or production service was used.
 
-**SIMULATED DATA — governance verification (2026-09-29).** CI went green for the first
-time on run `36497766876` (`839507e`): all 17 steps passed, including the test suite,
-`ruff check` (0 errors), `ruff format --check` (429 files), the governance checker, and
-the build (`AGENTS.md:39-44`, §21). The two container steps (16–17) are not reproducible
-on this machine (Docker not running) and rest on that remote run
-(`AGENTS.md:5152-5153`).
+## Production blockers
 
-**Limits.** There is no public sign-up with real tenants, no live design-partner
-traffic, and the largest engine validation is the single-WFM demo path. A green
-pipeline is not a production claim: nine production-only gates remain red
-(`AGENTS.md:1516-1519`) — `signed_production_evidence`, `certified_data_isolation`,
-`external_observer_audit`, `production_deployment_architecture`, `disaster_recovery_evidence`,
-`operational_ownership`, `incident_oncall_ownership`, `security_review`,
-`legal_privacy_review`. Each needs a signature from a key held outside this repository.
-No external security audit, no certified data isolation, no signed installer. No revenue
-and no paying users.
+The `production` profile remains fail-closed as `NOT_READY`. The nine production-only
+gates still require evidence or authority outside this local simulation:
+
+1. `signed_production_evidence`
+2. `certified_data_isolation`
+3. `external_observer_audit`
+4. `production_deployment_architecture`
+5. `disaster_recovery_evidence`
+6. `operational_ownership`
+7. `incident_oncall_ownership`
+8. `security_review`
+9. `legal_privacy_review`
+
+An AI agent can help prepare test protocols, collect local evidence, check artifacts,
+and rehearse operational procedures. It cannot turn a simulated review into an
+independent audit, certification, legal review, production signature, or named human
+on-call commitment. Those distinctions are part of the honest release boundary, not a
+claim that local simulations are useless.
+
+## Product and data boundaries
+
+- Both tenant datasets are synthetic, client-shaped fixtures. Every derived result
+  remains explicitly sample-labelled.
+- The raw CSV exports are processed by the production-readiness harness, not uploaded
+  through the App. The App supports authenticated document/task HTTP workflows; a
+  tenant-scoped CSV import workflow is not implemented.
+- No live external connector writes are enabled; no customer data leaves the local
+  simulation.
+- The engine readiness gates test measured fixture-level behavior, authorization,
+  disclosure, determinism and latency. They do not independently certify all engine
+  outputs as correct for real-world client operations.
+- No real Scoach Academy Hub pilot or any other client deployment is recorded.
+- No current remote CI result is asserted for the 2026-10-31 local source. The last
+  recorded remote CI measurements are dated historical evidence in
+  [`README.md`](../README.md) and [`AGENTS.md`](../AGENTS.md).
+
+## Current next actions
+
+1. Keep the nine production gates red until the corresponding external evidence and
+   human authority genuinely exist.
+2. If raw-file workflows are in scope, implement and test a tenant-scoped App import
+   path; do not describe the current App HTTP drill as CSV ingestion.
+3. Resolve the repository-wide lint/format debt and run the complete CI-equivalent
+   validation against the exact release candidate before any release decision.
+4. Preserve synthetic-data disclosure and the separation between simulated evidence
+   and real customer, independent-review, or production evidence.

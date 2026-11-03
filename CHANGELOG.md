@@ -13,9 +13,26 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Validated — 2026-10-31
+
+- **Synthetic two-tenant design-partner drill** — `PASS_SIMULATED`, run
+  `20261031T073346Z-6a6f3898`, 14/14 combined checks. The existing readiness harness
+  passed 12/12 gates and ran 20 calls across all six engines; the local App HTTP
+  workflow verified tenant-scoped summaries/tasks and negative access controls.
+  Deterministic simulated reviewer checks are not independent review or legal advice;
+  no raw CSV upload through the App, real customer, or production service was involved.
+  See [`docs/production_readiness/simulated-design-partner-drill-2026-10-31.md`](docs/production_readiness/simulated-design-partner-drill-2026-10-31.md).
+- **Tenant isolation and operations rehearsal** — the local API/App drill passed
+  tenant-scope, persistence, backup/restore, migration and rollback checks; its focused
+  test set reported 128 passed. See
+  [`docs/release/app-tenant-ops-drill-2026-10-31.md`](docs/release/app-tenant-ops-drill-2026-10-31.md).
+- **Current release boundary:** local `CONTROLLED_PILOT_READY` evidence is not a real
+  pilot approval. The production profile remains `NOT_READY`; the nine external
+  production gates are unchanged.
+
 ### Added
 
-- **sports-academy capability pack v1.0.0** (2026-09-10; commits `d5dcb45..c3c4abf`, 44 tests) — first vertical capability pack for Helix Codex OS, built for Scoach Academy Hub:
+- **sports-academy capability pack v1.0.0** (2026-09-10; commits `d5dcb45..c3c4abf`, 44 tests) — first sports-academy vertical prototype for Helix Codex OS, developed against a synthetic target scenario associated with Scoach Academy Hub; no customer relationship or data is implied:
   - Attendance adapter reusing the RTA engine (check-in/check-out → adherence)
   - Coach KPIs (4) + academy KPIs (5), YAML-declared and drift-tested
   - Athlete profiles (CRM) + CX-scored churn flags for seeded risk athletes

@@ -4,6 +4,13 @@
 **Governance:** Constitution 000 | MASTER_STORY.md authority  
 **Verification Method:** Every claim below was confirmed by running real commands and reading raw output.
 
+> **Scope and freshness:** this matrix is a dated Phase-1 implementation baseline, not
+> the current release-status report. Later local verification (2026-10-31) reported
+> 2,000 tests passed / 19 deselected, 12/12 synthetic fixture/engine gates, and
+> successful App/API operations and simulated design-partner drills. Production remains
+> `NOT_READY`; no real customer pilot or independent review is established. See
+> [`../docs/PRODUCTION_STATUS.md`](../docs/PRODUCTION_STATUS.md).
+
 ---
 
 ## Legend

@@ -2,6 +2,12 @@
 
 **Prepared:** 2026-09-13 · **For:** Hatem Shalaby · **Repo:** `E:\Helix-Prime`
 
+> **Status note (2026-10-31):** this is a dated architecture/build plan. References to
+> a "first client" describe a design target and desired product scenario, not an actual
+> customer or deployment. The local synthetic App/API drills passed their stated scope;
+> no real pilot has run. The App has no CSV upload endpoint, and production remains
+> `NOT_READY`. See [`PRODUCTION_STATUS.md`](PRODUCTION_STATUS.md).
+
 ---
 
 ## 0. What this document is, and how to read it

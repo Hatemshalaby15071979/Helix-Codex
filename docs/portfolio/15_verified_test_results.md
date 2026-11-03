@@ -1,21 +1,28 @@
 # 15. Verified Test Results
 
-> **[HISTORICAL SNAPSHOT]** Everything below is a clean run on **2026-08-29** and
-> records that day's state — **445 tests across 26 modules**. Keep this file for the
-> audit trail; do not compare current runs against it.
+> The dated summary table immediately below records the current local snapshot
+> (2026-10-31). The detailed per-file results after that table are a clean run on
+> **2026-08-29** — **445 tests across 26 modules** — retained as historical audit
+> evidence. Do not compare current runs against that old per-file table.
 
-## Current state (measured 2026-09-29)
+## Current state (measured 2026-10-31)
 
 | Check | Result |
 |---|---|
-| Full suite | **1,897 passed / 0 failed**, 19 deselected as a quarantined UI tier |
-| Coverage (`--cov=server --cov=connectors`, 80% floor) | **86.91%** |
-| CI | **green on all 17 steps** — run [`36497766876`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/36497766876) |
-| `ruff check` (the 17 CI paths) / `ruff format --check .` | 0 findings / 429 files already formatted |
-| `governance_check` | `governance=PASS` |
+| Full suite | **2,000 passed**, 19 deselected (quarantined cockpit UI tier excluded); local Python 3.12 |
+| Fixture/engine readiness | **12/12 gates**, 20 calls, six engines, two synthetic tenants, zero errors |
+| Tenant fidelity | **24/24 acceptance checks**; CallCenterClient 98/98; SportAcademyClient 121/121 |
+| App/API tenant and operations drill | Passed; focused test set **128 passed** |
+| Simulated design-partner drill | `PASS_SIMULATED`, **14/14 combined checks**; not real customer or reviewer evidence |
+| Changed-path Ruff checks | Clean |
+| Repository-wide Ruff | **21 existing findings; 346 files need formatting** |
+| Coverage | **86.91%**, last measured by historical CI on 2026-10-05; not re-measured in this local run |
+| Remote CI | Last recorded all-steps-green result is historical; current local source has no asserted remote CI result |
+| C8 profiles | `controlled_pilot` → `CONTROLLED_PILOT_READY`; `production` → `NOT_READY` |
 
-The suite has grown from 445 (2026-08-29) to 621 (2026-09-12) to 1,897. The
-per-module table below is the 445 snapshot and is deliberately left as written.
+The dated per-module table below is the 445-test snapshot from 2026-08-29 and is
+deliberately left as historical evidence. Earlier counts (621, 1,897 and 1,967) are
+also dated snapshots, not the current local total.
 
 ---
 
@@ -86,8 +93,8 @@ python3 demo/synthetic_demo.py   # exit 0
 Result: call-centre + restaurant tenants in one governed memory; `audit_chain_intact=True`;
 `live_customer_records=0`; connector writes disabled; production readiness `NOT_ESTABLISHED`.
 
-## Interpretation
-- 445 passing tests cover identity, tenant isolation, governance, connectors, workflows, approvals,
+## Interpretation of the historical 445-test snapshot
+- Those 445 tests covered identity, tenant isolation, governance, connectors, workflows, approvals,
   evidence, memory, metrics, metacognition, cloud boundary, pilot, and the restaurant capability pack.
-- The release is **controlled-pilot ready**; **production readiness is not established** (red
-  production gates by design).
+- That snapshot did not certify production readiness. See the current table above and
+  [`../PRODUCTION_STATUS.md`](../PRODUCTION_STATUS.md) for the latest local evidence and boundaries.

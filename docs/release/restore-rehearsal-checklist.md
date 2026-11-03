@@ -11,6 +11,10 @@ in every evidence field; a rehearsal with blank fields did not happen.
 - Host:
 - Backup directory under rehearsal:
 - Backup created at (from `backup-manifest.json`):
+- Backup bytes:
+- Backup duration:
+- App image tag and image ID:
+- Compose project / volume:
 
 ## Verify-only rehearsal
 
@@ -26,6 +30,9 @@ python helix_codex_app/scripts/restore_app.py --backup <backup-dir> --verify-onl
 - File inventory problems:
 - Audit chain result:
 - Release metadata result:
+- Restore duration:
+- Application health result:
+- Last verified backup age (observed RPO at drill):
 
 ## Throwaway restore rehearsal
 
@@ -42,6 +49,23 @@ python helix_codex_app/scripts/restore_app.py --backup <backup-dir> --target <em
 - File inventory problems:
 - Audit chain result:
 - Release metadata result:
+
+## Restart and rollback drill
+
+- Stop/start command and exit codes:
+- Synthetic tenant record visible after restart:
+- Previous image tag / image ID:
+- Image rollback command and health result:
+- Original volume retained and verified:
+
+## Migration drill (throwaway copy only)
+
+- App migration drift command and result:
+- Control-plane migration drift command and result:
+- App database stamp/upgrade command and result:
+- Workflow database stamp/upgrade command and result:
+- Schema/data verification after migration:
+- No live volume targeted (`yes` required):
 
 ## Decrypt rehearsal (off-site copies only)
 

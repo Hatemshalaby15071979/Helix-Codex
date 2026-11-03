@@ -1,8 +1,13 @@
 # 4. Security Model
 
+> **Current boundary (2026-10-31):** the local App/API tenant and operations drill
+> passed its defined cross-tenant and authentication controls. This does not constitute
+> an independent security review, penetration test, or certification; the corresponding
+> production gates remain open.
+
 Security is enforced in code and verified by the release security gate
-(`release.security_gate.run_security_gate()` → `all_ok=True`; re-verified
-2026-09-29, all six checks passing).
+(`release.security_gate.run_security_gate()` → `all_ok=True`; historical result
+re-verified 2026-09-29, all six checks passing).
 
 ## Checks (all passing)
 | Check | Result | Notes |

@@ -1,49 +1,51 @@
-# What I Do
+# Helix Prime — exploratory conversation draft
 
-## Operations systems for sports academies
+> **Not an approved offer or deployment document (status: 2026-10-31).** Helix Prime
+> has passed local synthetic-data and tenant/operations drills, but it has no recorded
+> real customer pilot or production deployment. The local `PASS_SIMULATED` design-
+> partner drill is not customer validation. Do not promise installation, live
+> attendance/churn monitoring, pricing, or data import based on this draft.
 
-I help sports academy owners get their operations under control.
+## What this conversation is for
 
-If your day feels like this:
-- You can't answer "how many athletes do we have?" in 30 seconds
-- You don't know if your coaches are showing up on time
-- You have no system to track who is about to leave
-- Your enrollment process is paper forms and WhatsApp messages
-- You have no KPIs — everything is gut feel
+Learn whether a sports academy has an operational problem that a small, governed
+software pilot could address. Statements below are discovery questions, not claims
+about any particular academy.
 
-...then we should talk.
+Possible topics:
 
-## What I offer
+- How are attendance and schedule changes recorded today?
+- Which staff roles need access to which records?
+- What data is available, who controls it, and what consent would be required?
+- Which single workflow, if any, would be valuable to test first?
+- What would the academy require before using any software with its data?
 
-A **pilot program** — free for 60 days. I install a system that:
+## What exists today
 
-1. **Tracks attendance** — you see who showed up, who didn't, in real time
-2. **Builds athlete profiles** — every athlete's history, attendance, and progress in one place
-3. **Sets coach KPIs** — clear metrics so you know who is performing
-4. **Detects churn risk** — alerts you when an athlete is about to drop out, before they leave
-5. **Organizes your operations** — roles, hierarchy, and workflows that make sense
+- A sports-academy capability pack exercised with synthetic fixtures.
+- Six deterministic engines exercised by a local readiness harness.
+- A local App/API workflow with tenant-scoped documents and tasks.
+- A local simulated two-tenant drill that passed 14/14 combined checks.
 
-## What makes this different
+These are engineering test results, not evidence that the software is suitable for a
+specific academy, that its outputs are independently validated, or that a customer has
+accepted the product.
 
-This is not another booking app. This is an **operating system** — it runs your whole academy from one dashboard. Every action is logged. Every decision has evidence. You stay in control; the system does the heavy lifting.
+## Current boundaries
 
-## The deal
+- No real customer deployment, pilot, or customer data is recorded.
+- The production profile is `NOT_READY`; nine production-only gates remain open.
+- The App has no CSV upload/import endpoint. Do not request or import a real roster
+  through the current App.
+- No price, free pilot period, contract, or service-level commitment is approved.
+- Any future pilot would require separate scope, consent, data-protection review,
+  operator ownership, and an explicit go/no-go decision.
 
-- **First 60 days:** Free. You pay nothing.
-- **After 60 days:** $350/month if you want to continue.
-- **Your data stays with you** — the system runs on your machine.
-- **Cancel anytime** — no lock-in, no contracts during pilot.
+## Suggested next step
 
-## Who am I
+If there is mutual interest, hold a discovery conversation only. Record confirmed needs
+separately from assumptions, and do not imply that a pilot or deployment is available
+until the product and required approvals are ready.
 
-Built by Hatem Shalaby, Contact Centre Operations & AI Implementation Lead | WFM & CX Transformation. Background: https://github.com/<YOUR_GITHUB_ORG>
-
-## Next step
-
-Let's have a 30-minute conversation. I'll ask you about your operations. I won't pitch anything. If I can help, I'll come back with a specific plan for your academy.
-
-**Contact:** [your email] | [your phone]
-
----
-
-*Helix Codex OS — accountable AI for operations that stay yours.*
+See [`PRODUCTION_STATUS.md`](PRODUCTION_STATUS.md) and
+[`COMMERCIAL_STORY.md`](COMMERCIAL_STORY.md) for the current project position.

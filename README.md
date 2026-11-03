@@ -8,18 +8,17 @@
 [![CI](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/workflows/CI/badge.svg)](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions)
 ![licence](https://img.shields.io/badge/licence-MIT-blue)
 [![last commit](https://img.shields.io/github/last-commit/<YOUR_GITHUB_ORG>/Helix-Prime)](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/commits/main)
-![status](https://img.shields.io/badge/ci-success-brightgreen?label=success%20(2026-10-05))
+![local verification](https://img.shields.io/badge/local%20verification-pass%20(2026--10--31)-brightgreen)
 
-*Measured 2026-10-06 — CI **success**; head `d48166f` (2026-10-05); Python.*
+*Local verification measured 2026-10-31. The latest recorded remote CI result is older; it is not evidence for the current local source tree.*
 
-<!-- No static test or coverage count is shown here: a frozen
-     number decays silently. Run the suite for a current figure;
-     the CI badge above is the live status. -->
+<!-- The workflow badge is a remote reference, not a local verification result.
+     Use the dated local-verification badge and status section below for this checkout. -->
 <!-- badges:end -->
 
 **The governed operations core of Helix Codex.**
 
-![Status](https://img.shields.io/badge/status-pre--pilot-blue)
+![status](https://img.shields.io/badge/status-simulated--validation--passed-blue)
 ![CI](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/workflows/ci.yml/badge.svg)
 ![Production](https://img.shields.io/badge/production-NOT__READY-red)
 ![Licence](https://img.shields.io/badge/licence-MIT-blue)
@@ -38,11 +37,11 @@ surface — so a decision is gated, recorded, and inspectable before it runs.
 > **Operating principle.** No generative model sits in the execution path. On a live floor, a hallucinated action is an SLA breach, not a quirky output — so a deterministic, rules-based gate decides what actually executes, and every decision is recorded before it runs. When the gate holds a submission, it reports the held state; it does not force the run.
 
 > [!IMPORTANT]
-> **Positioning.** Pre-pilot governed operations core: a verified fail-closed gate and a
-> live WFM demo, backed by a green CI and a large test suite — all six engines now drive
-> a real computation end-to-end, and CX's risk thresholds load from
-> `config/risk_thresholds.yaml` rather than hardcoded values. Not production-ready: nine
-> production-only gates are red by design.
+> **Positioning (2026-10-31).** Local-first governed operations core. A controlled-pilot
+> profile and a simulated two-tenant design-partner drill passed locally; six engines
+> computed on disclosed synthetic fixtures. No real customer pilot or first-customer
+> deployment has occurred. Production remains `NOT_READY`: nine production-only gates
+> still require evidence and authority that cannot be simulated locally.
 
 The canonical artifact is **`helix-api`**, a governed FastAPI spine where identity,
 RBAC, approvals, the kill switch, metrics, and the audit chain are enforced. The
@@ -70,9 +69,9 @@ dispatch (see Tier 2). Beyond the engines:
 - Provenance-bearing command center and tenant-isolated governed memory with retention.
 - Evidence-gated improvement proposals that never self-deploy.
 - An append-only, hash-chained `audit_events` ledger and an exportable governance evidence pack.
-- Two vertical capability packs: `capabilities/restaurant/` (reference pattern) and `capabilities/sports_academy/` (first real vertical, built for Scoach Academy Hub).
+- Two vertical capability packs: `capabilities/restaurant/` (reference pattern) and `capabilities/sports_academy/` (sports-academy prototype built with synthetic data; Scoach Academy Hub is an opportunity target, not a confirmed partner).
 
-### The governed public demo
+### The governed demo path (local or ephemeral)
 
 A stranger can drive the governed path end to end. They sign in with GitHub through
 Supabase Auth, land in a session holding exactly one permission (`ops.view`), submit
@@ -140,31 +139,38 @@ with it.
 - **`helix-api`** — the governed FastAPI spine. Identity, RBAC, approvals, kill switch, metrics, audit chain enforced here.
 - **`control_plane/`** — `governance.py` (the gate, `evaluate_gate`), `engine.py` (workflow state machine), `engine/*.py` (per-engine handlers).
 - **`engines/`** — `wfm/adapter.py` (Erlang C), `rta/`, `cx/`, `b2b/`, `personnel/`, `crm/`.
-- **`helix_codex_app/`** — the product layer the public demo runs on: identity, ops surface, documents, tasks, calendar, attendance, governed memory, low-code capability loader, WFM demo bridge.
+- **`helix_codex_app/`** — the product layer the local/ephemeral demo runs on: identity, ops surface, documents, tasks, calendar, attendance, governed memory, low-code capability loader, WFM demo bridge.
 - **`capabilities/`** — `restaurant/`, `sports_academy/` vertical packs.
 - **Cockpit** — `helix-cockpit`, a read-only Streamlit diagnostic surface.
 - **`audit_events`** — append-only, hash-chained ledger; exportable evidence pack.
-- **Deployment** — `infra/docker/docker-compose.yml` runs the same `helix-api` plus the cockpit and an Ollama sidecar; a Cloudflare Quick Tunnel (not left running between sessions) fronts the public demo.
+- **Deployment** — `infra/docker/docker-compose.yml` runs the same `helix-api` plus the cockpit and an Ollama sidecar; a Cloudflare Quick Tunnel can front a temporary demo but is not left running between sessions. No durable public service is claimed.
 
-## Production status & test coverage
+## Current status & verification (2026-10-31)
 
-Checked 2026-10-05: the project remains pre-pilot and production is `NOT_READY`. GitHub Actions passed all 17 CI steps on [`c0b85a6`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/commit/c0b85a60a651034ed5ac765b31cd82d225c08b3e) in [run `37340320781`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37340320781).
+This is a local verification snapshot, not a production or customer-acceptance claim.
+The detailed source of truth is [`docs/PRODUCTION_STATUS.md`](docs/PRODUCTION_STATUS.md);
+the documentation map is [`docs/DOCUMENTATION_STATUS.md`](docs/DOCUMENTATION_STATUS.md);
+dated run records remain historical evidence.
 
-| Check | Result | Measured |
+| Check | Result | Evidence |
 |---|---|---|
-| CI, end to end | **All 17 steps pass** — run [`37340320781`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37340320781) on `c0b85a6` | 2026-10-05 |
-| Full test suite | **1,967 passed, 0 failures, 19 deselected** (CI run [`37340320781`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37340320781)) | 2026-10-05 |
-| Coverage (`--cov=server --cov=connectors`, 80% floor) | **86.91%** (CI run [`37340320781`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37340320781)) | 2026-10-05 |
-| CI lint (`ruff check`, the 17 paths CI names) | **0 errors** (exit 0) | 2026-10-05 |
-| CI format (`ruff format --check .`, repo-wide) | **Clean** — 438 files already formatted | 2026-10-05 |
-| Governance checker (`GOVERNANCE/governance_check.py`) | **PASS** (exit 0) | 2026-10-05 |
-| Release gate `production` | `NOT_READY` (exit 1) | 2026-09-24 |
+| Full pytest suite | **2,000 passed, 19 deselected** | Local Python 3.12 run recorded in `AGENTS.md` §28 |
+| Focused readiness/regression tests | **33 passed** | `AGENTS.md` §27 |
+| Tenant fixture fidelity | **24/24 acceptance checks**; CallCenterClient 98/98; SportAcademyClient 121/121 | `AGENTS.md` §27 |
+| Engine readiness | **12/12 gates; 20 calls across six engines and two synthetic tenants; zero errors** | `docs/production_readiness/evidence/2026-10-31-final/` |
+| App/API tenant and operations drill | **Passed**, including backup, restore, migration, rollback, persistence, and cross-tenant controls | [`docs/release/app-tenant-ops-drill-2026-10-31.md`](docs/release/app-tenant-ops-drill-2026-10-31.md) |
+| Simulated design-partner drill | **PASS_SIMULATED, 14/14 checks**; deterministic simulated reviewer checks, not independent reviews | [`docs/production_readiness/simulated-design-partner-drill-2026-10-31.md`](docs/production_readiness/simulated-design-partner-drill-2026-10-31.md) |
+| Changed-path Ruff checks | **Clean** | `AGENTS.md` §28 |
+| Repository-wide lint/format | **Existing debt remains:** 21 Ruff findings; 346 files need formatting | `AGENTS.md` §27 |
+| C8 `controlled_pilot` / `production` profiles | `CONTROLLED_PILOT_READY` / `NOT_READY` | `AGENTS.md` §27 |
 
-- `CONTROLLED_PILOT_READY` is an internal self-approval (`approver: "operator-pilot-consent"`), not a third-party sign-off.
-- Production is `NOT_READY`. Nine production-only gates are red by design, each needing a signature from a key held outside this repository.
-- No external audit, no certification, no certified data isolation, no signed security review, no assigned on-call owner. No production deployment. No revenue.
-- Test counts move as the suite grows. Re-measure; never quote a figure from this file as current.
-- `evidence/` is git-ignored by design; the release evidence directories live only on the operator's machine.
+`CONTROLLED_PILOT_READY` is an internal, self-approved gate classification; it does
+not mean a real pilot has run. The latest recorded remote CI result is from 2026-10-05
+and predates the current local work. No current remote CI result is asserted here.
+Production remains blocked on nine production-only evidence gates, including signed
+evidence, certified isolation, external security/privacy review, deployment/DR evidence,
+and named operations/on-call ownership. There is no production deployment, real customer
+traffic, external audit, certification, or verified revenue.
 
 > [!NOTE]
 > **The pipeline went green on 2026-09-29 for the first time.** It had failed at
@@ -176,7 +182,7 @@ Checked 2026-10-05: the project remains pre-pilot and production is `NOT_READY`.
 > `AGENTS.md` §21.
 
 > [!WARNING]
-> **What this is not.** No live paying client. The demo data is synthetic by design — a governance decision, not a limitation being hidden: the property being shown is that labelling is structural. The public surface is not durable infrastructure. A green pipeline is not a production claim: nine production-only gates remain red, as recorded above.
+> **What this is not.** No live paying client, real pilot, or durable public deployment is recorded. Demo data is synthetic by design. A local simulated drill is not customer acceptance, and a passing pipeline is not a production claim: nine production-only gates remain red.
 
 ## Claims, with sources
 
@@ -192,13 +198,13 @@ shown at all.
 | Fail-closed gate: unknown role / unknown classification / forbidden classification / non-owned engine → `dead_letter` | enforced; 4 hard-deny branches | `control_plane/governance.py:972-1022`; `tests/test_governance_fail_closed.py` |
 | Gate boundaries → `awaiting_approval`: financial limit exceeded, confidence < `0.75`, explicit approval | 3 boundary branches | `control_plane/governance.py:1027-1065`; `MIN_AUTONOMY_CONFIDENCE` at `:64` |
 | Every governance decision is written to the hash-chained `audit_events` ledger before it runs | emit at submit | `control_plane/engine.py:839-840` |
-| Full test suite passes | **1,967 passed, 0 failures, 19 deselected** (CI run [`37371376357`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37371376357) on `fa150cb`, 2026-10-05) | `pytest tests/ -q -m "not smoke"`; `AGENTS.md` §24 |
-| Coverage floor (80%) met | **86.91%** (CI run [`37371376357`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/37371376357), 2026-10-05) | `.github/workflows/ci.yml` test step |
+| Full test suite passes | **2,000 passed, 19 deselected** (local Python 3.12 snapshot, 2026-10-31) | `AGENTS.md` §28 |
+| Coverage floor (80%) met | **86.91%** (last measured by CI on 2026-10-05; not re-measured in the 2026-10-31 local run) | `.github/workflows/ci.yml` |
 | `ruff check` clean on the 17 CI paths | **0 errors** (exit 0) | local run, 2026-10-05 |
 | `ruff format --check .` clean repo-wide | **438 files formatted** (exit 0) | local run, 2026-10-05 |
 | WFM demo returns an Erlang C answer through the gate, recorded in the audit trail | four-number input → answer; demonstrated end to end on a real server 2026-09-30 (`POST /app/api/ops/demo/wfm` → 201, `GET /app/ops/audit/{correlation_id}` → 200) | `helix_codex_app/integration/engine_bridge.py:529-587`; `helix_codex_app/modules/ops/router.py:207`; `docs/verification/2026-09-30.md` |
 | `data_mode: "simulated_realistic"` and `is_sample: true` are server-owned; a request cannot set them | injected at bridge; extra keys refused `400` | `engine_bridge.py:586-587`, `:538-539`; `router.py:223-227` |
-| Least-privilege demo identity: one permission (`ops.view`), not in the engine catalog | design enforced | "The governed public demo" section above; `helix_codex_app/security/permissions.py` |
+| Least-privilege demo identity: one permission (`ops.view`), not in the engine catalog | design enforced | "The governed demo path" section above; `helix_codex_app/security/permissions.py` |
 
 ### Tier 2 — MEASURED LIMITS
 
@@ -208,7 +214,7 @@ shown at all.
 | Cockpit UI tier quarantined | 19 tests deselected | `tests/integration/ui/cockpit/` conftest (quarantined tier); `AGENTS.md` §19 |
 | `dispatch.py` agent dispatch is a stub returning fake output | `Called …` / `Task submitted` placeholders | `app/command_center/agents/dispatch.py:84,187,204,217,231` |
 | Coverage floor measures execution, not result correctness | the suite now pins WFM's Erlang C to textbook reference values (`tests/test_wfm_erlang_c.py`); the other engines' result accuracy is still not validated against an external reference | `docs/verification/2026-09-30.md` |
-| CI container steps (16–17) not reproducible locally | Docker not running here; rest on remote green run | `AGENTS.md` §21 |
+| Latest remote CI result predates current local source | Last recorded green run is 2026-10-05; current source was verified locally on 2026-10-31 | `AGENTS.md` §28 |
 
 #### Fixed since this table was written
 
@@ -238,7 +244,7 @@ The sweep excluded five SSE/timing-loop test files — `tests/test_chat_stream.p
 | External security audit / certified data isolation | None. No signed installer, no certified isolation evidence. |
 | Multi-tenant isolation under real load | No independent tenant-isolation audit (cf. the 500/500 tagged-row count in LIVE Support Assistant). |
 | Engine accuracy at real corpus scale | Not measured; the engines are not independently validated for accuracy at real corpus scale. |
-| Design-partner live traffic | Scoach Academy Hub is a named first vertical (`capabilities/sports_academy/`), but no live client traffic is recorded. |
+| Real design-partner participation or live traffic | None recorded. Scoach Academy Hub is an opportunity target, not a confirmed partner; the 2026-10-31 drill used synthetic data only. |
 
 ### Tried and rejected
 

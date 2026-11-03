@@ -2,15 +2,19 @@
 
 > **Authority chain:** `00_CONSTITUTION.md` → `docs/HELIX_CODEX_OS_MASTER_BLUEPRINT.md` → implementation
 >
-> **Status:** CONTROLLED_PILOT_READY (not production — 9 gates require external evidence)
+> **Current status (2026-10-31):** the local C8 `controlled_pilot` profile is
+> `CONTROLLED_PILOT_READY`; the `production` profile is `NOT_READY`. The local suite
+> reported 2,000 passed / 19 deselected. Fixture/engine readiness passed 12/12 gates;
+> the App/API operations drill and simulated design-partner drill passed their defined
+> scopes. These are local synthetic checks, not a real customer pilot, independent
+> review, or production certification. See [`PRODUCTION_STATUS.md`](PRODUCTION_STATUS.md).
 >
-> **Last verified:** 2026-09-20 — full suite: **1,758 passed, 0 failed, 0 skipped, in one uninterrupted process**
+> **Quality limits:** changed paths passed Ruff; repository-wide Ruff still reports
+> 21 existing findings and 346 files needing format. The latest recorded remote CI
+> result is historical and is not asserted for the current local source.
 >
-> **Correction, 2026-09-27.** That figure is a dated snapshot, not the current state. Re-measured on 2026-09-27 the suite is **1,897 passed / 0 failed** (940 app chunk + 957 parent, 19 deselected as a quarantined UI tier), and `ruff check` was **not** clean (3 errors across the CI paths) while `ruff format --check .` would have reformatted 346 files.
->
-> **Resolved, 2026-09-29.** The lint debt that note recorded is cleared, and CI is **green for the first time in the repository's history**: run [36497766876](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/36497766876) on `839507e` passed **all 17 steps** — `1,897 passed, 19 deselected`, coverage 86.91%. `ruff check` on the CI path list exits 0 and `ruff format --check .` reports 429 files already formatted. The workflow had failed at step 5 on **every push since 2026-09-20**, which is why steps 6–17 had never executed once; the repair is recorded in `AGENTS.md`. The "ruff clean, mypy clean, bandit clean" cell below is therefore true again, not merely historical.
->
-> **Commit:** `003709b` (the 2026-09-20 snapshot) · `1830f30` (current `main`)
+> **Checkout:** branch `main`; no Git remote is configured in this local checkout.
+> Current online publication state is not asserted.
 
 ---
 
@@ -40,16 +44,16 @@
 
 | Property | Value |
 |---|---|
-| Repository | `https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime.git` (private) |
-| Branch | `main` (`origin/main` is `b9d8fb6`; the unpushed backlog is measured with `git rev-list --count origin/main..HEAD`) |
+| Repository | Helix-Prime local checkout; no remote configured; online visibility not rechecked |
+| Branch | `main`; no `origin/main` tracking ref in this checkout |
 | Python | 3.12 (requires `>=3.12,<3.13`) |
 | Package version | `0.9.0` (single-sourced from `pyproject.toml`) |
 | License | MIT |
 | Backend | FastAPI (canonical artifact: `helix-api`) |
 | Dashboard | Streamlit (secondary: `helix-cockpit`) |
 | Database | SQLite (workflow store, app store, audit trail) |
-| Governance | 23 release gates (14 C8 + app gates + 9 production-only) |
-| Test count | 1,897 passed / 0 failed, 19 deselected (snapshot 2026-09-29, CI run `36497766876`; the 1,758 on the line above is the 2026-09-20 measurement) |
+| Governance | 29 release-gate implementations (14 core + 6 App + 9 production-only) |
+| Test count | 2,000 passed, 19 deselected (local Python 3.12 run, 2026-10-31) |
 
 ### Design Principles (from `00_CONSTITUTION.md`)
 
@@ -883,14 +887,14 @@ With nine signed evidence fixtures in place, `run_gate(profile="production")` ac
 
 | Dimension | Status | Notes |
 |-----------|--------|-------|
-| Code quality | ✅ Strong | 1,897 tests passing, ruff clean, mypy clean, bandit clean (measured 2026-09-29, CI run `36497766876`) |
+| Code quality | ⚠️ Mixed | 2,000 local tests pass; changed-path Ruff is clean; repository-wide Ruff has 21 findings and 346 files needing format |
 | Architecture | ✅ Sound | Layered, seam-governed, no circular imports in core |
 | Governance | ✅ Implemented | 23 gates, 9 production-only, fail-closed everywhere |
-| Testing | ✅ Comprehensive | 1,897 passed / 0 failed, 19 deselected (measured 2026-09-29) |
-| Security posture | ✅ Good | Audit trail, classification, injection detection, secrets scanning, auth hardening |
+| Testing | ✅ Broad local coverage | 2,000 passed, 19 deselected (measured 2026-10-31); synthetic fixtures and tested routes only |
+| Security posture | ⚠️ Locally exercised | Audit trail, classification, tenant/auth controls; no independent security review or certification |
 | Documentation | ✅ Extensive | ~60K lines across docs/ + governance docs |
 | **Production readiness** | **NOT ESTABLISHED** | Needs 9 external signatures + human sign-off |
-| **Commercial status** | **Controlled pilot** | Single client (Scoach Academy Hub), synthetic data |
+| **Commercial status** | **No customer pilot recorded** | Scoach Academy Hub is an opportunity target; all drill data is synthetic |
 
 ---
 

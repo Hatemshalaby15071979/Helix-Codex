@@ -1,17 +1,29 @@
 # Release notes — Helix Prime
 
-**Latest published tag:** `v1.1.0` — 2026-08-29
+**Latest release tag recorded in this historical note:** `v1.1.0` — 2026-08-29
 (`b077a918…`, "Integrate controlled-pilot deliverables, governance package, and test CI").
 Prior tag: `v1.0.0` — 2026-08-27 (`681f0b28…`, "Fix cockpit launch, add setup.bat, relax
 Python deps to 3.10+").
 
-**Production status (verbatim from `README.md`):** pre-pilot; `production` release gate
-`NOT_READY` (exit 1); nine production-only gates red by design. This is **not** a
-production deployment and **not** a code change to the gate or the engines.
+## Current status (2026-10-31)
 
-This document records the current state and the documentation-alignment pass on the
-`docs/claims-standard-2026-09-29` branch. It is a documentation release, not a product
-release.
+- Local test suite: **2,000 passed, 19 deselected** (Python 3.12).
+- Fixture/engine readiness: **12/12 gates**, 20 calls across six engines and two
+  synthetic tenants, zero engine errors.
+- App/API tenant and operations drill: passed; focused tests **128 passed**.
+- Simulated design-partner drill: `PASS_SIMULATED`, **14/14 checks**. It used synthetic
+  data and deterministic simulated reviewer checks, not real customer or independent
+  review evidence.
+- The production profile remains **`NOT_READY`**; nine production-only gates remain
+  open. No real customer pilot, production deployment, external audit, or legal review
+  is recorded.
+- See [`PRODUCTION_STATUS.md`](PRODUCTION_STATUS.md) and
+  [`production_readiness/simulated-design-partner-drill-2026-10-31.md`](production_readiness/simulated-design-partner-drill-2026-10-31.md)
+  for current scope and boundaries.
+
+The remainder of this document is the **2026-09-29 documentation-alignment snapshot**.
+Its measurements, branch names, and open-item list are retained as history and must not
+be read as the current status.
 
 ## What is in the current state
 
@@ -28,7 +40,8 @@ release.
   PASS, build OK (`AGENTS.md:39-44`, §21). Verified locally this session: `ruff check`
   exit 0, `ruff format --check` exit 0.
 - **Two vertical capability packs.** `capabilities/restaurant/` (reference) and
-  `capabilities/sports_academy/` (first real vertical, Scoach Academy Hub).
+  `capabilities/sports_academy/` (sports-academy prototype built with synthetic data;
+  Scoach Academy Hub was a target scenario, not a confirmed partner).
 
 ## Validation gates (this session)
 
@@ -61,11 +74,11 @@ release.
 - The two CI container steps (16–17) are not reproducible on this machine (Docker not
   running); they rest on the remote green run (`AGENTS.md:5152-5153`).
 
-## Open items carried from earlier ledgers
+## Open items as recorded in the 2026-09-29 snapshot — historical
 
-- Engine scaffolding gap (issue 3) — not yet fixed; recorded openly.
-- Gate `oversight_only` not enforced (issue 1); `Engine.submit` omits `requires_approval`
-  to the gate (issue 2).
+- The engine scaffolding gap (issue 3) has since been closed; all six adapters compute
+  on the 2026-10-31 synthetic readiness fixtures.
+- Gate `oversight_only` and `requires_approval` defects (issues 1 and 2) were fixed.
+- WFM Erlang C and CX configuration defects were subsequently fixed.
 - Cockpit UI tier quarantined (19 tests).
-- Owner-held actions outstanding: secret scanning on 11 repos, `.env` history purge,
-  `ThommyShelby79` divergence resolution (`AGENTS.md:3690-3703`).
+- The 19-test cockpit UI quarantine remains reflected in the current test count.

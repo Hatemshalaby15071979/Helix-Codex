@@ -52,7 +52,7 @@ Replace `mycompany`, `admin`, and `mypassword` with your own values:
 ```
 docker compose -f infra/docker/docker-compose.app.yml exec helix-app \
     python helix_codex_app/scripts/bootstrap_owner.py \
-    --db-path /data/app.db --domain mycompany \
+    --db-path /data/helix_codex_app/app.db --domain mycompany \
     --username admin --password mypassword
 ```
 
@@ -93,7 +93,12 @@ Run the backup command from the repository folder:
 
 ```
 docker compose -f infra/docker/docker-compose.app.yml exec helix-app \
-    python helix_codex_app/scripts/backup_app.py --target /tmp/backup
+    python helix_codex_app/scripts/backup_app.py \
+    --db-path /data/helix_codex_app/app.db \
+    --memory-root /data/helix_codex_app/memory_stores \
+    --audit-db-path /data/security/audit.db \
+    --workflow-db-path /data/control_plane/workflow.db \
+    --target /tmp/backup
 ```
 
 Then copy the backup folder out of the container:
@@ -102,7 +107,13 @@ Then copy the backup folder out of the container:
 docker cp $(docker compose -f infra/docker/docker-compose.app.yml ps -q helix-app):/tmp/backup ./backup
 ```
 
-The backup folder contains your database and memory stores.
+The backup includes this app deployment's app, workflow, and audit databases
+and governed memory stores. Release metadata can be added if a generated
+manifest is available. API documents, tasks, and chats belong to the separate
+API Compose volume and need a separate API backup.
+Verify the app backup with
+`restore_app.py --verify-only` before relying on it; a missing database or
+failed integrity check exits non-zero.
 
 ## Security note
 

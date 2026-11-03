@@ -17,11 +17,16 @@ been demonstrated; unfinished items are listed separately in
   workflow state machine, manual approvals with separation of duties, evidence/
   provenance, append-only memory, metrics, and an evidence-gated metacognitive
   improvement engine that **never auto-deploys**.
-- A controlled, read-only-first design-partner pilot (call-centre wedge) with consent,
-  minimum data, tenant isolation, retention, rollback, and an evidence pack.
+- A simulated two-tenant design-partner drill, run 2026-10-31, using synthetic chaos
+  fixtures and the real local App HTTP routes. It passed 14/14 combined checks and
+  exercises tenant-scoped summaries/tasks, but is not a real design-partner pilot.
+- A read-only-first pilot package with consent, minimum-data, tenant-isolation,
+  retention, rollback, and evidence controls. No real customer pilot has run.
 - A first business capability pack (small restaurant) that **reuses the same core** and
   starts read-only with synthetic data.
-- A second capability pack (**sports academy**, built for Scoach Academy Hub) reusing the
+- A second capability pack (**sports academy**), built with synthetic data for a
+  sports-academy target scenario associated with Scoach Academy Hub (not a customer
+  implementation), reusing the
   same core, with its own ontology, roles, KPIs and a read-only phase behind SOD approval.
 - A governed FastAPI spine (**`helix-api`**, `server/`) as the canonical entry point:
   loopback-bound, auth-protected, with a kill switch and authenticated metrics.
@@ -30,30 +35,34 @@ been demonstrated; unfinished items are listed separately in
 
 ## Verification summary (reproducible)
 
-Measured **2026-09-29** on `main` (`4310c3f`). Every command below is reproducible; the
-dated earlier runs are kept as the audit trail in
+The current local snapshot was verified **2026-10-31**. Historical CI and earlier
+repository measurements remain dated records; do not treat them as current local
+source results. Every command below is reproducible; the dated earlier runs are kept as the audit trail in
 [`15_verified_test_results.md`](15_verified_test_results.md).
 
-- **Tests:** **1,897 passed / 0 failed**, 19 deselected as a quarantined UI tier
-  (`pytest tests/ -q -m "not smoke"`). The 445- and 621-test figures in this package are
-  dated snapshots (2026-08-29 and 2026-09-12) and are retained as history, not as current.
-- **Coverage:** **86.91%** over `server/` and `connectors/`, against an 80% floor.
-- **CI:** **green on all 17 steps** — run [`36497766876`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/36497766876).
-  The pipeline had failed at step 5 on every push since 2026-09-20, so steps 6–17 had never
-  executed once; the repair is recorded in `AGENTS.md` §21.
-- **Lint / format / types / dependencies:** `ruff check` 0 findings on the CI path list;
-  `ruff format --check .` 429 files already formatted; mypy 0 issues; bandit clean;
-  pip-audit clean.
+- **Tests:** **2,000 passed / 19 deselected** in the local Python 3.12 run. The quarantined
+  cockpit UI tier is excluded. Historical suite counts remain in
+  [`15_verified_test_results.md`](15_verified_test_results.md).
+- **Fixture / engine readiness:** 12/12 gates and 20 calls across six engines and two
+  synthetic tenants; zero engine errors. Tenant-fidelity acceptance: 24/24.
+- **App / API:** local tenant and operations drill passed; focused test set 128 passed.
+  The simulated design-partner drill passed 14/14 combined checks.
+- **Lint / format:** changed paths passed Ruff. Repository-wide status is not clean:
+  the current record reports 21 existing Ruff findings and 346 files needing format.
+  Do not repeat earlier 86.91% coverage or all-17-step CI results as measurements of
+  this local source snapshot; those are historical CI records.
 - **Governance:** `python3 -m GOVERNANCE.governance_check check` → `governance=PASS`.
-- **Security:** `release.security_gate.run_security_gate()` → `all_ok=True` — 0 secret
+- **Security:** the earlier `release.security_gate.run_security_gate()` result was
+  `all_ok=True` — 0 secret
   findings, canonical classification set, deny-by-default, redaction, typed malformed-output
   handling, audit integrity.
-- **Synthetic demo (clean setup):** `python3 demo/synthetic_demo.py` → exits 0; 41 governed
-  records across two tenants; audit chain intact; 0 live-customer records; no external writes.
-- **Release gates** (re-run 2026-09-29, `write_evidence=False`, manifest untouched):
-  `app_pilot` → `CONTROLLED_PILOT_READY`; `controlled_pilot` → `CONTROLLED_PILOT_READY`;
-  `production_candidate` → `PRODUCTION_CANDIDATE`; `production` → `NOT_READY` (exit 1 — the
-  nine production-only gates are red by design and require external evidence).
+- **Synthetic demo (clean setup):** the 2026-09-29 run exited 0 with 41 governed
+  records across two tenants, intact audit chain, zero live-customer records, and no
+  external writes; this is a dated historical measurement.
+- **Release gates:** the 2026-10-31 non-writing C8 run returned
+  `controlled_pilot` → `CONTROLLED_PILOT_READY` and `production` → `NOT_READY`; the
+  nine production-only gates remain red. The broader 2026-09-29 profile set
+  (`app_pilot`, `controlled_pilot`, `production_candidate`, `production`) is historical.
 
 ## Documents in this package
 
@@ -92,8 +101,9 @@ append.
   as such. Claims no pass rate, coverage, or CI status. Regenerate with
   `career_automation/engine_to_skill_map.py`.
 
-## Status
-- **Pilot package ready:** TRUE
-- **First real capability pack ready:** TRUE
-- **Real design-partner approval pending:** TRUE
-- **Production readiness:** **NOT_ESTABLISHED** (not claimed; external production gates are red by design)
+## Status (2026-10-31)
+- **Pilot package / controlled-pilot profile:** locally gate-ready; not evidence of a real pilot.
+- **Simulated design-partner drill:** `PASS_SIMULATED`, 14/14 checks; synthetic only.
+- **Real design-partner approval or participation:** none recorded.
+- **First customer deployment:** not ready; production profile remains `NOT_READY`.
+- **Production readiness:** **NOT_ESTABLISHED**; nine production-only gates still require genuine external evidence and human authority.

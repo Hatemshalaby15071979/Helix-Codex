@@ -2,7 +2,7 @@
 
 This directory contains operational runbooks and deployment guides for Helix Prime.
 
-> **Important:** Helix Prime is a single public monorepo at the repo root (`.`). All
+> **Important:** Helix Prime is a single local repository at the repo root (`.`). All
 > paths below are relative to the repo root. Earlier drafts of this file referenced a
 > two-repository layout (`AI OPS Engineering/helix-prime-ecosystem` + `helix-story`)
 > that no longer exists — those paths are void.
@@ -25,8 +25,11 @@ This directory contains operational runbooks and deployment guides for Helix Pri
 | Azure config | `marketing/azure.yaml` | Azure deployment scaffolding |
 | Infrastructure | `marketing/infra/main.bicep` | Azure Static Web Apps template |
 
-None of these files is evidence of a hosted production service. Helix Prime is a
-public alpha; there are no client deployments or production enterprise usage.
+None of these files is evidence of a hosted production service. The current local
+checkout has no configured remote; online visibility is not asserted here. No client
+deployment or production enterprise usage is recorded. Local synthetic tenant and
+operations drills passed on 2026-10-31; see
+[`../PRODUCTION_STATUS.md`](../PRODUCTION_STATUS.md).
 
 ## Engine Operations
 

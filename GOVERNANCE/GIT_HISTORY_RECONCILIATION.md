@@ -1,5 +1,12 @@
 # GIT History Reconciliation — Codex Phase C0
 
+> **Historical record:** this C0 note describes the 2026-08-27 checkout and its
+> proposed remediation at that time. The workspace history was later rewritten on
+> 2026-10-31 to the canonical identity; all configured remotes were removed and no
+> push was made. The "do not rewrite" and commit-plan instructions below are historical,
+> not current operational instructions. See the workspace handover record at
+> [`../../../agents.md`](../../../agents.md) for the 2026-10-31 scrub evidence.
+
 **Date:** 2026-08-27
 **Commits observed:** 2
 

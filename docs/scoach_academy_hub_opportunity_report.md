@@ -4,6 +4,14 @@
 > Target client: Scoach Academy Hub (private sports academy)
 > Prepared by: WorkBuddy AI using the Hexa Opportunity Memo framework + PCV methodology
 
+> **Current evidence boundary (2026-10-31):** this is a dated desk-research hypothesis,
+> not verified customer discovery. The repository contains no interview record,
+> consent, data transfer, pilot, approval, or customer outcome from Scoach Academy Hub.
+> Statements below about its operational pain, budget, or buying intent are assumptions
+> that require direct validation before use in a pitch or decision. The sports-academy
+> pack and subsequent design-partner drill used synthetic data only. The App has no CSV
+> upload/import route.
+
 ---
 
 ## Table of contents
@@ -27,7 +35,7 @@
 
 **PCV Score: 18/24 (strong opportunity — worth pursuing)**
 
-**Recommendation:** Proceed. This is a real problem with a real customer who is already in pain. The fit between Helix Codex's six engines and a sports academy's six core operational needs is remarkably tight. **Status (2026-09-12): the sports-academy capability pack (v1.0.0) has been BUILT** — `capabilities/sports_academy/` with attendance, coach KPIs, athlete profiles, facility, payments, roles, workflows, and cockpit views on simulated data — so the "new vertical, no pack" risk is retired. What remains is proving value on a narrow scope via the pilot, not selling the full vision.
+**Recommendation:** Validate the opportunity through direct discovery before proceeding. The original report's client-pain and buying-intent statements are hypotheses, not confirmed facts. The fit between Helix Codex's engines and sports-academy workflows is a product hypothesis. **Status (2026-09-12): the sports-academy capability pack (v1.0.0) was built** — `capabilities/sports_academy/` with attendance, coach KPIs, athlete profiles, facility, payments, roles, workflows, and cockpit views on simulated data. The local synthetic drill completed 2026-10-31; no real Scoach pilot or customer validation has occurred.
 
 **Key risks:**
 - No external evidence for this vertical is available yet
@@ -35,7 +43,7 @@
 - Competitors have polished, mobile-first products
 - The client may expect a finished SaaS, not an alpha platform
 
-**Strategy:** Position as a **pilot partner**, not a vendor. Free for 60 days, then discounted. Use the pilot to build the sports-academy capability pack. Turn Scoach Academy Hub into your first case study.
+**Historical strategy proposal, not an approved offer:** discuss a bounded pilot only after direct discovery, owner approval, consent, and scope agreement. No pricing, free period, pilot commitment, or case-study permission is recorded.
 
 ---
 
@@ -193,7 +201,7 @@ Based on industry research, these are the metrics a well-run sports academy trac
 | Time-to-competency | How fast a new coach reaches full load | < 30 days |
 | Quality score | Curriculum delivery consistency | > 85% |
 
-### 3.4 The pain points the client is experiencing (mapped to your research)
+### 3.4 Hypothesized pain points (not verified with the client)
 
 The client said:
 - "No rules and hierarchy" → needs organizational structure definition + role-based access
@@ -371,34 +379,38 @@ Print these. Bring them to the meeting. Ask them in this order:
 **Opening (2 minutes):**
 "Based on what you told me, you're running this academy on willpower and memory. You're the CRM, the scheduler, the KPI tracker, and the operations manager — all at once. That's why it feels like a mess. It's not that you're disorganized — it's that you don't have a system to organize into."
 
-**The pain mirror (3 minutes):**
-Restate the top 3 pains they mentioned in discovery, in their own words. This proves you listened.
+**The pain mirror (3 minutes, only after an actual discovery interview):**
+Restate only pains the participant actually described, in their own words and with
+permission. Do not present the assumptions in this report as statements made by Scoach.
 
-**The offer (5 minutes):**
-"I build something called Helix Codex OS. It's an operations system — like having an AI operations manager that never sleeps but always asks you before doing anything. Here's what I'd do for your academy:
-
-1. **Track every coach's attendance and KPIs automatically** — you'll see a dashboard, not guess.
-2. **Build athlete and family profiles** — every child's history, attendance, and progress in one place.
-3. **Set up role-based access** — your coaches see their sessions, your admin sees billing, you see everything.
-4. **Detect when an athlete is about to churn** — before they leave, not after.
-
-I'd like to do this as a **pilot** — free for the first 60 days. You pay nothing until you see value. In exchange, you let me use your academy as a case study (anonymized if you prefer) and give me feedback on what works and what doesn't."
+**Product discussion (not an offer):**
+"I am exploring whether a small, governed operations tool could help with a workflow you
+identify. I have exercised a synthetic-data prototype locally, but it is not deployed
+for customers. If we agree that a use case is worth exploring, I would first document
+scope, data permissions, operational safeguards, and what remains unproven."
 
 **The close (3 minutes):**
-"Here's what I need from you: your top 3 pains ranked, access to your current data (rosters, schedules, anything you have), and 30 minutes a week for a check-in call. That's it. I handle everything else."
+"If there is mutual interest, the next step is to validate one workflow and its risks.
+No data access, pilot, price, or case-study permission is requested or implied by this
+conversation."
 
 **What NOT to say:**
 - "I have 9 AI agents with content-based routing" — they don't care
 - "It uses Erlang C for forecasting" — they don't know what that is
 - "It has a hash-chained audit ledger" — say "every action is logged and auditable"
 - "It's local-first with cloud scaffolding" — say "it runs on your computer, your data stays with you"
-- "It's pre-pilot with 14/14 controlled-pilot gates passing" — say "I'm offering this as a pilot because I want to prove it works for you before you pay"
+- Do not describe the 14/14 simulated design-partner drill as customer acceptance,
+  independent review, or a controlled-pilot sign-off.
 
 ### 6.4 Handling objections
 
+The responses below are historical script suggestions, not approved commercial terms.
+Do not use the pricing, feature, or pilot claims as promises. The current App has no CSV
+upload endpoint, and the repository has no recorded customer deployment.
+
 | They say | You say |
 |----------|---------|
-| "How much does it cost?" | "The pilot is free for 60 days. After that, we'd talk about $350-600/month depending on how many athletes and coaches you have. But let's see if it's worth anything to you first." |
+| "How much does it cost?" | "There is no approved pilot offer or pricing yet. I would first understand your needs and determine whether the product is ready for a bounded test." |
 | "We already use WhatsApp and spreadsheets" | "Those work when you have 20 athletes. At 100+, the information is scattered and you lose track. How many athletes do you have now? And how many do you want next year?" |
 | "Can it do [feature X]?" | "Tell me what problem that feature would solve. If it's a top-3 pain, I'll build it in the pilot. If it's nice-to-have, let's focus on the burning issues first." |
 | "Are you a company? How long have you been doing this?" | "Built by Hatem Shalaby, Contact Centre Operations & AI Implementation Lead | WFM & CX Transformation. Background: https://github.com/<YOUR_GITHUB_ORG>" |
@@ -407,7 +419,7 @@ I'd like to do this as a **pilot** — free for the first 60 days. You pay nothi
 
 ---
 
-## 7. Pricing strategy and negotiation guide
+## 7. Historical pricing hypotheses — not approved offers
 
 ### 7.1 Pricing principles (from research)
 
@@ -423,7 +435,7 @@ Based on pricing research (solofoundr.co, 2026):
 
 | Tier | Monthly price | What's included | Target client |
 |------|--------------|-----------------|---------------|
-| **Pilot** | Free (60 days) | 1 engine (their top pain), 1 location, up to 100 athletes | Scoach Academy Hub (first client) |
+| **Historical pilot hypothesis** | Not an approved offer | Any future scope/price would require discovery, product readiness, consent, and owner approval | Prospective target only; no engagement recorded |
 | **Starter** | $350/month | 3 engines, 1 location, up to 100 athletes | Small academies |
 | **Growth** | $600/month | All 6 engines, 1 location, up to 200 athletes | Growing academies |
 | **Scale** | $1,200/month | All 6 engines, multi-location, unlimited athletes | Multi-location / franchise |

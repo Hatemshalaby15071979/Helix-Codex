@@ -7,7 +7,11 @@
 
 ## Where the project actually stands
 
-Helix Prime is a governed operations platform. It is `CONTROLLED_PILOT_READY`, not a product: it has no customers, no revenue, and makes no deployment claims.
+Helix Prime is a local-first governed operations platform. The local C8 profile returns
+`CONTROLLED_PILOT_READY`; this is an internal gate classification, not evidence that a
+real customer pilot has occurred. The 2026-10-31 simulated design-partner and App/API
+operations drills passed their stated scopes. There are still no recorded customer
+deployments, production usage, or verified revenue.
 
 **What is real today (verified):**
 
@@ -16,15 +20,18 @@ Helix Prime is a governed operations platform. It is `CONTROLLED_PILOT_READY`, n
 - An orchestrator with content-based request routing
 - **`helix-api`** — the governed FastAPI spine (`127.0.0.1:8000`), the one deployable artifact: identity, RBAC, approvals, kill switch, metrics, audit chain. The Streamlit cockpit is now a **read-only secondary diagnostic surface**.
 - **Helix Codex App** — the first daily-use product layer (`helix_codex_app/`): identity, chat, documents, tasks, calendar, attendance, governed memory, and a low-code capability loader
-- **2 vertical capability packs**: `capabilities/restaurant/` (the reference pattern) and `capabilities/sports_academy/` (first real vertical, built for Scoach Academy Hub)
+- **2 vertical capability packs**: `capabilities/restaurant/` (the reference pattern) and `capabilities/sports_academy/` (a sports-academy prototype built with synthetic data; Scoach Academy Hub is an opportunity target, not a confirmed partner)
 - **C8 release gate** — `release/gate.py`, 29 gate implementations (14 core + 6 app + 9 production-only) across 5 named profiles
-- A public repository at `github.com/<YOUR_GITHUB_ORG>/Helix-Prime`
-- **CI pipeline green** — `.github/workflows/ci.yml`, **all 17 steps passing** on `main` (run [`36497766876`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/36497766876), 2026-09-29): ruff check, ruff format check, mypy, the full suite (**1,897 passed, 19 deselected**, coverage **86.91%** against an 80% floor), bandit, pip-audit, the six drift/registry/governance checks, package build, and both container steps. It had failed at step 5 on **every push from 2026-09-20 to 2026-09-28**, so steps 6–17 were never exercised until this run; see `AGENTS.md` for the repair record.
+- A local repository checkout; no Git remote is configured here and current online visibility is not asserted
+- **Local verification (2026-10-31)** — the full suite reported **2,000 passed, 19 deselected**; fresh fixture/engine readiness passed **12/12 gates** across **20 calls**; the two-tenant simulated design-partner drill passed **14/14 checks**; and the App/API tenant and operations drill passed its focused controls. See [`docs/PRODUCTION_STATUS.md`](docs/PRODUCTION_STATUS.md) and [`AGENTS.md`](AGENTS.md). These are local results, not a current remote CI run or a production claim.
+- **Historical CI** — the latest recorded remote run is dated 2026-10-05 (1,967 passed,
+  19 deselected; coverage 86.91%). It is not evidence for the 2026-10-31 local source
+  state.
 
 **What is explicitly NOT real yet — do not claim otherwise:**
 
 - No client deployments and no production enterprise usage
-- No pilot has ever run on real data; every pack runs `DATA_MODE = "simulated_realistic"`
+- No real-client pilot has run; the 2026-10-31 design-partner drill used only synthetic fixtures
 - No revenue, no pricing model, no budget of a team that does not exist
 - No certifications: no SOC 2, no ISO, no independent audit
 - The 9 production-only gates remain red by design — they require external humans, external auditors, and legal review that do not exist
@@ -47,9 +54,9 @@ This is a **one-person** effort. Everything below is sized for that reality.
 
 ## Now (current focus)
 
-1. ~~**Push the last commits.**~~ — **closed 2026-09-29.** `main` is level with `origin/main` at `1830f30`; there is no backlog. This item previously recorded that the owner had made the repository **private** on 2026-09-21 — that record was superseded. The repository is **public** (measured 2026-09-25; the owner confirmed public is the intended state), and an unauthenticated GitHub API request returns `"private": false`. Never trust a SHA or a backlog count written here; re-measure with `git ls-remote --heads origin main`, then `git rev-list --count <sha>..HEAD`.
-2. **Run the pilot.** Turn Scoach Academy Hub from a named design partner into a dated pilot with a named operator and a consent record. This is the one gate that unlocks every commercial conversation.
-3. **Close the external production gap (Classes 2–5)** — 21 external verification items that require humans or external parties, tracked in `docs/release/handoff/production-blockers-checklist.md`. These cannot be closed by engineering.
+1. **Decide whether an App CSV import is required.** The current harness ingests synthetic exports; the App drill used its real HTTP document/task routes. There is no App CSV upload workflow. Implement and test a tenant-scoped import path only if that is part of the intended product scope.
+2. **If a real pilot is pursued, make it a separate owner-authorized activity.** The simulated drill is not a real Scoach Academy Hub engagement. A real pilot requires an actual participant, explicit consent, a named operator, a bounded data scope, and operational safeguards.
+3. **Keep the external production gap explicit.** The nine production-only gates still need genuine outside evidence and human authority; local simulation cannot satisfy or waive them. See [`docs/release/production-blockers.md`](docs/release/production-blockers.md).
 
 ## Next (once the above is stable)
 
@@ -61,8 +68,8 @@ This is a **one-person** effort. Everything below is sized for that reality.
    carried the retracted narration — **it did not**; the captions were regenerated
    from the corrected script in `c5a88ef` and are current. Closes issue #3. See
    `CHANGELOG.md`.
-2. **Build the container** — the Docker daemon was unavailable during validation, so the first real `docker build` may surface problems that the 32 static packaging tests cannot see.
-3. **Documentation consistency** — sweep remaining docs and screens for claims that exceed `MASTER_STORY.md`, and correct them the way this roadmap was corrected.
+2. **Close repository-wide lint/format debt** — the current local record reports 21 existing Ruff findings and 346 files needing formatting; changed paths are clean.
+3. **Re-run complete CI-equivalent validation** on the exact candidate source and preserve the resulting artifact set before any release decision.
 4. **Decide the public product name** — the repository says Helix Prime, the commercial layer says Helix Codex OS, and the manifest says Helix-Prime-Codex.
 
 ## Not on the roadmap

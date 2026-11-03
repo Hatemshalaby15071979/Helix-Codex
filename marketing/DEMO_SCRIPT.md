@@ -3,7 +3,14 @@
 File: marketing/assets/Helix_Prime_5Min_Demo.mp4
 Narrator: Professional storyteller voice (warm, confident, human)
 Author featured: Hatem Shalaby
-Core message: Real operations problems solved by real engineering, not AI hype.
+Core message: Local synthetic-data prototype exercised through explicit, measurable
+controls; no customer outcomes or production claims.
+
+> **Current use status (2026-10-31):** this is a narration script, not a record of a
+> live deployment. A local simulated two-tenant drill passed 14/14 checks, but no real
+> customer pilot, durable public service, cloud-scale operation, or customer ROI is
+> established. Do not reuse the previous "public alpha" or scalability statements
+> below without revising the script and revalidating the exact build.
 
 > **Truth note (re-verified 2026-09-20):** This script was rewritten to remove
 > fabricated claims (an invented "proof ledger," "57 auditable entries," "three
@@ -85,11 +92,12 @@ And every result the system produces is recorded and traceable — so the team c
 
 > [Visual: Clean, confident shots of the system in action. Simple test results showing "pass" — not code, just results.]
 
-"This is a working system — built and verified, step by step, in the open.
+"This is a working system — built and verified, step by step, in the local repository.
 
 Here's what the proof looks like:
 A test suite that runs against the real code — automated, and growing.
-Every component built in the open, in a public repository.
+Every component is testable from the local source. Current public repository visibility
+has not been verified, so do not claim that this code is publicly available.
 No screenshots of things that don't run. No promises dressed up as results.
 
 Engineers trust diagrams. Managers trust stories.
@@ -103,15 +111,18 @@ But smart buyers trust working code you can run yourself."
 
 "Here's what makes Helix different from everything else out there.
 
-It works on your laptop — no cloud required, no data leaving your building.
-It scales to the cloud — when you're ready, there's a path.
-And it's built honestly: a public alpha, with its real limits stated plainly in the README.
+It has been exercised locally with synthetic data; external data connections and
+customer deployments are not established.
+The architecture is local-first, but cloud scale and production operation have not
+been validated.
+And it is built honestly: the local simulation is not a customer result, and the
+production profile remains NOT_READY.
 
 This isn't about replacing people.
 It's about giving your team the clarity and speed they've always needed.
 
 Helix Prime.
-A digital operations team — built on real experience, built in the open.
+A governed operations prototype — tested locally, with its limits stated plainly.
 
 Experience. Engineering. Honesty."
 

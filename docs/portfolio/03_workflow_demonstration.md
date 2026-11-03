@@ -1,5 +1,12 @@
 # 3. Workflow Demonstration
 
+> **Scope note (2026-10-31):** the demo below remains a synthetic in-process
+> demonstration. A separate local simulated design-partner drill exercised authenticated
+> App HTTP routes across two synthetic tenants and passed 14/14 combined checks. It did
+> not upload raw CSV through the App (no CSV upload route exists) and did not involve a
+> real customer or independent reviewer. See
+> [`../production_readiness/simulated-design-partner-drill-2026-10-31.md`](../production_readiness/simulated-design-partner-drill-2026-10-31.md).
+
 The demonstration proves the **same governed core** runs two different businesses in one
 memory without cross-tenant leakage and with an intact audit chain.
 

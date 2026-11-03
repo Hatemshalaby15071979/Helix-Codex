@@ -2,8 +2,9 @@
 
 > **Classification:** PROJECT DOCUMENT — capability pack record
 > **Status:** Read-only, synthetic data only, `production_readiness: NOT_ESTABLISHED`
-> **Client context:** first design partner (Scoach Academy Hub, private sports
-> academy, one location). Business case: `docs/scoach_academy_hub_opportunity_report.md`.
+> **Target context:** sports-academy opportunity hypothesis associated with Scoach
+> Academy Hub; no design-partner relationship, customer data, or pilot is recorded.
+> All pack fixtures are synthetic. See `docs/scoach_academy_hub_opportunity_report.md`.
 
 ## What this pack is
 
@@ -67,20 +68,22 @@ registering new capabilities.
    (`AcademyConnector._reject_live_data`); no live Scoach connector exists
    and the pack tree carries no network client imports.
 
+The pack is a synthetic-data prototype, not a delivered customer implementation.
 Production readiness of this pack is separate from production readiness of
 the app: see `docs/release/production-data-boundary.md`. This pack stays
-synthetic, read-only, and `NOT_ESTABLISHED`; graduation needs a consented
-roster import, a client-defined curriculum, an explicit readiness review,
-and the same production gates as the app.
+synthetic, read-only, and `NOT_ESTABLISHED`; any future live-data work needs a
+tenant-scoped import path, explicit consent, a client-defined curriculum, an
+explicit readiness review, and the same production gates as the app. No CSV
+upload route currently exists in the App.
 
 ## Not in v1 (deliberate)
 
 - Parent mobile app (web portal only)
 - Payment processing/integration (manual records only; PCI scope deferred)
 - Athlete progression tracking (requires curriculum definition first)
-- Multi-location support (pilot is one location)
+- Multi-location support (a future pilot scope, if approved, would begin with one location)
 - Live data mode (`production_readiness` stays NOT_ESTABLISHED until a
-  design partner approves a controlled pilot)
+  separately authorized data path and the applicable readiness gates are satisfied)
 
 ## Verification
 

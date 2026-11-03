@@ -3,6 +3,11 @@
 A single, controlled, read-only-first pilot plan covers both demonstrated wedges (call-centre and
 restaurant). It is the operational expression of the governance model.
 
+> **Current status (2026-10-31):** the plan and local controls are exercised against
+> synthetic fixtures, including a simulated two-tenant App/API drill. No real design
+> partner has participated and no customer pilot has run. The simulation does not
+> satisfy consent, customer acceptance, or production approvals.
+
 ## Controls (all implemented and tested)
 1. **Scope & objectives** — `pilot.scope.PilotScope` (objectives, policies, review checklist).
 2. **Customer consent** — `pilot.consent.ConsentRecord` + `validate_consent` (granted / expiry /
@@ -31,5 +36,6 @@ activated in this build.
 ## Status
 - Pilot package ready: **TRUE**.
 - First restaurant capability pack ready: **TRUE**.
-- Real design-partner approval: **PENDING**.
+- Real design-partner participation/approval: **NOT RECORDED**.
+- Simulated design-partner drill: **PASS_SIMULATED**, 14/14 checks; synthetic only.
 - Production readiness: **NOT_ESTABLISHED**.

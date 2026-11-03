@@ -1,16 +1,22 @@
 # Known issues — Helix Prime
 
-Open limitations of the current build, each with the source that establishes it.
-These are documented honestly; none is hidden behind a passing claim. Numbers are
-reported exactly as found in code or measured on simulated data.
+Current limitations and retained defect records, each with the source that establishes
+it. Status was reconciled on 2026-10-31; historical defect descriptions below are not
+claims that a fixed defect remains present. Numbers are from code or disclosed
+test/synthetic data.
 
 > Data mode: `simulated_realistic`. Every behavioural number here is a measurement on
 > synthetic data or a reading of source. There is no real customer traffic; the demo
 > data is synthetic by design.
 
+> **Current validation:** the local suite reported 2,000 passed / 19 deselected; the
+> latest fixture/engine readiness run passed 12/12 gates. A separate local App/API
+> drill and a simulated design-partner drill passed their stated scopes. None is an
+> independent accuracy, security, legal, or production certification.
+>
 > **Fixed, retained as the record.** Issues 1 and 2 are fixed in commits `2c9d606`
-> and `64928da` and kept below, unchanged, as the record of what was wrong. The
-> remaining issues are open.
+> and `64928da`; issue 4's Erlang C implementation and issue 5's CX configuration
+> behavior are also fixed. The remaining items describe limitations that are still open.
 
 ## 1. The gate's `oversight_only` flag is parsed but never enforced — **FIXED**
 
@@ -133,9 +139,9 @@ no adapter is scaffolding.
 - The headline "Six engines" claim and the statement at `engines/README.md:52` that
   "Each adapter invokes real engine code (not fake)" are now true for both *invocation*
   and *computed result* across all six adapters.
-- The 1,897-test suite asserts the adapter *contract*, so green tests do **not** validate
-  that any engine computes the *correct* operational numbers — only that each
-  returns a computed result. See Tier 2 in `README.md`.
+- The suite and readiness harness show that adapters compute on the tested fixtures;
+  passing tests do **not** independently validate that every engine computes correct
+  operational numbers for real organizations. See Tier 2 in `README.md`.
 
 ## 4. ~~The WFM "Erlang C" formula is a non-standard closed form, and its docstring is corrupted~~ — FIXED
 
@@ -150,7 +156,11 @@ cited in the module docstring. The old implementation deviated from the textbook
 probability of waiting by up to 0.811 absolute ((100, 80): 0.769 vs 0.0196) and
 understaffed the demo-shaped scenario 5 vs the textbook 7 agents. Pinned by
 `tests/test_wfm_erlang_c.py` (42 tests). Record: `docs/verification/2026-09-30.md`.
-What was wrong is kept below.
+What was wrong is kept below as a historical defect description. The current
+implementation uses the textbook Erlang B recursion and Erlang C probability-of-waiting
+expression, and it is covered by 42 reference tests. The 2026-10-31 readiness pack also
+exercises WFM on both synthetic tenant fixtures; this is not validation against real
+customer traffic.
 
 `engines/wfm/src/erlang_c.py:124` computes
 `probability_waiting = (p * (1 - ρ)) / (n*(1-ρ) + ρ*(1-(1-ρ)^(n-1)))`. This is a
@@ -163,9 +173,10 @@ match the code. `optimize_agents` binary-searches agent counts
 
 - `confidence_interval` is a fixed `0.05 * agents` margin (`erlang_c.py:243`),
   independent of the `confidence_level=0.95` parameter accepted at `erlang_c.py:40`,
-  which is never used in the interval calculation.
-- Limits the claim that WFM performs standard Erlang C forecasting — it is a plausible
-  heuristic, not the textbook formula, and its stated confidence band is nominal.
+  which was never used in the old interval calculation.
+- Historical limitation: the old implementation was not standard Erlang C. It was
+  replaced and reference-tested; do not carry the former defect forward as current
+  status.
 
 ## 5. ~~CX churn scorer assumes AHT is at most 0.5 minutes~~ — RESOLVED
 
@@ -183,15 +194,14 @@ scorer does not consume.
 
 **Fix:** normalize AHT as `goodness = 1 - value` (clamped to `[0,1]`) and recalibrate the
 threshold band at `risk_scorer.py:57-66` to `{critical: 0.3, high: 0.5, medium: 0.7}` so
-a higher AHT fraction yields a lower goodness and therefore a higher risk. The parallel
-band in `config/risk_thresholds.yaml:16` was updated to match (the engine hardcodes its
-thresholds and does not read the YAML). A regression test
+a higher AHT fraction yields a lower goodness and therefore a higher risk. The
+threshold configuration is loaded from `config/risk_thresholds.yaml`; see issue 3.
+A regression test
 (`tests/test_cx_aht_normalization.py`) pins that a realistic AHT fraction is no longer
 collapsed to `0` and that risk is monotonic in the fraction.
 
-- Remaining (minor) limitation: the thresholds are still hardcoded in the engine rather
-  than loaded from `config/risk_thresholds.yaml` (deliberate, per the YAML header), but
-  the AHT unit is now coherent.
+- The hardcoded-threshold limitation in the original finding is also resolved; it is
+  retained here only as historical context.
 
 ## 6. Rate limiting trusts a header set by an external Worker
 
@@ -248,4 +258,17 @@ the engines produce correct operational numbers. There is no independent
 tenant-isolation audit (cf. the 500/500 tagged-row count in LIVE Support Assistant), no
 external security review, and no certified data-isolation evidence.
 
-- Limits any inference from "1,897 tests pass" to "the product is correct".
+- Limits any inference from a passing local suite or synthetic-fixture drill to
+  independently verified production correctness.
+
+## 11. The App has no CSV upload/import workflow
+
+The production-readiness harness ingests synthetic raw exports and runs the
+fixture/engine gates. The App itself has no CSV upload route. The 2026-10-31 simulated
+design-partner drill used the harness for fixture ingestion and then exercised the App's
+authenticated document/task APIs with source-derived summaries. It did not upload raw
+CSV files through the App.
+
+- Limits claims that the App itself ingests client CSV data. If in-App import is a
+  product requirement, implement a tenant-scoped, authenticated import path and test
+  its validation, quarantine, disclosure, and isolation behavior.

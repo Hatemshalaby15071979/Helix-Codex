@@ -6,12 +6,16 @@ and common troubleshooting steps.
 
 ## Architecture
 
-The app runs as a single Docker container. It holds one SQLite database
-(app.db), one governed memory tree (memory_stores/), and serves the web UI
-on http://127.0.0.1:8100. There are no external dependencies — no Redis,
-no message broker, no separate database server.
+The app runs as a single Docker container. Its persistent volume holds the
+app SQLite database and governed memory tree, plus the workflow and audit
+databases used by the app process. It serves the web UI on
+http://127.0.0.1:8100. There are no external dependencies — no Redis, no
+message broker, no separate database server.
 
 Data lives in a Docker named volume (`helix_app_data`) mounted at `/data`.
+This volume is independent of the API profile's `helix_data` volume; the
+two Compose profiles are separate deployments and do not share database
+state. Back up each deployment through its own procedure.
 Inside the image `/data` is owned by the unprivileged `helix` user
 (uid 10001) and is the only writable application path; the app itself runs
 as that user, never as root. On the host, the volume contents are managed
@@ -35,12 +39,13 @@ Manual check:
 curl -s http://127.0.0.1:8100/app/healthz
 ```
 
-Returns HTTP 200 with an empty body when the app is running.
+Returns HTTP 200 with `{"status":"ok","app":"helix-codex"}` when the app is
+running.
 
-`healthy` means liveness only (the process answers). Whether the instance
-is verified ready is a separate question: the core `/readyz` probe, the
-`infra/monitoring/README.md` alert catalog (meaning + response action per
-alert), and the release gates in `docs/release/` are the readiness story.
+`healthy` means the app endpoint responds. The separate API Compose profile
+has `/readyz` for API readiness; it is not an app health endpoint. Consult
+the `infra/monitoring/README.md` alert catalog and release gates for the
+readiness story.
 After any upgrade or restore, check `healthy` here, then work through the
 restore-rehearsal checklist before letting users back in.
 
@@ -69,7 +74,12 @@ backup directory with a manifest:
 
 ```
 docker compose -f infra/docker/docker-compose.app.yml exec helix-app \
-    python helix_codex_app/scripts/backup_app.py --target /tmp/backup
+    python helix_codex_app/scripts/backup_app.py \
+    --db-path /data/helix_codex_app/app.db \
+    --memory-root /data/helix_codex_app/memory_stores \
+    --audit-db-path /data/security/audit.db \
+    --workflow-db-path /data/control_plane/workflow.db \
+    --target /tmp/backup
 ```
 
 Copy the backup out of the container:
@@ -80,23 +90,30 @@ docker cp \
     ./helix-backup-$(date +%Y%m%d)
 ```
 
-The backup manifest records the node count and memory chain verification
-status. A chain that fails verification is flagged in the manifest.
+The backup includes this deployment's app database, governed memory tree,
+workflow database, and audit database; release metadata is optional when a
+generated manifest is available. Its manifest records each captured file's
+SHA-256, app node count, audit-chain status, and memory-chain verification.
+Missing requested databases, invalid audit chains, and invalid memory chains
+cause a non-zero result. The API profile uses a
+separate Docker volume and its own backup procedure in
+`docs/release/backup-restore-guide.md`; this app backup does not cover API
+documents, tasks, or chats.
 
 **Schedule:** Run a backup daily if the app is in active use.
 
 ## Scheduled backups
 
-Backups are taken from outside the container so a dead app can still be
-backed up. Name every backup directory with a timestamp so retention can
-sort it (`helix-backup-YYYYMMDD-HHMMSS`). The examples below capture the
-app database, the memory stores, the audit database, and the release
-manifest — the full verifiable set.
+Run the backup command inside the healthy container and copy the result to
+durable host storage immediately. Name every backup directory with a
+timestamp (`helix-backup-YYYYMMDD-HHMMSS`). The example captures all app
+state databases and memory stores. Pass `--release-manifest` if the deployed
+release provides a generated manifest file.
 
 Linux (cron, daily at 02:00):
 
 ```
-0 2 * * * docker compose -f /opt/helix/infra/docker/docker-compose.app.yml exec -T helix-app python helix_codex_app/scripts/backup_app.py --db-path /data/app.db --memory-root /data/memory_stores --audit-db-path /data/audit.db --release-manifest /data/release-manifest.json --target /tmp/helix-backup-$(date +\%Y\%m\%d-\%H\%M\%S) && docker cp $(docker compose -f /opt/helix/infra/docker/docker-compose.app.yml ps -q helix-app):/tmp/helix-backup-$(date +\%Y\%m\%d-\%H\%M\%S) /srv/backups/ && python helix_codex_app/scripts/backup_app.py --prune-root /srv/backups --keep-last 7 --keep-days 30
+0 2 * * * mkdir -p /srv/backups && STAMP=$(date +\%Y\%m\%d-\%H\%M\%S) && docker compose -f /opt/helix/infra/docker/docker-compose.app.yml exec -T helix-app python helix_codex_app/scripts/backup_app.py --db-path /data/helix_codex_app/app.db --memory-root /data/helix_codex_app/memory_stores --audit-db-path /data/security/audit.db --workflow-db-path /data/control_plane/workflow.db --target /tmp/helix-backup-$STAMP && docker cp $(docker compose -f /opt/helix/infra/docker/docker-compose.app.yml ps -q helix-app):/tmp/helix-backup-$STAMP /srv/backups/helix-backup-$STAMP && python /opt/helix/helix_codex_app/scripts/backup_app.py --prune-root /srv/backups --keep-last 7 --keep-days 30
 ```
 
 macOS: the same commands under `launchd` (a `StartCalendarInterval` plist
@@ -128,20 +145,18 @@ age -r <recipient> -o helix-backup-20260918-020000.tar.age <backup-dir>
 Store the decryption key offline, separate from the backups. A backup you
 cannot decrypt is not a backup — rehearsal (below) must include a decrypt.
 
-## RPO / RTO assumptions
+## RPO / RTO
 
-- **RPO ≤ 24 hours** with the daily schedule above: a total loss loses at
-  most one day of chats, documents, tasks, and memory. Shorten the cron
-  interval if the team cannot re-create a day of work.
-- **RTO is minutes, not hours:** stop the app, restore into a clean
-  directory, verify (automatic), swap the volume contents, start, log in.
-  The restore command refuses to run long: verification is local SQLite
-  and file hashing, so even a large backup verifies in minutes.
+The daily schedule is a proposed 24-hour backup interval, not a measured
+recovery-point guarantee. Record the age of the last verified backup at
+incident time to calculate observed RPO. Do not claim an RTO until a timed
+restore rehearsal includes verification and a successful application health
+check; record elapsed time and data volume in the rehearsal checklist.
 
 ## Backup failure alert and escalation
 
-`backup_app.py` exits non-zero and prints `app backup failed: <reason>`
-when nothing was captured or a write fails. Wire the scheduler to alert
+`backup_app.py` exits non-zero on missing state, write errors, or invalid
+integrity checks (write errors print `app backup failed: <reason>`). Wire the scheduler to alert
 on a non-zero exit (cron mail, Task Scheduler event, or your monitor
 watching the job log). On a backup failure:
 
@@ -154,28 +169,49 @@ watching the job log). On a backup failure:
 
 ## Restore
 
-Restoring requires the app to be stopped and the target to be clean:
+Do not delete the active volume to make room for a restore. Keep it as the
+rollback copy and restore into a new Compose project (which gets a separate,
+empty named volume):
 
 ```
 docker compose -f infra/docker/docker-compose.app.yml down
-docker volume rm infra_helix_app_data
 ```
 
-Copy the backup into the container:
+First verify the backup and restore it into the new project's `/data` volume.
+Verification hashes the mounted snapshot and checks its databases in a
+temporary writable copy, so the original backup can remain read-only and
+unchanged.
+Replace the project name with a new, unused lowercase identifier:
 
 ```
-docker compose -f infra/docker/docker-compose.app.yml run --rm helix-app sh
+RESTORE_PROJECT=helix-restore-$(date -u +%Y%m%d%H%M%S)
+BACKUP_DIR=/srv/backups/helix-backup-YYYYMMDD-HHMMSS
+docker compose -p "$RESTORE_PROJECT" -f infra/docker/docker-compose.app.yml \
+    run --rm -v "$BACKUP_DIR:/backup:ro" helix-app \
+    python helix_codex_app/scripts/restore_app.py --backup /backup --verify-only
+docker compose -p "$RESTORE_PROJECT" -f infra/docker/docker-compose.app.yml \
+    run --rm -v "$BACKUP_DIR:/backup:ro" helix-app \
+    python helix_codex_app/scripts/restore_app.py --backup /backup --target /data
 ```
 
-Inside the container, run the restore:
+Start the restored project and confirm health and representative tenant
+workflows before directing users to it:
 
 ```
-python helix_codex_app/scripts/restore_app.py \
-    --backup /tmp/backup --target /tmp/restore
+docker compose -p "$RESTORE_PROJECT" -f infra/docker/docker-compose.app.yml up -d
+docker compose -p "$RESTORE_PROJECT" -f infra/docker/docker-compose.app.yml ps
 ```
 
-The restore verifies node counts and memory chains against the manifest.
-A mismatch exits with code 1 and the data is not applied.
+The original project's volume is intentionally retained until the restored
+deployment is accepted. If the restored instance fails, stop it and start the
+original project again:
+
+```
+docker compose -p "$RESTORE_PROJECT" -f infra/docker/docker-compose.app.yml down
+docker compose -f infra/docker/docker-compose.app.yml up -d
+```
+
+Never use `down -v` or remove either volume as part of the restore procedure.
 
 Restore success requires verification, never merely file copying. After
 the copy, `restore_app.py` proves five things and refuses the restore
@@ -204,32 +240,80 @@ dimension. Rehearse quarterly and after every upgrade, and record the run
 in `docs/release/restore-rehearsal-checklist.md` — the checklist ships
 with empty evidence fields for the operator to fill in.
 
-After a successful restore, start the app normally.
+After a successful restore, the new project runs from the restored volume. The
+restore script verifies the staged copy; the operator must still exercise the
+live deployment before declaring recovery complete.
 
-## Upgrade safely (backup first)
+## Schema and migration drill
 
-Never upgrade without a fresh backup. Upgrades only ever replace code;
-the `/data` volume is left untouched, but a backup is the only way back
-if a new image fails to start against an old database.
+Run both drift checks against the release image before an upgrade. They build
+temporary databases and compare application-created schemas with the migration
+heads; they do not target the mounted data volume:
 
-1. Back up first (see **Backup** above) and copy the backup folder out of
-   the container.
-2. Pull or rebuild the image:
+```
+docker compose -f infra/docker/docker-compose.app.yml exec -T helix-app \
+    python helix_codex_app/scripts/check_app_migration_drift.py
+docker compose -f infra/docker/docker-compose.app.yml exec -T helix-app \
+    python scripts/check_migration_drift.py
+```
+
+For an existing database, rehearse Alembic only against the restored throwaway
+volume. First confirm schema drift checks pass, then stamp the schema already
+created by the app and apply the head:
+
+```
+docker compose -p "$RESTORE_PROJECT" -f infra/docker/docker-compose.app.yml \
+    exec -T helix-app python -m alembic -c helix_codex_app/alembic.ini \
+    -x db=/data/helix_codex_app/app.db stamp head
+docker compose -p "$RESTORE_PROJECT" -f infra/docker/docker-compose.app.yml \
+    exec -T helix-app python -m alembic -c helix_codex_app/alembic.ini \
+    -x db=/data/helix_codex_app/app.db upgrade head
+docker compose -p "$RESTORE_PROJECT" -f infra/docker/docker-compose.app.yml \
+    exec -T helix-app python -m alembic -c alembic.ini \
+    -x db=/data/control_plane/workflow.db stamp head
+docker compose -p "$RESTORE_PROJECT" -f infra/docker/docker-compose.app.yml \
+    exec -T helix-app python -m alembic -c alembic.ini \
+    -x db=/data/control_plane/workflow.db upgrade head
+```
+
+Verify the restored tenant rows and health endpoint after the drill. Never
+stamp, upgrade, or otherwise rehearse migrations against the active volume.
+
+## Upgrade and rollback safely (backup first)
+
+Never upgrade without a fresh, verified backup. Compose keeps versioned
+image tags when a unique `HELIX_APP_IMAGE_TAG` is supplied; record the
+currently deployed tag before choosing a new one. Do not reuse or delete the
+previous tag until the upgrade is accepted.
+
+1. Back up and verify first (see **Backup** above). Copy the backup folder
+   out of the container.
+2. Record the current image tag and select a new, unique tag:
    ```
+   docker compose -f infra/docker/docker-compose.app.yml images
+   export HELIX_APP_IMAGE_TAG=20261031T080000Z
    docker compose -f infra/docker/docker-compose.app.yml build --pull
    ```
    The build installs dependencies from the pinned
-   `release/requirements.lock.txt`, so a rebuild resolves the exact same
-   dependency set.
+   `release/requirements.lock.txt`. Each tag remains available locally for
+   rollback; also record its image ID with `docker image inspect`.
 3. Recreate the container without removing the volume:
    ```
-   docker compose -f infra/docker/docker-compose.app.yml up -d
+   docker compose -f infra/docker/docker-compose.app.yml up -d --no-build --force-recreate
    ```
    (`down` without `-v` also preserves the volume. Never use `down -v`
    for an upgrade — that deletes all data.)
 4. Verify: wait for `healthy` in `ps`, then open the app and log in.
-   If the container will not turn healthy, stop it and restore from the
-   backup in step 1 (see **Restore** above).
+5. To roll back the image while retaining the same data volume, select the
+   recorded previous tag and recreate without building:
+   ```
+   export HELIX_APP_IMAGE_TAG=<previous-tag>
+   docker compose -f infra/docker/docker-compose.app.yml up -d --no-build --force-recreate
+   docker compose -f infra/docker/docker-compose.app.yml ps
+   ```
+   If the database itself must be reverted, stop this project and restore
+   into a separate project as described in **Restore**; never overwrite or
+   remove the last-known-good volume during an incident.
 
 ## Evidence export
 
@@ -291,16 +375,12 @@ or VPN for remote access.
 
 If you have access to the database file, the operator can reset the
 password by running the bootstrap script with a new password and a
-different domain, then creating a new owner. Alternatively, the
-database file at `/data/app.db` can be removed (along with the
-`/data/memory_stores` tree) to start fresh — this deletes all data.
+different domain, then creating a new owner. Alternatively, restore a known-good backup into a new volume as described
+above. Do not remove the active database or memory tree as a password-reset
+shortcut; that destroys tenant data.
 
 ### Container won't stop
 
-```
-docker compose -f infra/docker/docker-compose.app.yml kill
-docker compose -f infra/docker/docker-compose.app.yml down -v
-```
-
-Removing the volume deletes all data. Only do this if you have a
-backup or are starting fresh.
+Use `docker compose ... stop` or `down` to stop the service. Both preserve its
+volume. Volume removal is a separate, destructive maintenance action and is
+not part of incident recovery.

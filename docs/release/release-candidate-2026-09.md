@@ -1,5 +1,10 @@
 # Helix Prime release-candidate record
 
+> **Historical snapshot:** this record describes the 2026-09 candidate, not the
+> 2026-10-31 checkout. Current status: local synthetic validation passed in its stated
+> scope; production remains `NOT_READY`; no real customer pilot is recorded. See
+> [`../PRODUCTION_STATUS.md`](../PRODUCTION_STATUS.md).
+
 **Status:** stabilization in progress
 **Target profile:** `controlled_pilot`
 **Canonical surface:** `helix-api`

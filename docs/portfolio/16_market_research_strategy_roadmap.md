@@ -138,8 +138,10 @@ Every credible 2025–2026 source converges on the same bottleneck:
 ### 3.3 Implication for Helix Codex
 
 The market is explicitly asking for **the governed, read-only-first, human-approved operating
-layer** — which is precisely what this repository demonstrates end-to-end (see
-[`01_architecture_overview.md`](01_architecture_overview.md) and the **1,897-test** suite in
+layer** — a product hypothesis to validate through customer discovery, not evidence that
+buyers have requested or adopted this repository. Local synthetic tests and the simulated
+design-partner drill establish only the behaviors measured in their stated scopes (see
+[`01_architecture_overview.md`](01_architecture_overview.md) and
 [`15_verified_test_results.md`](15_verified_test_results.md)). Big-tech platforms will own the
 general-purpose agent runtime (CB Insights); independents win by solving **accountability that
 cuts across platforms** — a neutral governance/orchestration substrate with an immutable

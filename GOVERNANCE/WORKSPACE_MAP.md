@@ -1,5 +1,13 @@
 # Helix Prime — Workspace Map
 
+> **Historical workspace map:** the tree and component statuses below describe
+> observations from 2026-07-30 and a Wayfinder merge on 2026-09-12; they are not a
+> current inventory of the repository. As of 2026-10-31, local synthetic fixture,
+> App/API operations, and simulated design-partner drills passed their stated scopes.
+> Production remains `NOT_READY`; no real customer pilot is recorded. Use
+> [`../docs/PRODUCTION_STATUS.md`](../docs/PRODUCTION_STATUS.md) and the root
+> [`../AGENTS.md`](../AGENTS.md) for current status.
+
 ```
 Project Helix Prime/
 ├── cockpit/                  # Operations Control Room
@@ -74,7 +82,7 @@ Project Helix Prime/
 
 ### Destination
 
-Helix Prime Codex: a human-supervised, enterprise-grade AI organization (8 GMs + SAMI CEO + 6 engines + workflow control plane) proven by one complete contact-centre vertical slice (WFM → RTA → OPS → Compliance → HR/L&D → CRM/CX → SAMI summary) that runs with durable workflows, typed contracts, approvals, audit evidence, tenant isolation, and failure-injection verification. Codex name claimed after C0–C5; production-ready only after C8 evidence pack.
+Helix Prime Codex: a human-supervised, enterprise-grade AI organization (8 GMs + SAMI CEO + 6 engines + workflow control plane) proven by one complete contact-centre vertical slice (WFM → RTA → OPS → Compliance → HR/L&D → CRM/CX → SAMI summary) that runs with durable workflows, typed contracts, approvals, audit evidence, tenant isolation, and failure-injection verification. Codex name claimed after C0–C5; the C8 controlled-pilot evidence pack is distinct from production readiness, which additionally requires all nine production-only gates.
 
 ### Notes
 

@@ -1,9 +1,15 @@
 # AGENTS.md — Helix Codex OS Build Ledger
 
 > **Purpose:** Any agent (or human) can pick up exactly where the last one stopped.
-> **ACTIVE WORK: no engineering work is open.** The §20 B-, A- and follow-up
-> sections are CLOSED — **§20.30 carries the closure table with the commit SHAs for
-> each, and the suite's final run: 1,897 passed, 0 failed across both chunks.** The
+> **Current status (2026-10-31):** the local full suite reported 2,000 passed and
+> 19 deselected; fixture/engine readiness passed 12/12 gates; the App/API operations
+> drill and simulated design-partner drill passed their defined scopes. See §27–§28.
+> This is local simulated evidence, not a real customer pilot, independent review, or
+> production approval. Production remains `NOT_READY`.
+>
+> The §20 B-, A- and follow-up sections are CLOSED — §20.30 carries their historical
+> closure table and commit SHAs. The earlier 1,897-test result recorded there is a
+> dated baseline, not the current suite total. The
 > §22.1 adapter findings are also CLOSED — **§22.4 carries the 2026-09-30 closure
 > batch: all six adapters now drive a real computation end-to-end.** §23
 > (ERLANGC-1) is CLOSED — the WFM Erlang C engine was rewritten on the textbook
@@ -25,29 +31,28 @@
 > Phase 6** — the nine production-only gates need signatures from keys held
 > outside this repository.
 >
-> **One owner decision is open, and it is not engineering work:**
+> This local checkout currently has no configured Git remote. Its current online
+> publication state is not asserted here. The bounded push authorization recorded
+> below expired on 2026-10-15 and does not authorize a push now.
 >
-> 1. ~~**The unpushed backlog.**~~ — **closed 2026-09-29.** `main` is level with
->    `origin/main` at **`1830f30`**; the backlog is **0**. Earlier text here quoted
->    `6b7d923`, `b9d8fb6` and a 32-commit backlog; every one of those was correct
->    when written and has since moved. **Re-measure, never quote:**
->    `git ls-remote --heads origin main`, then `git rev-list --count <sha>..HEAD`.
->    (The local `origin/main` tracking ref was pruned once, so
->    `git rev-list --count origin/main..HEAD` can fail with `unknown revision` —
->    measure against the remote.)
-> 2. **Repository visibility.** Recorded as closed on 2026-09-21 with the
->    repository set to private; that record was superseded. Measured 2026-09-25,
->    an unauthenticated request to
->    `https://api.github.com/repos/<YOUR_GITHUB_ORG>/Helix-Prime` returns
->    HTTP 200 and `"private": false`. **The repository is public, and the owner
->    confirmed on 2026-09-25 that public is the intended state.** See §20.5.
+> **Historical repository observations — not current measurements:** on 2026-09-29
+> `main` was level with `origin/main` at `1830f30`; on 2026-09-25 the GitHub API
+> reported the repository public and the owner confirmed that visibility was intended.
+> These historical facts do not establish the current online state. This checkout has
+> no remote configured; do not infer a current backlog or visibility from the old rows.
+> If a remote is restored, re-measure with `git ls-remote` and compare against the
+> current local commit before making a publication claim.
 >
-> **CI is green for the first time — 2026-09-29.** Run
+> **First all-steps-green CI result — 2026-09-29 (historical).** Run
 > [`36497766876`](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/runs/36497766876)
 > on `839507e` passed **all 17 steps**: `1,897 passed, 19 deselected`, coverage
 > 86.91%. The workflow had failed at **step 5 on every push from 2026-09-20 to
 > 2026-09-28**, which is why steps 6–17 had never executed once and why several
 > pre-existing defects were invisible. Full record: §21.
+>
+> The latest remote-CI measurement recorded in this repository is later: 2026-10-05,
+> run `37371376357`, **1,967 passed / 19 deselected**, coverage 86.91%. Neither
+> historical run is a CI result for the 2026-10-31 local source tree.
 >
 > **Pushes are gated on explicit human authorization.** Commits inside the
 > workspace follow the standing authorization; pushes do not. The backlog was
@@ -85,16 +90,16 @@
 > Everything else is COMPLETE history: §1 (Production Hardening, H0–H3), §1A (app
 > UI modernization, UI-1), the sports-academy pack (S0–S7), §2–§19, and §20
 > (PORTFOLIO-DOCS-1) with its B-, A- and follow-up sections. Do not restart
-> completed sections. Read this file top-to-bottom, then **§20.30** for the current
-> closure state, or §5 ("Suggested next work"). Update this file immediately after
+> completed sections. Read the current status above and §27–§28 first; §20.30 is a
+> historical closure table. Update this file immediately after
 > completing each step.
 >
 > **Out-of-band tooling (§19):** four standalone modules at the repository root —
 > `telemetry_simulator.py`, `ingest_engine.py`, `supervisor.py`, `cockpit_ui.py` —
 > form the Helix Ops Cockpit. They are **not** part of the governed core: nothing
 > under `tests/` imports them, they are absent from `release/release-manifest.json`,
-> and they appear in no gate profile. They therefore move neither the 1,758-test
-> baseline nor the gate surface. Their own coverage lives in a quarantined
+> and they appear in no gate profile. They do not change the governed-core gate
+> surface or the 2,000-test current local baseline. Their own coverage lives in a quarantined
 > integration tier — `tests/integration/ui/cockpit/`, 19 tests, deselected by
 > default; run it with `pytest tests/integration/ui/cockpit/ -m ui_integration`.
 
@@ -114,14 +119,15 @@
 > two ever disagree about what is done, this file is right and the other is stale. See
 > §20.12 for how that was resolved.
 
-- **Repo:** `E:\Helix-Prime` (Helix Prime → being commercialized as "Helix Codex OS")
-- **Mission:** Build `capabilities/sports_academy/` — the first vertical capability
-  pack for Helix Codex OS, for the first client (Scoach Academy Hub, a private
-  sports academy). Full plan + business context: `docs/scoach_academy_hub_opportunity_report.md`.
+- **Repo:** Helix-Prime repository root. `E:\Helix-Prime` is the historical Windows path.
+- **Mission:** maintain the local-first governed operations core and its synthetic
+  capability prototypes. The sports-academy pack is a prototype for an opportunity
+  scenario; Scoach Academy Hub is not a confirmed partner or client. Background
+  hypothesis: `docs/scoach_academy_hub_opportunity_report.md`.
 - **Blueprint:** `docs/HELIX_CODEX_OS_MASTER_BLUEPRINT.md` (governs architecture).
 - **Constitution:** `00_CONSTITUTION.md` wins over any doc on conflict.
-- **Python:** 3.12 canonical. Venvs exist (`.venv312`, `.venv-py312`, etc.).
-- **Test command:** `python -m pytest tests/ -q -m "not smoke"` (run from repo root `E:\Helix-Prime`).
+- **Python:** 3.12 canonical. The workspace test environment is `../../.venvs/helix-prime`.
+- **Test command:** `python -m pytest tests/ -q -m "not smoke"` (run from this repo root).
 - **Lint:** `ruff check <paths>`.
 
 ### Non-negotiable rules (violating these breaks the governed core)
@@ -5718,5 +5724,53 @@ approval state.
 pass `ruff check` and `ruff format --check`; dependency check passes. Full repository
 Ruff still reports 21 existing findings and format check reports 346 files needing
 format; these are pre-existing repository-wide debt outside this narrow readiness
-change. Full pytest was running at 43% at last captured progress; see workspace
-`agents.md` for its final recorded result.
+change. The full local suite later completed with 2,000 passed and 19 deselected; see
+§28.
+
+## 28. App/API operations and simulated design-partner drills (2026-10-31)
+
+### 28.1 Tenant isolation and operations
+
+The local API/App drill used synthetic tenants and disposable Docker volumes. It
+verified tenant-scoped reads/writes, cross-tenant denials, persistence across restart,
+backup verification, restore to an isolated volume, migration checks, rollback and
+health recovery. The focused set reported 128 passed. Restart-to-ready measured 2.88
+seconds. Full details and command list:
+[`docs/release/app-tenant-ops-drill-2026-10-31.md`](docs/release/app-tenant-ops-drill-2026-10-31.md).
+The containers and synthetic volumes were removed after evidence capture.
+
+### 28.2 Simulated design-partner drill
+
+Run `20261031T073346Z-6a6f3898` returned `PASS_SIMULATED`, 14/14 combined checks. It
+ran the existing synthetic fixture/engine readiness harness and then exercised the
+real local App HTTP document/task routes for two tenants. The readiness portion passed
+12/12 gates and made 20 calls across all six engines with zero errors; the overall
+simulation's maximum engine-call duration was 424 ms. Anonymous access returned 401,
+cross-tenant reads 404, CSRF-less writes 403, and invalid-title writes 400. Own-tenant
+records round-tripped.
+
+The simulated auditor/privacy/operations checks are deterministic assertions, not
+separate LLM opinions, independent audits, or legal advice. Raw CSV ingestion occurred
+in the readiness harness; the App has no CSV upload endpoint. This is not a real
+customer engagement, a production approval, or a change to the nine production-only
+C8 gates.
+
+The workspace-level JSON evidence had SHA-256
+`6e0dd051d7332585dd00652d54bb3cf9aa90b492d8f0153a290152c912f858e1`. The in-repo
+engine evidence is under
+`docs/production_readiness/evidence/simulated-design-partner-2026-10-31-engine-readiness/`;
+its checksum manifest passed. The runner tests passed 2/2; changed-path Ruff lint and
+format checks passed.
+
+### 28.3 Final local verification and disposition
+
+- Full test suite: `../../.venvs/helix-prime/bin/python -m pytest tests -q`
+  from the repository root — **2,000 passed, 19 deselected** (workspace Python 3.12).
+- Simulated-runner tests: `python3 -m pytest tools/test_simulated_design_partner.py -q`
+  from the Career workspace root — **2 passed**.
+- Changed simulation paths: Ruff lint and format checks passed.
+- C8 `controlled_pilot`: `CONTROLLED_PILOT_READY`; C8 `production`: `NOT_READY`.
+- Production-only gates: nine remain missing; no real client pilot or production
+  deployment is claimed.
+- Local checkout: no Git remote configured. No commit or push was made for these
+  documentation changes.

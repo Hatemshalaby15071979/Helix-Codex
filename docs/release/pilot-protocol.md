@@ -1,7 +1,10 @@
 # Helix Prime Codex C8 — Controlled Pilot Operating Protocol
 
-Status: **controlled pilot** operating protocol. This defines HOW a human-supervised
-pilot is run. It does NOT claim production readiness or unfettered autonomy.
+Status: **controlled-pilot operating protocol**, not evidence that a customer pilot is
+currently running. The 2026-10-31 local synthetic drills passed their stated scopes;
+no real customer participation or production approval is recorded. This protocol does
+NOT claim production readiness or unfettered autonomy. See
+[`../PRODUCTION_STATUS.md`](../PRODUCTION_STATUS.md).
 
 Companion docs:
 - Scope/data/consent boundaries: `controlled-pilot-pack.md`

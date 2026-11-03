@@ -6,6 +6,14 @@
 in the repository. It does not claim production approval, live data validity, or
 external sibling-service deployment.
 
+> **Current validation (2026-10-31):** the local full suite reported 2,000 passed,
+> 19 deselected; fixture/engine readiness passed 12/12 gates; and the API/App
+> tenant-isolation and operations drill passed its defined scope (128 focused tests).
+> A separate simulated design-partner drill passed 14/14 combined checks using
+> synthetic data. These results do not establish a real customer pilot, driver-level
+> tenant certification, or production readiness; see
+> [`PRODUCTION_STATUS.md`](PRODUCTION_STATUS.md).
+
 ## Delivered controls
 
 | Phase | Delivered | Evidence |
@@ -20,7 +28,7 @@ external sibling-service deployment.
 | C6 | GM activation manifest | `organization/gm_activation.py` validates seven remaining GMs against runtime RoleSpec + YAML catalog; all seven are active |
 | C7 | Sibling-service boundary | `control_plane/schemas/sibling_events/boundary.py` prohibits imports/vendoring/direct stores |
 | C7 | Versioned event contracts | `control_plane/schemas/sibling_events/` defines four v1 events + sealed envelope + published JSON Schema |
-| C8 | Tenant-scoped storage | **Not implemented at the driver level.** Isolation is enforced by `security/policy.py::authorize` (policy seam), which denies cross-tenant requests. `control_plane/tenancy.py` claimed SQL-level scoping but was never invoked; removed 2026-09-11. |
+| C8 | Tenant-scoped storage | **Driver-level row partitioning is not implemented.** The policy seam denies unauthorized requests; separately, the App/API routes passed the local two-tenant HTTP isolation drill on 2026-10-31. This route-level evidence is not driver-level isolation or independent certification. The unused `control_plane/tenancy.py` was removed 2026-09-11. |
 | C8 | Local-first deployment profile | `infra/docker/Dockerfile`, `infra/docker/entrypoint.sh`, `infra/docker/docker-compose.yml` |
 | C8 | Accelerator configuration | `config-files/acceleration.yaml` describes CUDA, DirectML and CPU fallback for Ollama |
 | C8 | Governance evidence pack | `scripts/export_evidence_pack.py` exports uptime, communication history and hash validation trails |
@@ -67,10 +75,10 @@ fact.
   shims are gone — dependency declarations are consolidated at the repo root.
 - The RTA/WFM seam smoke path passes for no-breach, awaiting-approval,
   approved/recalculated and denied branches.
-- A full historical suite run exposed unrelated legacy teardown assumptions; the
-  C0 fixture now closes tracked stores and raw connections before temporary
-  directories are removed. Re-run the suite in CI after the remaining legacy
-  fixtures migrate to `sqlite_store`.
+- A historical suite run exposed legacy teardown assumptions; the C0 fixture now
+  closes tracked stores and raw connections before temporary directories are removed.
+  The latest recorded local full suite is 2,000 passed and 19 deselected. A current
+  remote CI result is not asserted.
 
 ## Not claimed
 
