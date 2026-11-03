@@ -1,0 +1,16 @@
+schema_version: 1
+simulation: true
+disclosure: "SIMULATION ONLY; no human operator, pager, or on-call rotation is assigned."
+roles:
+  incident_coordinator:
+    assigned_person: null
+    simulated: true
+  backup_operator:
+    assigned_person: null
+    simulated: true
+on_call:
+  active: false
+  pager: local-test-only
+  acknowledgement_slo_minutes: 15
+  resolution_slo_hours: 4
+  real_person_paged: false
