@@ -50,7 +50,7 @@ KNOWN_LIMITATIONS = [
     "Sibling transport is local/in-process only; network sibling transport deferred.",
     "No autonomous irreversible/financial/personnel/compliance/external-communication actions.",
     "Pilot data must be limited to synthetic or explicitly consented data.",
-    "Production label not claimed without every production gate passing.",
+    "This simulation-only branch never emits a production classification.",
 ]
 
 
@@ -118,6 +118,8 @@ def build_manifest(
     include_full_path: bool = False,
 ) -> Dict[str, Any]:
     """Build a deterministic, machine-readable release manifest."""
+    if classification == "PRODUCTION":
+        raise ValueError("this simulation-only release cannot emit a production classification")
     deps = _read_versions("release/requirements.lock.txt")
     manifest: Dict[str, Any] = {
         "manifest_schema_version": MANIFEST_SCHEMA_VERSION,

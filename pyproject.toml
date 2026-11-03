@@ -160,6 +160,10 @@ extend-immutable-calls = ["fastapi.Depends"]
 # built here, never parsed from input, and the executable is resolved with
 # shutil.which rather than a bare name.
 "scripts/produce_production_evidence.py" = ["S603"]
+# The simulation signer/verifier invokes OpenSSL and a fixed verifier script
+# with locally constructed argv; it never invokes a shell or accepts commands.
+"release/simulation.py" = ["S603"]
+"release/gate.py" = ["S603"]
 # S603/S310 (subprocess / URL open): the marketing film tooling shells out to
 # node/ffmpeg/ffprobe and calls the ElevenLabs API. Argv is built in-file (never
 # parsed from input), executables are resolved with shutil.which(), and the four

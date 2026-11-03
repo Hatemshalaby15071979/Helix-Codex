@@ -20,20 +20,17 @@
 # gate to `production` therefore makes it production-only automatically, which
 # fails tests/test_production_evidence.py until evidence for it is defined.
 #
-# IMPORTANT: The "production" profile adds nine production-only gates (signed
-# production evidence, certified data isolation, external observer audit, ...)
-# that no local run can satisfy on its own: each needs a signature produced by a
-# key held outside this repository. `allowed_final` therefore includes
-# PRODUCTION — but the label is reachable ONLY when all 23 gates are green on
-# genuine signed external evidence AND a valid terminal `production_approved`
-# sign-off exists. Nothing in this file makes a gate green; the gates remain the
-# block, and a bare PRODUCTION label with no evidence is still unreachable.
+# IMPORTANT: This branch is simulation-only. Its "production" profile remains
+# blocked regardless of gate inputs; the "simulated_production" profile binds
+# its nine otherwise-external gates to locally verified, disclosed receipts.
+# No real approval or bare production classification is emitted.
 
 profiles:
   - alpha
   - internal_pilot
   - controlled_pilot
   - production_candidate
+  - simulated_production
   - production
   - app_pilot
 
@@ -104,6 +101,30 @@ required_gates:
     - performance_limits
     - operator_readiness
     - release_approval
+  simulated_production:
+    - repository_state
+    - reproducible_install
+    - configuration_validation
+    - dependency_locking
+    - startup_readiness
+    - backup_restore
+    - rollback
+    - data_isolation
+    - audit_integrity
+    - security_checks
+    - failure_recovery
+    - performance_limits
+    - operator_readiness
+    - release_approval
+    - signed_production_evidence
+    - certified_data_isolation
+    - external_observer_audit
+    - production_deployment_architecture
+    - disaster_recovery_evidence
+    - operational_ownership
+    - incident_oncall_ownership
+    - security_review
+    - legal_privacy_review
   app_pilot:
     - repository_state
     - configuration_validation
@@ -141,13 +162,11 @@ required_gates:
     - security_review
     - legal_privacy_review
 
-# Final classifications this release permits. PRODUCTION is listed because the
-# gates — not a policy constant — are what keep it unreachable without signed
-# external evidence; the owner declared the C8 sprint over on 2026-09-20.
+# Final classifications permitted by this simulation-only execution.
 allowed_final:
   - CONTROLLED_PILOT_READY
   - PRODUCTION_CANDIDATE
-  - PRODUCTION
+  - SIMULATED_PRODUCTION_READY
 
 default_c8: PRODUCTION_CANDIDATE
 
@@ -190,6 +209,15 @@ profile_policy:
     independent_peer_review_required: true
     production_gate_substitution_allowed: false
     evidence_expiry_days: 14
+  simulated_production:
+    canonical_surface: helix-app+helix-api
+    data_scope: SYNTHETIC_ONLY
+    tenant_limit: 2
+    read_only_integrations: true
+    human_approval_required: false
+    independent_peer_review_required: false
+    production_gate_substitution_allowed: true
+    evidence_expiry_days: 30
   production:
     canonical_surface: helix-api
     data_scope: LIVE_PRODUCTION_DATA

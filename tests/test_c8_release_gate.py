@@ -24,13 +24,12 @@ from release import backup, harness, manifest, observability, profiles, security
 
 
 def test_never_emits_bare_production():
-    # Even when everything is green, production adds production-only gates that
-    # are not satisfied, so bare PRODUCTION is impossible.
+    # This branch is simulation-only, so the production profile never emits.
     result = profiles.classify_from_gate_results(
-        "production", profiles.GATE_NAMES, release_approved=True
+        "production",
+        profiles.GATE_NAMES + profiles.PRODUCTION_ONLY_GATES,
+        release_approved=True,
     )
-    assert "PRODUCTION" not in result or result == "PRODUCTION"
-    # With the production profile, extra gates are missing -> NOT_READY.
     assert result == "NOT_READY"
 
 
@@ -202,6 +201,7 @@ def test_derived_values_match_the_hardcoded_ones_they_replaced():
         ],
         "controlled_pilot": c8,
         "production_candidate": c8,
+        "simulated_production": c8 + production_only,
         "production": c8 + production_only,
         "app_pilot": [
             "repository_state",
@@ -217,15 +217,11 @@ def test_derived_values_match_the_hardcoded_ones_they_replaced():
             "app_pwa_assets",
         ],
     }
-    # `allowed_final` is the one value that has moved since this equivalence was
-    # established: PRODUCTION was added on 2026-09-20 by owner decision, so the
-    # label is permitted when the gates are genuinely satisfied. The assertion is
-    # still kept exact rather than relaxed to a subset, so any *further* movement
-    # fails here — the point of this test is to notice movement, not to allow it.
+    # Exact equality intentionally rejects a bare production classification.
     assert set(profiles.ALLOWED_FINAL_CLASSIFICATIONS) == {
         "CONTROLLED_PILOT_READY",
         "PRODUCTION_CANDIDATE",
-        "PRODUCTION",
+        "SIMULATED_PRODUCTION_READY",
     }
     assert profiles.DEFAULT_C8_CLASSIFICATION == "PRODUCTION_CANDIDATE"
 
@@ -251,6 +247,11 @@ def test_manifest_required_fields():
     assert m["product"] == "Helix-Prime-Codex"
     assert "cloud_deployment" in m["disabled_capabilities"]
     assert m["classification"] == "PRODUCTION_CANDIDATE"
+
+
+def test_manifest_refuses_bare_production_classification():
+    with pytest.raises(ValueError, match="simulation-only release"):
+        manifest.build_manifest(classification="PRODUCTION")
 
 
 def test_manifest_schema_accepts_every_profile_and_classification_the_code_can_produce():
@@ -574,23 +575,13 @@ def test_gate_refuses_production_without_evidence():
     assert summary["exit_code"] == 1
 
 
-def test_production_is_permitted_only_on_signed_evidence(monkeypatch, tmp_path):
-    """The label is reachable by evidence, and by nothing else.
-
-    Before 2026-09-20 this same run went 23/23 gates green, classified
-    `PRODUCTION`, and still exited 1 — a sprint-policy refusal sitting on top of
-    the gates. `allowed_final` now permits the label, which makes the gates the
-    *only* thing standing in the way; they need signatures from a key that is not
-    in this repository. Both halves are asserted in one test so neither can pass
-    vacuously: with no evidence the gate must refuse, with the nine signed
-    artifacts it must permit. The fixtures are synthetic and the key is a
-    throwaway, so this proves the mechanism, not an approval.
-    """
+def test_production_remains_unavailable_even_with_signed_external_evidence(monkeypatch, tmp_path):
+    """Signed test fixtures cannot emit a production classification on this branch."""
     from release import gate
 
     fixtures = pathlib.Path(__file__).parent / "fixtures" / "production_evidence"
 
-    # Half one: nothing declared -> refused, and no label claimed.
+    # No evidence is refused.
     monkeypatch.delenv("HELIX_PRODUCTION_EVIDENCE_DIR", raising=False)
     monkeypatch.delenv("HELIX_PRODUCTION_EVIDENCE_PUBKEY", raising=False)
     summary = gate.run_gate(profile="production", num_soak_workflows=3, write_evidence=False)
@@ -598,7 +589,7 @@ def test_production_is_permitted_only_on_signed_evidence(monkeypatch, tmp_path):
     assert summary["permitted_c8_outcome"] is False
     assert summary["exit_code"] == 1
 
-    # Half two: the nine signed artifacts are the only difference.
+    # Even all nine signed test fixtures cannot override the simulation-only policy.
     evidence = tmp_path / "evidence"
     evidence.mkdir()
     for artifact in fixtures.glob("*.evidence.json"):
@@ -612,9 +603,9 @@ def test_production_is_permitted_only_on_signed_evidence(monkeypatch, tmp_path):
 
     summary = gate.run_gate(profile="production", num_soak_workflows=3, write_evidence=False)
     assert summary["all_gates_green"] is True
-    assert summary["classification"] == "PRODUCTION"
-    assert summary["permitted_c8_outcome"] is True
-    assert summary["exit_code"] == 0
+    assert summary["classification"] == "NOT_READY"
+    assert summary["permitted_c8_outcome"] is False
+    assert summary["exit_code"] == 1
 
 
 # ── individual gates ───────────────────────────────────────────────────────

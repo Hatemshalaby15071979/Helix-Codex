@@ -698,7 +698,7 @@ Key methods: add(), retrieve(), correct(), supersede(), delete(), clear_for_demo
 | `__init__.py` | 10 | Release package init |
 | `gate.py` | 704 | Core release gate: 23 gates (14 C8 + app + 9 production-only), profiles, classification, exit codes |
 | `harness.py` | 430 | Gate harness: evidence writing, probes, disposables |
-| `profiles.py` | 202 | Gate profiles — DERIVED from release-profiles.yaml (14 gates × 4 profiles) |
+| `profiles.py` | 202 | Gate profiles — derived from release-profiles.yaml, including simulation-only receipts |
 | `production_evidence.py` | 293 | Evidence verifier: RSA-PKCS#1 v1.5 signature check over external artifacts |
 | `signoff.py` | 202 | Sign-off serialization + validation: validate_signoff, import_go_no_go |
 | `backup.py` | 220 | Backup logic |
@@ -706,7 +706,7 @@ Key methods: add(), retrieve(), correct(), supersede(), delete(), clear_for_demo
 | `security_gate.py` | 260 | Security gate evaluation |
 | `manifest.py` | 156 | Manifest generation; version single-sourced from pyproject.toml via tomllib |
 | `pilot_metrics.py` | 128 | Pilot metrics |
-| `release-profiles.yaml` | 146 | **Source of truth** for gate profiles + allowed_final (includes PRODUCTION) |
+| `release-profiles.yaml` | 146 | **Source of truth** for gate profiles + simulation-only allowed classifications |
 | `release-manifest.json` | 50 | Last manifest (pins b6b954e; release_approved: false — deliberately stale) |
 | `go-no-go.json` | 15 | Pilot consent flag (approved: true; NOT a human production approval) |
 | `manifest.schema.json` | 69 | Schema: profiles + classifications enums |
@@ -959,7 +959,7 @@ With nine signed evidence fixtures in place, `run_gate(profile="production")` ac
 1. Produce evidence artifacts: `scripts/produce_production_evidence.py` → gates, init-key, template, check, sign, status
 2. Record sign-off: `scripts/record_production_signoff.py` → states, template, check
 3. Run gate: `scripts/release_gate.py` (warns: NOT read-only — regenerates manifest)
-4. Verify: All 23 gates green on evidence → classification PRODUCTION → exit 0 (with allowed_final including PRODUCTION)
+4. Verify: The production profile remains NOT_READY on this simulation-only branch. `simulated_production` may pass only with all core gates and nine verified ML-DSA-65 simulation receipts.
 5. Publish: Manual PyPI upload from dist/ artifact
 
 ### 8.3 Deployment Options

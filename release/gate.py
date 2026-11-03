@@ -5,12 +5,11 @@ Runs every gate in the requested profile, aggregates pass/fail, and emits a
 deterministic classification. Final classifications allowed by C8:
     CONTROLLED_PILOT_READY  (profile=controlled_pilot, all gates green)
     PRODUCTION_CANDIDATE    (profile=production_candidate, all gates green)
-    PRODUCTION              (profile=production, all 23 gates green on signed
-                             external evidence plus a release_approved sign-off)
+    SIMULATED_PRODUCTION_READY (profile=simulated_production, all gates green)
 
-PRODUCTION became permitted on 2026-09-20, and it is reachable only by evidence:
-each of the nine production-only gates demands a signature produced by a key held
-outside this repository, so no local run can manufacture the label.
+The production profile is permanently NOT_READY in this simulation-only branch.
+The simulated profile records no human approval and verifies its nine receipts
+both in-process and through a separate local verifier process.
 
 The gate writes a machine-readable evidence pack + release manifest under
 `evidence/releases/<timestamp>/` (gitignored, not committed).
@@ -26,13 +25,21 @@ import json
 import os
 import pathlib
 import re
+import subprocess
 import sys
 import tempfile
 from typing import Any, Dict, List, Optional
 
 from release import harness as harness_mod
 from release import manifest as manifest_mod
-from release import observability, production_evidence, profiles, scratch, security_gate
+from release import (
+    observability,
+    production_evidence,
+    profiles,
+    scratch,
+    security_gate,
+    simulation,
+)
 
 ROOT = manifest_mod.ROOT
 
@@ -788,7 +795,37 @@ def run_gate(
     required = profiles.gates_required_for(profile)
     results: Dict[str, Any] = {}
     green: List[str] = []
+    simulation_ok = False
+    simulation_detail = ""
+    observer_ok = False
+    observer_detail = "simulation evidence was not independently verified"
+    if profile == "simulated_production":
+        simulation_pack = simulation.simulation_evidence_dir()
+        simulation_ok, simulation_detail, _ = simulation.verify_simulation_signoff(
+            simulation_pack, ROOT
+        )
+        if simulation_ok and simulation_pack is not None:
+            observer_ok, observer_detail = _verify_simulation_in_subprocess(simulation_pack)
     for gate in required:
+        if profile == "simulated_production" and gate == "release_approval":
+            ok = not profiles.policy_for(profile)["human_approval_required"]
+            detail = "simulation policy does not claim or require human release approval"
+            results[gate] = {"ok": ok, "detail": detail}
+            if ok:
+                green.append(gate)
+            continue
+        if profile == "simulated_production" and gate in profiles.PRODUCTION_ONLY_GATES:
+            ok = simulation_ok
+            detail = f"{gate}: {simulation_detail}"
+            if gate == "external_observer_audit":
+                ok = simulation_ok and observer_ok
+                detail = f"{gate}: {observer_detail}"
+            elif ok:
+                detail = f"{gate}: disclosed post-quantum simulation receipt verified"
+            results[gate] = {"ok": ok, "detail": detail}
+            if ok:
+                green.append(gate)
+            continue
         impl = GATE_IMPL.get(gate)
         if impl is None:
             results[gate] = {"ok": False, "detail": "no implementation"}
@@ -802,7 +839,11 @@ def run_gate(
             results[gate] = {"ok": False, "detail": f"{type(e).__name__}: {e}"}
 
     # release approval gate
-    approval = results.get("release_approval", {}).get("ok", False)
+    approval = (
+        results.get("release_approval", {}).get("ok", False)
+        if profile != "simulated_production"
+        else False
+    )
     classification = profiles.classify_from_gate_results(profile, green, release_approved=approval)
 
     rep = observability.run_observability_report()
@@ -844,9 +885,39 @@ def run_gate(
     return summary
 
 
+def _verify_simulation_in_subprocess(pack_dir: pathlib.Path) -> tuple[bool, str]:
+    """Run a fresh interpreter as the simulated independent evidence observer."""
+    verifier = ROOT / "scripts" / "verify_simulation_signoff.py"
+    try:
+        result = subprocess.run(
+            [sys.executable, str(verifier), str(pack_dir)],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )  # noqa: S603
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return False, f"separate verifier process failed: {type(exc).__name__}: {exc}"
+    try:
+        output = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return False, "separate verifier process returned malformed output"
+    if (
+        not isinstance(output, dict)
+        or result.returncode != 0
+        or output.get("valid") is not True
+        or output.get("simulation") is not True
+    ):
+        detail = output.get("detail", "") if isinstance(output, dict) else "invalid JSON shape"
+        return False, f"separate verifier process refused pack: {detail}"
+    return True, "separate verifier process validated the signed simulation pack"
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     profile = "production_candidate"
+    write_evidence = "--no-write-evidence" not in argv
     if "--profile" in argv:
         i = argv.index("--profile")
         if i + 1 < len(argv):
@@ -858,7 +929,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     if profile not in profiles.PROFILE_ORDER:
         print(f"ERROR: unknown profile {profile!r}")
         return 2
-    summary = run_gate(profile=profile)
+    summary = run_gate(profile=profile, write_evidence=write_evidence)
     print(json.dumps(summary, default=str, indent=2))
     return summary["exit_code"]
 

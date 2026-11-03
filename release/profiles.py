@@ -22,7 +22,8 @@ Profiles (never conflated with production readiness):
 - internal_pilot       : non-production, internal team only
 - controlled_pilot     : human-supervised, synthetic/consented data only
 - production_candidate : evidence pack accepted, but NOT released to production
-- production           : requires all 23 gates satisfied on signed external evidence
+- simulated_production : machine-verifiable simulation, never a human approval
+- production           : unavailable in this simulation-only execution
 """
 
 from __future__ import annotations
@@ -192,10 +193,8 @@ _CANONICAL = derive_profiles(load_profiles())
 
 PROFILE_ORDER: List[str] = _CANONICAL["order"]
 
-# Final classifications this release permits. It includes PRODUCTION as of
-# 2026-09-20: the block on an unevidenced production label is the gates, not this
-# set, and `classify_from_gate_results` returns PRODUCTION only when all nine
-# production-only gates are green on signed external evidence AND release_approved.
+# Final classifications this simulation-only release permits. The production
+# profile is deliberately unable to emit a production classification.
 ALLOWED_FINAL_CLASSIFICATIONS: FrozenSet[str] = _CANONICAL["allowed_final"]
 
 # The default classification emitted when the C8 release gate is green.
@@ -217,19 +216,16 @@ def _all_c8_gates() -> List[str]:
 
 
 # Production-only gates: external evidence / ownership commitments that C8 (and
-# any local automated run) cannot satisfy alone — each needs a signature from a
-# key held outside the repository, or a named human. They keep the production
-# profile NOT_READY until genuine external approvals and evidence exist. Since
-# 2026-09-20 these gates, not the `allowed_final` policy set, are what block an
-# unevidenced PRODUCTION label.
+# any local automated run) cannot satisfy alone. The simulated profile may
+# substitute machine-verifiable receipts for them, but the production profile
+# remains unavailable.
 PRODUCTION_ONLY_GATES: List[str] = _CANONICAL["production_only_gates"]
 
 
 # Gates required per profile. alpha/internal_pilot are permissive;
 # controlled_pilot and production_candidate require the full C8 gate set.
-# production requires ALL of those PLUS the nine production-only criteria, so an
-# unqualified PRODUCTION label is still unreachable: the extra gates are what
-# hold, not the policy set.
+# production requires ALL of those PLUS the nine production-only criteria, but
+# this simulation-only release does not emit a production classification.
 PROFILE_REQUIRED_GATES: Dict[str, List[str]] = _CANONICAL["required_gates"]
 
 # Scope limits are intentionally separate from gate results: a green pilot gate
@@ -269,10 +265,8 @@ def classify_from_gate_results(
 
     - Unknown profile -> NOT_READY.
     - If any required gate for the requested profile is red -> NOT_READY.
-    - production is emitted only when every C8 gate AND all nine production-only
-      gates are green and `release_approved` is true. Those nine each need a
-      signature from a key held outside this repository, so an unevidenced run
-      falls to NOT_READY — this function does not manufacture the label.
+    - production always returns NOT_READY in this simulation-only release; its
+      external evidence is not substituted by the simulated profile.
     The permitted set is `allowed_final` in release-profiles.yaml; a
     classification outside it is still reported, but makes the gate exit non-zero.
     """
@@ -282,19 +276,10 @@ def classify_from_gate_results(
     missing = [g for g in required if g not in green_gates]
 
     if profile == "production":
-        # Production adds external-only gates — none of which C8 or any local
-        # automated run can satisfy. A bare PRODUCTION label is therefore
-        # unreachable here: every production-only gate must be independently
-        # green before it could be considered.
-        base_missing = [g for g in _all_c8_gates() if g not in green_gates]
-        extra_missing = [
-            g for g in PRODUCTION_ONLY_GATES if g not in _all_c8_gates() and g not in green_gates
-        ]
-        required_extra = list(PRODUCTION_ONLY_GATES)
-        all_prod_gates = all(g in green_gates for g in required_extra)
-        if base_missing or extra_missing or not all_prod_gates or not release_approved:
-            return "NOT_READY"
-        return "PRODUCTION"
+        return "NOT_READY"
+
+    if profile == "simulated_production":
+        return "SIMULATED_PRODUCTION_READY" if not missing else "NOT_READY"
 
     if not missing:
         if profile == "controlled_pilot":

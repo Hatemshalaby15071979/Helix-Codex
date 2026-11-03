@@ -2818,7 +2818,7 @@ human or external party showed up today, could they actually complete it?*
 |---|---|---|
 | Nine signed evidence artifacts | **Solvable now** — `produce_production_evidence.py` produces, checks and signs each; verified end to end | External auditors (Class 3/4/5) |
 | Terminal `production_approved` record | **Solvable now** — `record_production_signoff.py` templates and validates it; refuses while the gates are red | Named human + reviewer |
-| `allowed_final` now includes `PRODUCTION` | **Done 2026-09-20** (owner decision). The gate exits 0 at 23/23 gates green on signed evidence, and still exits 1 without it — the gates are now the only block | Owner (policy) |
+| Production classification policy | Superseded for this simulation-only branch: the production profile always returns NOT_READY; only SIMULATED_PRODUCTION_READY may represent locally verified simulation evidence | Branch execution contract |
 | Class 2.1–2.3: named operator / SOD reviewer / data controller | **No structured home anywhere in the tree** — no field, no record, no reader; the pilot protocol lists the roles as prose. No machine check requires them, so this is a process record, not a code gap. If it should be machine-checked, that is a small addition, but inventing a record format is the owner's call | Owner + second human |
 | Class 2.4/2.6: pilot go/no-go and exit review | Fields exist (`go-no-go.json` `approver` / `approved_at`), unfilled; the recorder now validates whatever is written | Owner |
 | Class 5.3/5.4: network sibling transport, external IdP/observability | In `DISABLED_CAPABILITIES` as deliberate C8 non-goals. Enabling them is a product-scope decision, and the plan assigns their *validation* to B2 (operational spend) | Owner (scope + spend) |

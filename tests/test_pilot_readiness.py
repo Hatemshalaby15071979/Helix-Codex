@@ -59,13 +59,20 @@ def test_production_stays_not_ready_even_if_all_gates_green():
     assert result == "NOT_READY"
 
 
-def test_production_requires_all_nine_gates_green_and_approval():
+def test_production_never_emits_in_simulation_only_release():
     green = list(profiles.GATE_NAMES) + list(profiles.PRODUCTION_ONLY_GATES)
-    # Without human release approval, still NOT_READY.
     assert profiles.classify_from_gate_results("production", green, False) == "NOT_READY"
-    # Even with approval and all nine green, gate/production classify logic is
-    # fail-closed; require the dedicated classifier path.
-    assert profiles.classify_from_gate_results("production", green, True) == "PRODUCTION"
+    assert profiles.classify_from_gate_results("production", green, True) == "NOT_READY"
+
+
+def test_simulated_production_requires_all_core_and_external_gate_receipts():
+    required = profiles.gates_required_for("simulated_production")
+    assert len(required) == len(profiles.GATE_NAMES) + 9
+    assert (
+        profiles.classify_from_gate_results("simulated_production", required)
+        == "SIMULATED_PRODUCTION_READY"
+    )
+    assert profiles.classify_from_gate_results("simulated_production", required[:-1]) == "NOT_READY"
 
 
 def test_controlled_pilot_readiness_classification():
