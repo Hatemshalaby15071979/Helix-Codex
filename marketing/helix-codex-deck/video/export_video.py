@@ -60,7 +60,7 @@ def tool(name: str) -> str:
 
 
 def run(cmd: list[str], label: str) -> None:
-    res = subprocess.run(cmd, capture_output=True, text=True)
+    res = subprocess.run(cmd, capture_output=True, text=True)  # noqa: S603
     if res.returncode != 0:
         print(res.stderr[-2000:])
         sys.exit(f"{label} failed")
@@ -155,7 +155,7 @@ def capture(frames_dir: Path, max_seconds: int, quality: int) -> dict:
     # shifts quality into the max-seconds slot, which silently truncates the
     # capture to `quality` seconds (78 by default) instead of the whole film.
     cmd = [node, str(script), str(frames_dir), str(max_seconds), str(quality)]
-    res = subprocess.run(cmd, capture_output=True, text=True, cwd=str(HERE))
+    res = subprocess.run(cmd, capture_output=True, text=True, cwd=str(HERE))  # noqa: S603
     sys.stdout.write(res.stdout)
     if res.returncode != 0:
         print(res.stderr[-2000:])

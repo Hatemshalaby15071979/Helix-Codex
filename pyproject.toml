@@ -160,6 +160,13 @@ extend-immutable-calls = ["fastapi.Depends"]
 # built here, never parsed from input, and the executable is resolved with
 # shutil.which rather than a bare name.
 "scripts/produce_production_evidence.py" = ["S603"]
+# S603/S310 (subprocess / URL open): the marketing film tooling shells out to
+# node/ffmpeg/ffprobe and calls the ElevenLabs API. Argv is built in-file (never
+# parsed from input), executables are resolved with shutil.which(), and the four
+# URL sites are pinned to https in `build_voice._https_request` /
+# `_urlopen_https`. Media generation is author-run by design; the governed core
+# gets none of these exemptions.
+"marketing/helix-codex-deck/video/*.py" = ["S603", "S310"]
 # S104 (hardcoded bind to all interfaces): the Ops Cockpit ingest engine is a
 # service whose deployment contract is 0.0.0.0:8000. The bind is a CLI default
 # (--host overrides it) and the module docstring flags the loopback override for

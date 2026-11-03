@@ -228,9 +228,9 @@ def cx_payload_from_tickets(tenant: Tenant, *, limit: int = 40) -> BuiltPayload:
     tickets = tickets.dropna(subset=["requester_id"]).copy()
     tickets["_csat"] = pd.to_numeric(tickets["satisfaction_score"], errors="coerce")
     tickets["_breach"] = pd.to_numeric(tickets["sla_breached"], errors="coerce")
-    tickets["_reopen"] = (pd.to_numeric(tickets["reopens"], errors="coerce").fillna(0.0) > 0).astype(
-        float
-    )
+    tickets["_reopen"] = (
+        pd.to_numeric(tickets["reopens"], errors="coerce").fillna(0.0) > 0
+    ).astype(float)
     tickets["_resolution"] = pd.to_numeric(tickets["resolution_minutes"], errors="coerce")
     agg = (
         tickets.groupby("requester_id")

@@ -55,6 +55,22 @@ EDGE_RATE = 0
 MAX_RATE = 45  # percent; beyond this the voice starts to sound rushed
 
 API = "https://api.elevenlabs.io/v1"
+
+
+def _https_request(url: str, **kwargs) -> urllib.request.Request:
+    """Build a Request and pin the scheme to https (the API base is a constant)."""
+    if not url.startswith("https://"):
+        raise ValueError("refusing non-https ElevenLabs request")
+    return urllib.request.Request(url, **kwargs)
+
+
+def _urlopen_https(req: urllib.request.Request, *, timeout: int):
+    """urlopen with the scheme pinned to https; refuses file:/custom schemes."""
+    if not req.full_url.startswith("https://"):
+        raise ValueError("refusing non-https ElevenLabs request")
+    return urllib.request.urlopen(req, timeout=timeout)  # noqa: S310  # scheme pinned to https
+
+
 ELEVEN_VOICE = "Daniel"
 ELEVEN_MODEL = "eleven_multilingual_v2"
 ELEVEN_FORMAT = "mp3_44100_128"
@@ -190,8 +206,8 @@ def eleven_key() -> str:
 def eleven_voice(key: str, want_name: str | None, want_id: str | None) -> tuple[str, str]:
     if want_id:
         return want_id, want_id
-    req = urllib.request.Request(f"{API}/voices", headers={"xi-api-key": key})
-    with urllib.request.urlopen(req, timeout=45) as res:
+    req = _https_request(f"{API}/voices", headers={"xi-api-key": key})
+    with _urlopen_https(req, timeout=45) as res:
         voices = json.loads(res.read().decode("utf-8")).get("voices", [])
     if not voices:
         sys.exit("the ElevenLabs account returned no voices")
@@ -212,7 +228,7 @@ def eleven_voice(key: str, want_name: str | None, want_id: str | None) -> tuple[
 
 
 def eleven_render(key: str, voice_id: str, model: str, text: str, out: Path) -> tuple[bool, str]:
-    req = urllib.request.Request(
+    req = _https_request(
         f"{API}/text-to-speech/{voice_id}?output_format={ELEVEN_FORMAT}",
         data=json.dumps(
             {"text": text, "model_id": model, "voice_settings": ELEVEN_SETTINGS}
@@ -221,7 +237,7 @@ def eleven_render(key: str, voice_id: str, model: str, text: str, out: Path) -> 
         method="POST",
     )
     try:
-        with urllib.request.urlopen(req, timeout=120) as res:
+        with _urlopen_https(req, timeout=120) as res:
             audio = res.read()
     except urllib.error.HTTPError as err:
         return False, f"HTTP {err.code} {err.read().decode('utf-8', 'replace')[:200]}"

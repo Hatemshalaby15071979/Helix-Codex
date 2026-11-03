@@ -32,10 +32,9 @@ from __future__ import annotations
 
 import argparse
 import re
-import sys
-from pathlib import Path
 
-from build_captions import FILM, build as build_captions, extract_scenes
+from build_captions import FILM, extract_scenes
+from build_captions import build as build_captions
 from build_voice import AUDIO, clip_name, ffprobe_seconds, flatten_beats
 
 SCENE_RE = re.compile(
@@ -122,9 +121,15 @@ def main() -> int:
         new = new_times(group, scene["dur"])
 
         # window each beat gets, old vs new, against the clip it must hold
-        def worst(times: list[float]) -> float:
+        def worst(
+            times: list[float],
+            *,
+            scene: dict = scene,
+            group: list[float] = group,
+            group_beats: list = group_beats,
+        ) -> float:
             out = 0.0
-            for i, (beat, length) in enumerate(zip(group_beats, group, strict=True)):
+            for i, (_beat, length) in enumerate(zip(group_beats, group, strict=True)):
                 end = times[i + 1] if i + 1 < len(times) else scene["dur"]
                 out = max(out, length - (end - times[i]))
             return out
@@ -152,7 +157,7 @@ def main() -> int:
             problems.append(f"{scene['title']}: negative beat time")
         if any(t >= scene["dur"] for t in times):
             problems.append(f"{scene['title']}: a beat starts at or after the scene ends")
-        if any(b <= a for a, b in zip(times, times[1:])):
+        if any(b <= a for a, b in zip(times, times[1:], strict=False)):
             problems.append(f"{scene['title']}: beat times are not strictly increasing")
     if problems:
         for problem in problems:

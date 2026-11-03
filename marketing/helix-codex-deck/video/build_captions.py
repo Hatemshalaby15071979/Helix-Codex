@@ -23,7 +23,6 @@ import math
 import re
 import shutil
 import subprocess
-import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
