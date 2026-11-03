@@ -19,6 +19,27 @@ from .policy import evaluate_write_gate
 from .ports import ConnectorPort, WritePlan, WriteReceipt
 
 
+def _provider_activated(connector: Any) -> bool:
+    """Whether the provider is activated for live writes.
+
+    Reads the connector's own status (BaseConnector.status()) and any explicit
+    ``is_activated`` declaration. Unknown or unreadable status → False (fail
+    closed). A connector whose adapter was never activated must not pass the
+    gate, even if every other control is green.
+    """
+    from connectors.contracts import ConnectorStatus
+
+    try:
+        explicit = getattr(connector, "is_activated", None)
+        if explicit is not None:
+            return explicit is True
+        status = getattr(connector, "status", None)
+        status = status() if callable(status) else status
+        return status in (ConnectorStatus.AUTHENTICATED, ConnectorStatus.HEALTHY)
+    except Exception:
+        return False
+
+
 class ConnectorGateway:
     """Single surface for connector operations with governance.
 
@@ -103,11 +124,14 @@ class ConnectorGateway:
         capability_id = intent.get("capability_id", "unknown")
         data_mode = context.data_mode
 
-        # Evaluate governance gate
+        # Evaluate governance gate. The activation flag comes from the
+        # connector's real status (AUTHENTICATED/HEALTHY, or an explicit
+        # is_activated declaration), never from a constant — unknown statuses
+        # fail closed.
         gate_result = evaluate_write_gate(
             capability_id=capability_id,
             data_mode=data_mode,
-            provider_activated=True,  # TODO: check actual activation status
+            provider_activated=_provider_activated(connector),
         )
 
         if not gate_result["permitted"]:

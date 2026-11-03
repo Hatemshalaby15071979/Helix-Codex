@@ -26,27 +26,41 @@ the app binds to loopback, the Worker is the only path in from outside, and the
 Worker always sets or deletes the header rather than forwarding a caller's value.
 If the app is ever exposed without the Worker in front, that trust no longer holds
 and this module's ordering must be revisited.
+
+The trust is therefore opt-in: the headers are honoured only when the environment
+sets ``HELIX_BEHIND_WORKER=true``. Without the flag the caller address is the
+socket peer, and the headers are ignored entirely — a deployment that is not
+behind the Worker cannot have its rate limits spoofed by inventing one.
 """
 from __future__ import annotations
 
+import os
 from ipaddress import ip_address
 
 from fastapi import Request
 
 WORKER_CLIENT_IP_HEADER = "x-helix-client-ip"
 EDGE_CLIENT_IP_HEADER = "cf-connecting-ip"
+BEHIND_WORKER_ENV = "HELIX_BEHIND_WORKER"
+
+
+def _behind_worker() -> bool:
+    return os.environ.get(BEHIND_WORKER_ENV, "").strip().lower() in {"1", "true", "yes", "on"}
 
 
 def client_ip(request: Request) -> str | None:
     """The best available address for the caller, falling back to the peer.
 
-    A header value is used only when it parses as an IP address, so a malformed
-    or oversized value cannot become a rate-limit bucket key.
+    A header value is used only when the deployment declares it is behind the
+    Worker (``HELIX_BEHIND_WORKER=true``) and only when it parses as an IP
+    address, so a malformed or oversized value cannot become a rate-limit
+    bucket key. Without the flag the socket peer is the only source.
     """
-    for header in (WORKER_CLIENT_IP_HEADER, EDGE_CLIENT_IP_HEADER):
-        candidate = _as_ip(request.headers.get(header))
-        if candidate is not None:
-            return candidate
+    if _behind_worker():
+        for header in (WORKER_CLIENT_IP_HEADER, EDGE_CLIENT_IP_HEADER):
+            candidate = _as_ip(request.headers.get(header))
+            if candidate is not None:
+                return candidate
     if request.client is not None:
         return request.client.host
     return None

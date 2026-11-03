@@ -2,11 +2,21 @@
 
 This module replaces the regex-based call_agent parsing in base_agent.py
 with a structured tool call system using JSON schema validation.
+
+Honesty contract: no tool handler ever returns invented output. Handlers are
+either wired (call_agent -> the agent registry; side-effecting tools -> the
+bound Engine / document reader) or fail closed with a typed error. The legacy
+regex parser exists only behind HELIX_LEGACY_CALL_PARSING=1 and is logged.
 """
 from __future__ import annotations
 
+import asyncio
 import json
+import uuid
+from datetime import datetime, timezone
 from typing import Any, Mapping
+
+from contracts.task import CorrelationContext, TaskRequest
 
 from contracts.toolcall import (
     TOOLS,
@@ -14,6 +24,16 @@ from contracts.toolcall import (
     ToolCallEnvelope,
     ToolResult,
 )
+
+
+# Per-tool argument schemas: required key -> (type, max length). Validation is
+# strict: unknown keys are refused rather than silently ignored (fail closed).
+_ARG_SCHEMAS: dict[str, dict[str, tuple[type, int]]] = {
+    "call_agent": {"agent_name": (str, 64), "message": (str, 8192)},
+    "submit_task": {"task": (str, 2048)},
+    "request_approval": {"summary": (str, 2048)},
+    "read_document": {"doc_id": (str, 128)},
+}
 
 
 class AgentDispatch:
@@ -32,10 +52,12 @@ class AgentDispatch:
         store=None,
         connector_gateway=None,
         max_depth: int = 5,
+        document_reader=None,
     ) -> None:
         self._engine = engine
         self._store = store
         self._gateway = connector_gateway
+        self._document_reader = document_reader
         self._max_depth = max_depth
         self._depth: int = 0
         self._visited_agents: set[str] = set()
@@ -80,9 +102,22 @@ class AgentDispatch:
         if tool_def is None:
             return False, f"Unknown tool: {tool_call.tool}"
 
-        # Check required args
-        # TODO: Validate args against tool schema
+        args = tool_call.args
+        if not isinstance(args, Mapping):
+            return False, f"args must be an object, got {type(args).__name__}"
 
+        schema = _ARG_SCHEMAS.get(tool_call.tool, {})
+        unknown = sorted(set(args) - set(schema))
+        if unknown:
+            return False, f"unknown arg(s) for {tool_call.tool}: {', '.join(unknown)}"
+        for key, (expected_type, max_len) in schema.items():
+            value = args.get(key)
+            if value is None:
+                return False, f"missing required arg: {key}"
+            if not isinstance(value, expected_type) or not value.strip():
+                return False, f"arg {key} must be a non-empty {expected_type.__name__}"
+            if len(value) > max_len:
+                return False, f"arg {key} exceeds {max_len} characters"
         return True, ""
 
     def check_depth(self) -> bool:
@@ -184,12 +219,28 @@ class AgentDispatch:
         self._visited_agents.add(agent_name)
 
         try:
-            # TODO: Actually call the agent and get response
-            result = f"Called {agent_name} with: {message}"
+            from app.command_center.agents.base_agent import AgentRegistry
+
+            agent = AgentRegistry.get_agent(agent_name)
+            if agent is None:
+                return ToolResult(
+                    call_id=tool_call.call_id,
+                    error=f"Agent {agent_name!r} is not registered",
+                    nature="error",
+                )
+            # process_request performs a blocking HTTP call to the local model;
+            # keep the event loop free.
+            output = await asyncio.to_thread(agent.process_request, message)
             return ToolResult(
                 call_id=tool_call.call_id,
-                output=result,
+                output=output,
                 nature="model_inference",
+            )
+        except Exception as exc:
+            return ToolResult(
+                call_id=tool_call.call_id,
+                error=f"call_agent failed: {exc}",
+                nature="error",
             )
         finally:
             self._depth -= 1
@@ -200,26 +251,16 @@ class AgentDispatch:
         tool_call: ToolCall,
         context: Mapping[str, Any],
     ) -> ToolResult:
-        """Handle submit_task tool call."""
-        # TODO: Implement task submission through Engine
-        return ToolResult(
-            call_id=tool_call.call_id,
-            output="Task submitted for approval",
-            nature="model_inference",
-        )
+        """Handle submit_task: submit to the bound Engine, or fail closed."""
+        return await self._submit_through_engine(tool_call, context, default_capability="task_submission")
 
     async def _handle_request_approval(
         self,
         tool_call: ToolCall,
         context: Mapping[str, Any],
     ) -> ToolResult:
-        """Handle request_approval tool call."""
-        # TODO: Implement approval request through Engine
-        return ToolResult(
-            call_id=tool_call.call_id,
-            output="Approval request submitted",
-            nature="model_inference",
-        )
+        """Handle request_approval: submit to the bound Engine, or fail closed."""
+        return await self._submit_through_engine(tool_call, context, default_capability="approval_request")
 
     async def _handle_read_document(
         self,
@@ -228,10 +269,102 @@ class AgentDispatch:
     ) -> ToolResult:
         """Handle read_document tool call."""
         doc_id = tool_call.args.get("doc_id", "")
-        # TODO: Implement document read
+        if self._document_reader is None:
+            return ToolResult(
+                call_id=tool_call.call_id,
+                error="read_document is not available: no document reader bound to this dispatch",
+                nature="error",
+            )
+        try:
+            output = await asyncio.to_thread(self._document_reader, doc_id, context)
+            return ToolResult(
+                call_id=tool_call.call_id,
+                output=output,
+                nature="verified_fact",
+            )
+        except Exception as exc:
+            return ToolResult(
+                call_id=tool_call.call_id,
+                error=f"read_document failed: {exc}",
+                nature="error",
+            )
+
+    async def _submit_through_engine(
+        self,
+        tool_call: ToolCall,
+        context: Mapping[str, Any],
+        *,
+        default_capability: str,
+    ) -> ToolResult:
+        """Submit a side-effecting tool call through the bound Engine.
+
+        Fails closed: without an Engine, or without the context keys the
+        Engine contract requires, the call is refused — never faked.
+        """
+        if self._engine is None:
+            return ToolResult(
+                call_id=tool_call.call_id,
+                error=f"{tool_call.tool} is not available: no Engine bound to this dispatch",
+                nature="error",
+            )
+
+        missing = [
+            key
+            for key in ("requesting_actor", "owning_role_id", "correlation_id")
+            if not str(context.get(key) or "").strip()
+        ]
+        tenant_id = str(context.get("tenant_id") or "").strip() or None
+        client_id = str(context.get("client_id") or "").strip() or None
+        if not tenant_id and not client_id:
+            # CorrelationContext requires at least one of the two.
+            missing.append("tenant_id or client_id")
+        if missing:
+            return ToolResult(
+                call_id=tool_call.call_id,
+                error=f"{tool_call.tool} requires context keys: {', '.join(missing)}",
+                nature="error",
+            )
+
+        now = datetime.now(timezone.utc).isoformat()
+        text = tool_call.args.get("task") or tool_call.args.get("summary") or ""
+        correlation = CorrelationContext(
+            correlation_id=str(context["correlation_id"]),
+            idempotency_key=str(context.get("idempotency_key") or tool_call.call_id),
+            tenant_id=tenant_id,
+            client_id=client_id,
+            created_at=now,
+        )
+        request = TaskRequest(
+            request_id=f"req-{uuid.uuid4().hex[:12]}",
+            correlation=correlation,
+            requesting_actor=str(context["requesting_actor"]),
+            owning_role_id=str(context["owning_role_id"]),
+            capability=str(context.get("capability") or default_capability),
+            input_payload={
+                "text": text,
+                "source": "agent_dispatch",
+                "tool_call_id": tool_call.call_id,
+                "data_classification": context.get("data_classification") or "internal",
+            },
+            requires_approval=True,
+            status="proposed",
+            created_at=now,
+        )
+        try:
+            workflow = await asyncio.to_thread(self._engine.submit, request)
+        except Exception as exc:
+            return ToolResult(
+                call_id=tool_call.call_id,
+                error=f"{tool_call.tool} engine submit failed: {exc}",
+                nature="error",
+            )
         return ToolResult(
             call_id=tool_call.call_id,
-            output=f"Document {doc_id} read",
+            output={
+                "workflow_id": getattr(workflow, "workflow_id", None),
+                "state": str(getattr(workflow, "state", "unknown")),
+                "requires_approval": True,
+            },
             nature="model_inference",
         )
 

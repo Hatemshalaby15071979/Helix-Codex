@@ -4,7 +4,9 @@ Tests cover:
 1. Structured round-trip (parse → validate → execute → result)
 2. Malformed output → review queue with zero tool executions
 3. Depth-6 → typed refusal
-4. submit_task freezes at awaiting_approval and completes after approve
+4. submit_task/request_approval fail closed without an Engine; when an Engine
+   is bound, the TaskRequest is submitted with requires_approval=True
+5. Strict argument validation (missing/unknown/over-length args refused)
 """
 from __future__ import annotations
 
@@ -102,3 +104,124 @@ def test_cycle_detection():
     # This should detect the cycle
     result = asyncio.run(dispatch.execute_tool_call(tool_call, {}))
     assert "Cycle" in result.error or "cycle" in result.error.lower()
+
+
+def test_validate_rejects_missing_args():
+    dispatch = AgentDispatch(max_depth=5)
+    tool_call = ToolCall(call_id="c1", tool="call_agent", args={"agent_name": "PHILI"})
+    is_valid, error = dispatch.validate_tool_call(tool_call)
+    assert is_valid is False
+    assert "message" in error
+
+
+def test_validate_rejects_unknown_args():
+    dispatch = AgentDispatch(max_depth=5)
+    tool_call = ToolCall(
+        call_id="c1",
+        tool="call_agent",
+        args={"agent_name": "PHILI", "message": "hi", "shell": "rm -rf /"},
+    )
+    is_valid, error = dispatch.validate_tool_call(tool_call)
+    assert is_valid is False
+    assert "shell" in error
+
+
+def test_validate_rejects_overlength_and_non_string():
+    dispatch = AgentDispatch(max_depth=5)
+    tool_call = ToolCall(
+        call_id="c1",
+        tool="call_agent",
+        args={"agent_name": "PHILI", "message": 1234},
+    )
+    is_valid, error = dispatch.validate_tool_call(tool_call)
+    assert is_valid is False
+
+
+def test_submit_task_fails_closed_without_engine():
+    dispatch = AgentDispatch(max_depth=5)
+    tool_call = ToolCall(call_id="c1", tool="submit_task", args={"task": "Review proposal"})
+    result = asyncio.run(
+        dispatch.execute_tool_call(
+            tool_call,
+            {
+                "tenant_id": "t-1",
+                "requesting_actor": "sami",
+                "owning_role_id": "ops_gm",
+                "correlation_id": "corr-1",
+            },
+        )
+    )
+    assert result.nature == "error"
+    assert "no Engine bound" in (result.error or "")
+
+
+def test_submit_task_requires_context_keys():
+    dispatch = AgentDispatch(max_depth=5, engine=object())
+    tool_call = ToolCall(call_id="c1", tool="submit_task", args={"task": "Review proposal"})
+    result = asyncio.run(dispatch.execute_tool_call(tool_call, {}))
+    assert result.nature == "error"
+    assert "context keys" in (result.error or "")
+
+
+class _StubEngine:
+    def __init__(self):
+        self.requests = []
+
+    def submit(self, request):
+        self.requests.append(request)
+
+        class _Workflow:
+            workflow_id = "wf-stub-1"
+            state = "awaiting_approval"
+
+        return _Workflow()
+
+
+def test_submit_task_wires_to_engine():
+    engine = _StubEngine()
+    dispatch = AgentDispatch(max_depth=5, engine=engine)
+    tool_call = ToolCall(call_id="c1", tool="submit_task", args={"task": "Review proposal"})
+    result = asyncio.run(
+        dispatch.execute_tool_call(
+            tool_call,
+            {
+                "tenant_id": "t-1",
+                "client_id": "c-1",
+                "requesting_actor": "sami",
+                "owning_role_id": "ops_gm",
+                "correlation_id": "corr-1",
+                "idempotency_key": "idem-1",
+            },
+        )
+    )
+    assert result.nature == "model_inference"
+    assert result.output == {
+        "workflow_id": "wf-stub-1",
+        "state": "awaiting_approval",
+        "requires_approval": True,
+    }
+    assert len(engine.requests) == 1
+    request = engine.requests[0]
+    assert request.requires_approval is True
+    assert request.input_payload["text"] == "Review proposal"
+    assert request.capability == "task_submission"
+
+
+def test_call_agent_unknown_agent_fails_closed():
+    dispatch = AgentDispatch(max_depth=5)
+    tool_call = ToolCall(
+        call_id="c1",
+        tool="call_agent",
+        args={"agent_name": "NO_SUCH_AGENT_XYZ", "message": "hello"},
+    )
+    result = asyncio.run(dispatch.execute_tool_call(tool_call, {}))
+    assert result.nature == "error"
+    assert "not registered" in (result.error or "")
+
+
+def test_read_document_fails_closed_without_reader():
+    dispatch = AgentDispatch(max_depth=5)
+    tool_call = ToolCall(call_id="c1", tool="read_document", args={"doc_id": "doc-1"})
+    result = asyncio.run(dispatch.execute_tool_call(tool_call, {}))
+    assert result.nature == "error"
+    assert "no document reader" in (result.error or "")

@@ -71,13 +71,12 @@ Approval authentication
     503 unless `HELIX_COCKPIT_ALLOW_UNAUTHENTICATED=true` is set, which exists for
     local development and tests only and must never be enabled in production. The
     `manager_id` in the request is recorded as asserted by the key holder, not
-    independently verified by the engine. The app binds 0.0.0.0:8000 by default
-    per the cockpit deployment spec; override with --host on an untrusted network.
+    independently verified by the engine. The app binds 127.0.0.1:8000 by default;
+    pass --host 0.0.0.0 only inside a trusted network segment.
 
 The engine is in-memory and single-process; `asyncio.Lock` serialises mutation
-on the event loop. Bind defaults to 0.0.0.0:8000 per the cockpit deployment
-spec, which is a deliberate departure from the repository's loopback default --
-override with --host when running on an untrusted network.
+on the event loop. Bind defaults to 127.0.0.1 (loopback) like the rest of the
+repository; containers and trusted networks must opt in with --host.
 """
 
 from __future__ import annotations
@@ -86,6 +85,7 @@ import argparse
 import asyncio
 import hmac
 import json
+import logging
 import os
 import statistics
 import time
@@ -862,10 +862,30 @@ def _require_approve_auth(http_request: Request) -> JSONResponse | None:
     return None
 
 
+_ALLOW_UNAUTHENTICATED_ENV = "HELIX_COCKPIT_ALLOW_UNAUTHENTICATED"
+
+
+def _warn_if_unauthenticated_override() -> None:
+    """Shout about the local-dev override; it must never reach production."""
+    if os.environ.get(_ALLOW_UNAUTHENTICATED_ENV, "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }:
+        logging.getLogger("ingest_engine").warning(
+            "%s is enabled: the approve endpoint is UNAUTHENTICATED. This is for "
+            "local development and tests only and must never be set for an "
+            "exposed deployment. Set HELIX_COCKPIT_APPROVE_KEY instead.",
+            _ALLOW_UNAUTHENTICATED_ENV,
+        )
+
+
 def create_app(
     engine: CockpitStateEngine | None = None, manager: ConnectionManager | None = None
 ) -> FastAPI:
     """Build the cockpit REST application around one engine instance."""
+    _warn_if_unauthenticated_override()
     state_engine = engine or CockpitStateEngine()
     stream_manager = manager or ConnectionManager()
 
@@ -983,7 +1003,7 @@ app = create_app(manager=manager)
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--host", default="0.0.0.0", help="bind address")
+    parser.add_argument("--host", default="127.0.0.1", help="bind address (default: loopback; use --host 0.0.0.0 only inside a trusted network)")
     parser.add_argument("--port", type=int, default=8000, help="bind port")
     parser.add_argument("--log-level", default="info", help="uvicorn log level")
     args = parser.parse_args()

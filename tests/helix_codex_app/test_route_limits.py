@@ -57,7 +57,13 @@ def _request(headers: dict[str, str], peer: str = "127.0.0.1") -> Request:
     )
 
 
-def test_the_workers_header_wins_over_the_edge_header():
+@pytest.fixture()
+def behind_worker(monkeypatch):
+    """Declare the deployment is behind the Cloudflare Worker."""
+    monkeypatch.setenv("HELIX_BEHIND_WORKER", "true")
+
+
+def test_the_workers_header_wins_over_the_edge_header(behind_worker):
     """The Worker hop rewrites cf-connecting-ip, so its own header must lead."""
     seen = client_ip(
         _request(
@@ -70,7 +76,7 @@ def test_the_workers_header_wins_over_the_edge_header():
     assert seen == "203.0.113.9"
 
 
-def test_the_edge_header_is_used_when_no_worker_set_one():
+def test_the_edge_header_is_used_when_no_worker_set_one(behind_worker):
     """The tunnel-direct path has no Worker in front of it."""
     assert client_ip(_request({"cf-connecting-ip": "198.51.100.4"})) == "198.51.100.4"
 
@@ -79,13 +85,37 @@ def test_the_socket_peer_is_the_last_resort():
     assert client_ip(_request({}, peer="127.0.0.1")) == "127.0.0.1"
 
 
-def test_a_value_that_is_not_an_address_is_ignored():
+def test_a_value_that_is_not_an_address_is_ignored(behind_worker):
     """A junk header must not become a bucket key."""
     assert client_ip(_request({"x-helix-client-ip": "not-an-ip"})) == "127.0.0.1"
     assert (
         client_ip(_request({"x-helix-client-ip": "not-an-ip", "cf-connecting-ip": "198.51.100.4"}))
         == "198.51.100.4"
     )
+
+
+def test_headers_are_ignored_without_the_worker_flag():
+    """BLK-015: without HELIX_BEHIND_WORKER the headers are not trusted at all."""
+    assert (
+        client_ip(
+            _request(
+                {
+                    "x-helix-client-ip": "203.0.113.9",
+                    "cf-connecting-ip": "198.51.100.4",
+                }
+            )
+        )
+        == "127.0.0.1"
+    )
+
+
+def test_behind_worker_flag_is_explicit(monkeypatch):
+    """The flag is opt-in; any other value means not-behind-Worker."""
+    for value in ("", "0", "false", "no", "yesplease"):
+        monkeypatch.setenv("HELIX_BEHIND_WORKER", value)
+        assert client_ip(_request({"x-helix-client-ip": "203.0.113.9"})) == "127.0.0.1"
+    monkeypatch.setenv("HELIX_BEHIND_WORKER", "1")
+    assert client_ip(_request({"x-helix-client-ip": "203.0.113.9"})) == "203.0.113.9"
 
 
 def test_the_throttle_counts_then_refuses(tmp_path):

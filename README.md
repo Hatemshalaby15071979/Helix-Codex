@@ -298,7 +298,7 @@ Ollama is optional; without it the system runs in deterministic offline mode and
 Agent consultations return an `Offline` status and explain that model responses are unavailable. The local WFM, RTA, CX, and CRM calculations, approval flow, and audit trail still run; they do not call Ollama. Agent-generated answers need Ollama, and an offline response never attempts an external write.
 
 The Ops Cockpit ingest engine (`ingest_engine.py`) is a separate process that binds
-`0.0.0.0:8000` by default. Its `POST /api/v1/cockpit/approve` authority action fails
+`127.0.0.1:8000` by default (`--host 0.0.0.0` opts into a trusted network). Its `POST /api/v1/cockpit/approve` authority action fails
 closed: it requires an `X-Cockpit-Key` header matching the `HELIX_COCKPIT_APPROVE_KEY`
 environment variable, and refuses with `503` when that variable is unset unless
 `HELIX_COCKPIT_ALLOW_UNAUTHENTICATED=true` is set. That override is for local development
