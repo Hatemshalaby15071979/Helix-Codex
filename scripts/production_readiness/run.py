@@ -29,7 +29,7 @@ if str(_ROOT) not in sys.path:
 from scripts.production_readiness import gates  # noqa: E402
 from scripts.production_readiness.dataset import TENANTS, Tenant, load_tenants  # noqa: E402
 
-READY = "PRODUCTION_READINESS_EVIDENCED"
+READY = "SIMULATION_READINESS_EVIDENCED"
 NOT_READY = "NOT_READY"
 
 DISCLOSURE = (

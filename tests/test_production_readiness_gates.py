@@ -12,6 +12,11 @@ import pandas as pd
 import pytest
 
 from scripts.production_readiness import gates, ingest
+from scripts.production_readiness.run import READY
+
+
+def test_readiness_label_is_explicitly_simulation_scoped():
+    assert READY == "SIMULATION_READINESS_EVIDENCED"
 
 
 def _frame(rows):
