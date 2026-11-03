@@ -1,0 +1,1 @@
+{"audit_receipts_sha256": "b606200d2bf5cab5d3b7cee54e4390a4ec27074a3b04edcddd4f5d54d726ca8a", "detail": "all nine simulation receipts and the post-quantum audit chain verify", "disclosure": "SIMULATION ONLY; not external approval or certification.", "profile_bundle_sha256": "55232c80da0c33a19c772172b2c64f3cd9fdee68fb2021b9d4a80f43cd14f62b", "simulation": true, "valid": true}

@@ -1,0 +1,668 @@
+{
+  "gates": [
+    {
+      "detail": "both fixtures match their hash manifest and carry disclosure",
+      "evidence": [],
+      "gate_id": "PR-G01",
+      "metrics": {
+        "callcenterclient": {
+          "disclosure_present": true,
+          "files_listed": 1573,
+          "mismatched": 0,
+          "missing": 0,
+          "tables": 39
+        },
+        "sportacademyclient": {
+          "disclosure_present": true,
+          "files_listed": 1557,
+          "mismatched": 0,
+          "missing": 0,
+          "tables": 40
+        }
+      },
+      "ok": true,
+      "title": "fixture integrity + disclosure"
+    },
+    {
+      "detail": "all declared raw defects detected and cleaned",
+      "evidence": [],
+      "gate_id": "PR-G02",
+      "metrics": {
+        "callcenterclient": {
+          "defects": {
+            "payroll_export.csv": {
+              "chaos_counts": {},
+              "found_in": {
+                "period_format": "raw"
+              },
+              "overlay_cleaning": {},
+              "primary_missing": [],
+              "raw_counts": {
+                "negative_values": 0,
+                "period_format": 5000,
+                "trailing_whitespace": 0
+              }
+            },
+            "salesforce_cases_export.csv": {
+              "chaos_counts": {},
+              "found_in": {
+                "null_on_closed": "raw"
+              },
+              "overlay_cleaning": {},
+              "primary_missing": [],
+              "raw_counts": {
+                "duplicate_keys": 0,
+                "locale_date": 0,
+                "mojibake": 0,
+                "null_on_closed": 270
+              }
+            },
+            "wfm_schedule_export.csv": {
+              "chaos_counts": {},
+              "found_in": {
+                "locale_date": "raw",
+                "uppercase_enum": "raw"
+              },
+              "overlay_cleaning": {},
+              "primary_missing": [],
+              "raw_counts": {
+                "locale_date": 5084,
+                "negative_values": 0,
+                "trailing_whitespace": 0,
+                "uppercase_enum": 5084
+              }
+            },
+            "zendesk_tickets_export.csv": {
+              "chaos_counts": {
+                "duplicate_keys": 5,
+                "mixed_timezones": 8005,
+                "mojibake": 4,
+                "negative_values": 0,
+                "orphan_reference": 1,
+                "trailing_whitespace": 8001
+              },
+              "found_in": {
+                "duplicate_keys": "raw",
+                "mixed_timezones": "raw",
+                "trailing_whitespace": "raw"
+              },
+              "overlay_cleaning": {
+                "deduplicated_rows": 8000,
+                "joinable_rows_retained": 7954,
+                "orphan_rows_quarantined": 46
+              },
+              "primary_missing": [],
+              "raw_counts": {
+                "duplicate_keys": 5,
+                "mixed_timezones": 8005,
+                "mojibake": 0,
+                "negative_values": 0,
+                "orphan_reference": 0,
+                "trailing_whitespace": 8005
+              }
+            }
+          },
+          "duplicates_removed": 5,
+          "format_and_schema_variants": {
+            "bom_variant": {
+              "bom": true,
+              "crlf": true,
+              "encoding": "utf-8-sig"
+            },
+            "cp1252_rows_retained": 100,
+            "cp1252_variant": {
+              "bom": false,
+              "crlf": false,
+              "encoding": "cp1252"
+            },
+            "schema_variant_rows_retained": 8000
+          },
+          "tickets_clean_rows": 8000,
+          "tickets_raw_rows": 8005,
+          "timestamps_parsed_pct": 100.0
+        },
+        "fidelity_acceptance": {
+          "checks": {
+            "EXT-CC-01": true,
+            "EXT-CC-02": true,
+            "EXT-CC-03": true,
+            "EXT-CC-04": true,
+            "EXT-CC-05": true,
+            "EXT-CC-06": true,
+            "EXT-CC-07": true,
+            "EXT-CC-08": true,
+            "EXT-CC-09": true,
+            "EXT-CC-10": true,
+            "EXT-CC-11": true,
+            "EXT-CC-12": true,
+            "EXT-SA-01": true,
+            "EXT-SA-02": true,
+            "EXT-SA-03": true,
+            "EXT-SA-04": true,
+            "EXT-SA-05": true,
+            "EXT-SA-06": true,
+            "EXT-SA-07": true,
+            "EXT-SA-08": true,
+            "EXT-SA-09": true,
+            "EXT-SA-10": true,
+            "EXT-SA-11": true,
+            "EXT-SA-12": true
+          },
+          "failures": [],
+          "measurements": {
+            "cc_forecast_ks_distance": 1.0,
+            "cc_late_records": 241,
+            "cc_orphan_assignees": 46,
+            "cc_outage_days": 2,
+            "sa_attendance_coverage_days": 364,
+            "sa_cancellation_rate_pct": 3.026,
+            "sa_injury_absence_spearman": -1.0
+          },
+          "passed": 24,
+          "primary_timezone_counts": {
+            "utc_plus_02": 1200,
+            "zulu": 6805
+          },
+          "total": 24
+        },
+        "sportacademyclient": {
+          "defects": {
+            "applicant_export.csv": {
+              "chaos_counts": {},
+              "found_in": {
+                "blank_score_in_progress": "raw"
+              },
+              "overlay_cleaning": {},
+              "primary_missing": [],
+              "raw_counts": {
+                "blank_score_in_progress": 540,
+                "duplicate_keys": 0,
+                "trailing_whitespace": 0
+              }
+            },
+            "itsm_export.csv": {
+              "chaos_counts": {},
+              "found_in": {
+                "closed_at_null_on_open": "raw",
+                "zero_resolution_on_open": "raw"
+              },
+              "overlay_cleaning": {},
+              "primary_missing": [],
+              "raw_counts": {
+                "closed_at_null_on_open": 199,
+                "duplicate_keys": 0,
+                "trailing_whitespace": 0,
+                "zero_resolution_on_open": 199
+              }
+            },
+            "payroll_export.csv": {
+              "chaos_counts": {},
+              "found_in": {
+                "period_format": "raw"
+              },
+              "overlay_cleaning": {},
+              "primary_missing": [],
+              "raw_counts": {
+                "negative_values": 0,
+                "period_format": 3000,
+                "trailing_whitespace": 0
+              }
+            },
+            "playmetrics_registrations.csv": {
+              "chaos_counts": {
+                "duplicate_keys": 4,
+                "orphan_reference": 1,
+                "trailing_whitespace": 2504,
+                "uppercase_enum": 0
+              },
+              "found_in": {
+                "duplicate_keys": "raw",
+                "trailing_whitespace": "raw"
+              },
+              "overlay_cleaning": {},
+              "primary_missing": [],
+              "raw_counts": {
+                "duplicate_keys": 4,
+                "orphan_reference": 0,
+                "trailing_whitespace": 2504,
+                "uppercase_enum": 0
+              }
+            },
+            "session_export.csv": {
+              "chaos_counts": {
+                "locale_date": 30000,
+                "negative_values": 0,
+                "trailing_whitespace": 0,
+                "uppercase_enum": 30000
+              },
+              "found_in": {
+                "locale_date": "raw",
+                "uppercase_enum": "raw"
+              },
+              "overlay_cleaning": {},
+              "primary_missing": [],
+              "raw_counts": {
+                "locale_date": 30000,
+                "negative_values": 0,
+                "trailing_whitespace": 0,
+                "uppercase_enum": 30000
+              }
+            }
+          }
+        }
+      },
+      "ok": true,
+      "title": "raw-layer defect detection"
+    },
+    {
+      "detail": "Erlang C staffing is plausible on both fixtures",
+      "evidence": [],
+      "gate_id": "PR-G03",
+      "metrics": {
+        "callcenterclient": {
+          "aht_seconds": 459.4,
+          "client": "teleclient",
+          "contacts": 48.1562,
+          "interval_minutes": 15.0,
+          "observed_staff_or_coaches": 14.29,
+          "optimal_agents": 30.0,
+          "provenance": {
+            "contacts_total": 4623.0,
+            "date": "2026-10-27",
+            "files": [
+              "16_DATA/curated/intraday_15min.csv",
+              "16_DATA/curated/queue_metrics_daily.csv"
+            ],
+            "grain": "queue x 15-minute interval, one business day",
+            "intervals_observed": 96,
+            "queue_id": "TEL-VOICE-BILL",
+            "rows": 96,
+            "sla_target_pct": 80.0
+          },
+          "required_to_observed": 2.099,
+          "service_level_achieved": 0.8301,
+          "service_level_target": 0.8,
+          "traffic_intensity": 24.58
+        },
+        "callcenterclient_wfm_chaos": {
+          "abandon_after_threshold_pct": 67.679,
+          "outage_days": 2,
+          "outage_handled_contacts": 0,
+          "outage_offered_contacts": 129974,
+          "outage_sla_zero_rows": 28,
+          "short_abandon_count": 11426
+        },
+        "sportacademyclient": {
+          "aht_seconds": 3600.0,
+          "client": "academy",
+          "contacts": 193.0,
+          "interval_minutes": 1440.0,
+          "observed_staff_or_coaches": 48.0,
+          "optimal_agents": 13.0,
+          "provenance": {
+            "date": "2026-10-27",
+            "files": [
+              "16_DATA/curated/forecast_daily.csv",
+              "16_DATA/curated/sessions.csv"
+            ],
+            "grain": "sport x calendar day, delivered attendance priced at session duration",
+            "rows": 1,
+            "sessions_observed": 16,
+            "sport": "football"
+          },
+          "required_to_observed": 0.271,
+          "service_level_achieved": 0.9235,
+          "service_level_target": 0.9,
+          "traffic_intensity": 8.04
+        }
+      },
+      "ok": true,
+      "title": "WFM staffing on real queue-day volume"
+    },
+    {
+      "detail": "adherence reproduces the fixture within 2pp",
+      "evidence": [],
+      "gate_id": "PR-G04",
+      "metrics": {
+        "callcenterclient": {
+          "actual_hours": 7585.02,
+          "agents_or_sessions": 1500,
+          "client": "teleclient",
+          "overall_adherence_pct": 85.731,
+          "provenance": {
+            "dataset_adherence_pct": 86.06083798882682,
+            "date": "2026-10-27",
+            "files": [
+              "16_DATA/curated/rosters_daily.csv"
+            ],
+            "grain": "agent x day (hour collapsed to 0)",
+            "rows": 1500
+          },
+          "scheduled_hours": 8850.0
+        },
+        "callcenterclient_fixture_pct": 86.061,
+        "callcenterclient_split_shift": {
+          "daily_hours_match_source": true,
+          "overlay_agent_days": 547500,
+          "source_agent_days": 547500,
+          "split_shift_agents": 30,
+          "swap_marked_rows": 5475
+        },
+        "sportacademyclient": {
+          "actual_hours": 1111.0,
+          "agents_or_sessions": 111,
+          "client": "academy",
+          "overall_adherence_pct": 85.396,
+          "provenance": {
+            "date": "2026-10-27",
+            "files": [
+              "16_DATA/curated/sessions.csv"
+            ],
+            "grain": "session x day, booked vs attended places",
+            "rows": 111
+          },
+          "scheduled_hours": 1306.0
+        },
+        "sportacademyclient_fixture_pct": 85.069
+      },
+      "ok": true,
+      "title": "RTA adherence on roster/attendance data"
+    },
+    {
+      "detail": "risk is bounded and ordered with CSAT",
+      "evidence": [],
+      "gate_id": "PR-G05",
+      "metrics": {
+        "callcenterclient": {
+          "client": "travbookclient",
+          "customers_scored": 40,
+          "overall_risk_score": 0.1422,
+          "provenance": {
+            "cohorts_available": 7631,
+            "files": [
+              "16_DATA/curated/tickets.csv"
+            ],
+            "grain": "requester x full ticket history (cohort KPI)",
+            "rows": 40,
+            "tickets_read": 60000
+          },
+          "risk_levels": {
+            "low": 39,
+            "medium": 1
+          },
+          "risk_score_spread": 0.474,
+          "spearman_csat_vs_kpi_score": 0.8669
+        },
+        "sportacademyclient": {
+          "client": "academy",
+          "customers_scored": 40,
+          "overall_risk_score": 0.2682,
+          "provenance": {
+            "attendance_rows": 421975,
+            "cohorts_available": 3007,
+            "files": [
+              "16_DATA/curated/attendance.csv",
+              "16_DATA/curated/athletes.csv"
+            ],
+            "grain": "athlete x 12-month attendance history",
+            "rows": 40
+          },
+          "risk_levels": {
+            "low": 40
+          },
+          "risk_score_spread": 0.1122,
+          "spearman_csat_vs_kpi_score": 0.9084
+        }
+      },
+      "ok": true,
+      "title": "CX risk on real ticket/attendance cohorts"
+    },
+    {
+      "detail": "SOP + staffing plan generated from tenant profile",
+      "evidence": [],
+      "gate_id": "PR-G06",
+      "metrics": {
+        "callcenterclient": {
+          "client": "teleclient",
+          "provenance": {
+            "account": "teleclient",
+            "channels": [
+              "backoffice",
+              "chat",
+              "email",
+              "voice"
+            ],
+            "files": [
+              "16_DATA/curated/queue_metrics_daily.csv",
+              "16_DATA/curated/contracts.csv",
+              "16_DATA/curated/rate_cards.csv"
+            ],
+            "grain": "account x 24 months of queue volume",
+            "rows": 5110
+          },
+          "requirements": 8,
+          "sop_keys": [
+            "client_id",
+            "content",
+            "created_at",
+            "title",
+            "version"
+          ],
+          "staffing_keys": [
+            "client_id",
+            "created_at",
+            "roles",
+            "timeline",
+            "total_cost"
+          ]
+        },
+        "sportacademyclient": {
+          "client": "academy",
+          "provenance": {
+            "files": [
+              "16_DATA/curated/sessions.csv",
+              "16_DATA/curated/academy_profile.md"
+            ],
+            "grain": "academy x 24 months of sessions",
+            "rows": 70680,
+            "sports": [
+              "athletics",
+              "basketball",
+              "football",
+              "gymnastics",
+              "martial_arts",
+              "padel",
+              "swimming",
+              "tennis"
+            ]
+          },
+          "requirements": 8,
+          "sop_keys": [
+            "client_id",
+            "content",
+            "created_at",
+            "title",
+            "version"
+          ],
+          "staffing_keys": [
+            "client_id",
+            "created_at",
+            "roles",
+            "timeline",
+            "total_cost"
+          ]
+        }
+      },
+      "ok": true,
+      "title": "B2B onboarding from client profile"
+    },
+    {
+      "detail": "pipeline carries the real requisition and candidate",
+      "evidence": [],
+      "gate_id": "PR-G07",
+      "metrics": {
+        "callcenterclient": {
+          "candidates": 1,
+          "client": "teleclient",
+          "pipeline_status": "active",
+          "postings": 1,
+          "provenance": {
+            "files": [
+              "16_DATA/curated/requisitions.csv",
+              "16_DATA/curated/applicants.csv"
+            ],
+            "grain": "one open requisition x its applicant funnel",
+            "open_requisitions": 31,
+            "req_id": "REQ-0003",
+            "rows": 27
+          }
+        },
+        "sportacademyclient": {
+          "candidates": 1,
+          "client": "academy",
+          "pipeline_status": "active",
+          "postings": 1,
+          "provenance": {
+            "enrolled_athletes": 3200.0,
+            "files": [
+              "16_DATA/curated/coaches.csv",
+              "16_DATA/curated/squads.csv",
+              "16_DATA/curated/leavers.csv"
+            ],
+            "grain": "academy staffing plan across 8 sports",
+            "leavers": 104,
+            "open_posts_estimate": 78,
+            "rows": 168,
+            "squads": 246
+          }
+        }
+      },
+      "ok": true,
+      "title": "Personnel pipeline from requisitions/coaches"
+    },
+    {
+      "detail": "deal value is carried from tenant finance data",
+      "evidence": [],
+      "gate_id": "PR-G08",
+      "metrics": {
+        "callcenterclient": {
+          "client": "teleclient",
+          "deals": 1,
+          "leads": 1,
+          "pipeline_value": 19895063.86,
+          "provenance": {
+            "account": "teleclient",
+            "annual_value_usd": 28421519.8,
+            "files": [
+              "16_DATA/curated/pnl_monthly.csv",
+              "16_DATA/curated/tickets.csv"
+            ],
+            "grain": "account x 24 months P&L, one representative ticket",
+            "rows": 12
+          }
+        },
+        "sportacademyclient": {
+          "client": "academy",
+          "deals": 1,
+          "leads": 1,
+          "pipeline_value": 24000.0,
+          "provenance": {
+            "athlete_id": "SAC-A-00001",
+            "files": [
+              "16_DATA/curated/invoices.csv",
+              "16_DATA/curated/feedback_surveys.csv",
+              "16_DATA/curated/athletes.csv"
+            ],
+            "grain": "family x invoice history",
+            "members_of_academy": 3200,
+            "rows": 24
+          }
+        }
+      },
+      "ok": true,
+      "title": "CRM pipeline on tenant account value"
+    },
+    {
+      "detail": "all six adapters deny an unknown role",
+      "evidence": [],
+      "gate_id": "PR-G09",
+      "metrics": {
+        "b2b": {
+          "error_code": "unauthorized"
+        },
+        "crm": {
+          "error_code": "unauthorized"
+        },
+        "cx": {
+          "error_code": "unauthorized"
+        },
+        "personnel": {
+          "error_code": "unauthorized"
+        },
+        "rta": {
+          "error_code": "unauthorized"
+        },
+        "wfm": {
+          "error_code": "unauthorized"
+        }
+      },
+      "ok": true,
+      "title": "engine authorisation fails closed"
+    },
+    {
+      "detail": "every tenant-derived result is labelled sample",
+      "evidence": [],
+      "gate_id": "PR-G10",
+      "metrics": {
+        "calls": 12
+      },
+      "ok": true,
+      "title": "synthetic-data disclosure on results"
+    },
+    {
+      "detail": "repeated calls are byte-identical in their metrics",
+      "evidence": [],
+      "gate_id": "PR-G11",
+      "metrics": {
+        "callcenterclient:rta": {
+          "digest": "d76d70ef17c78f1b",
+          "stable": true
+        },
+        "callcenterclient:wfm": {
+          "digest": "1778961cd04abb9f",
+          "stable": true
+        },
+        "sportacademyclient:rta": {
+          "digest": "a8b46d34c949e1ed",
+          "stable": true
+        },
+        "sportacademyclient:wfm": {
+          "digest": "abaf85acfb96299f",
+          "stable": true
+        }
+      },
+      "ok": true,
+      "title": "determinism of engine results"
+    },
+    {
+      "detail": "all 20 calls under 5000ms",
+      "evidence": [],
+      "gate_id": "PR-G12",
+      "metrics": {
+        "budget_ms": 5000,
+        "calls": 20,
+        "max_ms": 222,
+        "mean_ms": 96.9
+      },
+      "ok": true,
+      "title": "engine latency budget"
+    }
+  ],
+  "label": "SIMULATION_READINESS_EVIDENCED",
+  "run_id": "20261103T191510Z",
+  "summary": {
+    "failed": 0,
+    "gates": 12,
+    "passed": 12
+  }
+}

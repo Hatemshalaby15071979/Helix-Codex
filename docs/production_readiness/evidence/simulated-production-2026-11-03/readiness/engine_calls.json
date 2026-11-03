@@ -1,0 +1,332 @@
+{
+  "calls": [
+    {
+      "capability": "wfm_forecast",
+      "client_id": "teleclient",
+      "data_mode": "sample",
+      "duration_ms": 97,
+      "engine": "wfm",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "353a54ea097cc0477ec02990c33fe8fc9d98ef5873a2467941cc38b72d69ac22",
+      "payload_digest": "1778961cd04abb9fc0f1fca71b252bb4132e6bb1e119e9de69b828efbf50456c",
+      "result_digest": "ebda8b8fbb5b13f76e02cfdac4843a7d63023de8c54f21b66489eaed5e305c9d",
+      "tenant": "callcenterclient",
+      "warnings": [
+        "derived arrival_rate=192.62 from contacts=48.1562 interval=15.0",
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "wfm_forecast",
+      "client_id": "academy",
+      "data_mode": "sample",
+      "duration_ms": 75,
+      "engine": "wfm",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "a79b02fe26f008b741c789defff4d0168d34d36ff2ce993241d9f61522642239",
+      "payload_digest": "abaf85acfb96299f43cf22394eb1350f19d7851444f53b7d8a8e477066676e17",
+      "result_digest": "38554ab285617eac9749a44b0adb7e585b508256d43173577509c8d78b42574a",
+      "tenant": "sportacademyclient",
+      "warnings": [
+        "derived arrival_rate=8.04 from contacts=193.0 interval=1440.0",
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "rta_adherence",
+      "client_id": "teleclient",
+      "data_mode": "sample",
+      "duration_ms": 222,
+      "engine": "rta",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "8b0ca256f5f78d6ec16924029ed2d3ab73d5d6dbcd17f9866ccfea37e6dd6731",
+      "payload_digest": "d76d70ef17c78f1bb34661408925101680204150461334dbdd4f3607e5acb0cb",
+      "result_digest": "8363abb3486f6ef62b12e12f815a1a3e4349f4b9382508108599cbfd332d5234",
+      "tenant": "callcenterclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "rta_adherence",
+      "client_id": "academy",
+      "data_mode": "sample",
+      "duration_ms": 94,
+      "engine": "rta",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "3047acb608c27255ee123e5b1d53cf682df319c9b388e2c436a6079d5e92d632",
+      "payload_digest": "a8b46d34c949e1ede7a5ded7f7800b3b4fe150d44ae17ffea00c4b95eb3a55f3",
+      "result_digest": "902ba8aaf569b334a2ac097c5b075537387ddfb87e2ff4d6e532fd75c2e08a4b",
+      "tenant": "sportacademyclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "churn_risk_scoring",
+      "client_id": "travbookclient",
+      "data_mode": "sample",
+      "duration_ms": 80,
+      "engine": "cx",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "c31f8ca6af71d9b2a5e40785a8ba4243537ddbdc66d9c6d6a09889a2240418b1",
+      "payload_digest": "205bf3c5c8d3c9e485509506906ca22810fff285339fe4e83c5e306931c071b2",
+      "result_digest": "bd86913981e2b32c24e41f3576e402719370bc09b899f094dc1659083c8e3528",
+      "tenant": "callcenterclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "churn_risk_scoring",
+      "client_id": "academy",
+      "data_mode": "sample",
+      "duration_ms": 78,
+      "engine": "cx",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "13875edc32ad94cd39dc23676008a0deb408c5a58f2e306c6848346d72325f7a",
+      "payload_digest": "128b0619ae66433be8221fecaf33b7388db46ad087120a2dc84bf28f011833be",
+      "result_digest": "b90e15a9d2212d45b74fd40967606c6318472b2fd913fc7cb7f8cfb1d5eb3cf6",
+      "tenant": "sportacademyclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "b2b_onboarding",
+      "client_id": "teleclient",
+      "data_mode": "sample",
+      "duration_ms": 77,
+      "engine": "b2b",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "a96ccd73ce9420a67ba004646151f8d2c596c20e5e84c5e7620d59de978a1dde",
+      "payload_digest": "b26d92a865d4710c03521a9eddda2788e910c0be4108ec805b852aa7ec54c79e",
+      "result_digest": "b3bc4a1f7ab990e4cc916df209b1036b96871ac65a27e216a63799f3983e87ff",
+      "tenant": "callcenterclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "b2b_onboarding",
+      "client_id": "academy",
+      "data_mode": "sample",
+      "duration_ms": 149,
+      "engine": "b2b",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "c34fa91154826cf0e48f3e00d3272409b37233c82cfcaacb9bed40a3379ef023",
+      "payload_digest": "bb76dd2698a62a3d29858d6fb387bc1ee1db1c51e8472a4985877fe38810f6bc",
+      "result_digest": "0be19bc5309d2bca42ec5d1c17ff05a9ab8334626145fec44dbb0d2b27f94003",
+      "tenant": "sportacademyclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "talent_acquisition",
+      "client_id": "teleclient",
+      "data_mode": "sample",
+      "duration_ms": 77,
+      "engine": "personnel",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "5d64ca5d828bb6d4c9aeacfe4de168d69ddcb55427d302c82e948c3aebc7787b",
+      "payload_digest": "06072068f753d373e2e213bf6a6a55d74cefd4a6fc90428f91405afa52d44230",
+      "result_digest": "47f5c60a7ce4a8473ac84c69038c90d3b3a2ae62d6356d05f90fc6a32c540655",
+      "tenant": "callcenterclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "talent_acquisition",
+      "client_id": "academy",
+      "data_mode": "sample",
+      "duration_ms": 77,
+      "engine": "personnel",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "cddf0ca08280131fca25c2e77c3f0fded6b2ff5ee1981aa00bdb691b1206eb9d",
+      "payload_digest": "fd72bbff62ba02283421583835535c6f689eb9e26d9379e6f9016e42d1edd8ef",
+      "result_digest": "b057f75b9c42f126d882bf8bb87a72506c6f5401f16cd86f29c18d8184edc1bb",
+      "tenant": "sportacademyclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "sales_pipeline",
+      "client_id": "teleclient",
+      "data_mode": "sample",
+      "duration_ms": 77,
+      "engine": "crm",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "fb99042af5435a5c52950ea8bb87aa5daf216b127954c87a95f976066aec4e2e",
+      "payload_digest": "b4045bbacc194cba6a5cc80a1a5d4f25f8962a625f8ce29689ccf259bac1ddb1",
+      "result_digest": "accfacf6e3f8559e4c7f6d55116ba466ba4e6b01d0f6b8bd3c6deb1682a39152",
+      "tenant": "callcenterclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "sales_pipeline",
+      "client_id": "academy",
+      "data_mode": "sample",
+      "duration_ms": 76,
+      "engine": "crm",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "be001c0365415b14dfece510078585b3be129c6c3248ca2d55891b14ee309e22",
+      "payload_digest": "b29d9985f50c10c02649f2b2afc2e2d22327137cbd1b7aae8ce373f72d975104",
+      "result_digest": "5a088c6731c7e8beba1f4f010176473756d89c2cf6526b6dec0b99f9be429e06",
+      "tenant": "sportacademyclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "wfm_forecast",
+      "client_id": "teleclient",
+      "data_mode": "sample",
+      "duration_ms": 75,
+      "engine": "wfm",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "353a54ea097cc0477ec02990c33fe8fc9d98ef5873a2467941cc38b72d69ac22",
+      "payload_digest": "1778961cd04abb9fc0f1fca71b252bb4132e6bb1e119e9de69b828efbf50456c",
+      "result_digest": "ebda8b8fbb5b13f76e02cfdac4843a7d63023de8c54f21b66489eaed5e305c9d",
+      "tenant": "callcenterclient",
+      "warnings": [
+        "derived arrival_rate=192.62 from contacts=48.1562 interval=15.0",
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "wfm_forecast",
+      "client_id": "teleclient",
+      "data_mode": "sample",
+      "duration_ms": 105,
+      "engine": "wfm",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "353a54ea097cc0477ec02990c33fe8fc9d98ef5873a2467941cc38b72d69ac22",
+      "payload_digest": "1778961cd04abb9fc0f1fca71b252bb4132e6bb1e119e9de69b828efbf50456c",
+      "result_digest": "ebda8b8fbb5b13f76e02cfdac4843a7d63023de8c54f21b66489eaed5e305c9d",
+      "tenant": "callcenterclient",
+      "warnings": [
+        "derived arrival_rate=192.62 from contacts=48.1562 interval=15.0",
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "rta_adherence",
+      "client_id": "teleclient",
+      "data_mode": "sample",
+      "duration_ms": 106,
+      "engine": "rta",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "8b0ca256f5f78d6ec16924029ed2d3ab73d5d6dbcd17f9866ccfea37e6dd6731",
+      "payload_digest": "d76d70ef17c78f1bb34661408925101680204150461334dbdd4f3607e5acb0cb",
+      "result_digest": "8363abb3486f6ef62b12e12f815a1a3e4349f4b9382508108599cbfd332d5234",
+      "tenant": "callcenterclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "rta_adherence",
+      "client_id": "teleclient",
+      "data_mode": "sample",
+      "duration_ms": 105,
+      "engine": "rta",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "8b0ca256f5f78d6ec16924029ed2d3ab73d5d6dbcd17f9866ccfea37e6dd6731",
+      "payload_digest": "d76d70ef17c78f1bb34661408925101680204150461334dbdd4f3607e5acb0cb",
+      "result_digest": "8363abb3486f6ef62b12e12f815a1a3e4349f4b9382508108599cbfd332d5234",
+      "tenant": "callcenterclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "wfm_forecast",
+      "client_id": "academy",
+      "data_mode": "sample",
+      "duration_ms": 76,
+      "engine": "wfm",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "a79b02fe26f008b741c789defff4d0168d34d36ff2ce993241d9f61522642239",
+      "payload_digest": "abaf85acfb96299f43cf22394eb1350f19d7851444f53b7d8a8e477066676e17",
+      "result_digest": "38554ab285617eac9749a44b0adb7e585b508256d43173577509c8d78b42574a",
+      "tenant": "sportacademyclient",
+      "warnings": [
+        "derived arrival_rate=8.04 from contacts=193.0 interval=1440.0",
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "wfm_forecast",
+      "client_id": "academy",
+      "data_mode": "sample",
+      "duration_ms": 76,
+      "engine": "wfm",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "a79b02fe26f008b741c789defff4d0168d34d36ff2ce993241d9f61522642239",
+      "payload_digest": "abaf85acfb96299f43cf22394eb1350f19d7851444f53b7d8a8e477066676e17",
+      "result_digest": "38554ab285617eac9749a44b0adb7e585b508256d43173577509c8d78b42574a",
+      "tenant": "sportacademyclient",
+      "warnings": [
+        "derived arrival_rate=8.04 from contacts=193.0 interval=1440.0",
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "rta_adherence",
+      "client_id": "academy",
+      "data_mode": "sample",
+      "duration_ms": 93,
+      "engine": "rta",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "3047acb608c27255ee123e5b1d53cf682df319c9b388e2c436a6079d5e92d632",
+      "payload_digest": "a8b46d34c949e1ede7a5ded7f7800b3b4fe150d44ae17ffea00c4b95eb3a55f3",
+      "result_digest": "902ba8aaf569b334a2ac097c5b075537387ddfb87e2ff4d6e532fd75c2e08a4b",
+      "tenant": "sportacademyclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    },
+    {
+      "capability": "rta_adherence",
+      "client_id": "academy",
+      "data_mode": "sample",
+      "duration_ms": 123,
+      "engine": "rta",
+      "error": null,
+      "is_sample": true,
+      "metrics_digest": "3047acb608c27255ee123e5b1d53cf682df319c9b388e2c436a6079d5e92d632",
+      "payload_digest": "a8b46d34c949e1ede7a5ded7f7800b3b4fe150d44ae17ffea00c4b95eb3a55f3",
+      "result_digest": "902ba8aaf569b334a2ac097c5b075537387ddfb87e2ff4d6e532fd75c2e08a4b",
+      "tenant": "sportacademyclient",
+      "warnings": [
+        "sample/demo data \u2014 not live operational data"
+      ]
+    }
+  ],
+  "count": 20,
+  "run_id": "20261103T191510Z"
+}

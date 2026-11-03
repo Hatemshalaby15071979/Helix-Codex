@@ -99,3 +99,31 @@ claim that local simulations are useless.
    validation against the exact release candidate before any release decision.
 4. Preserve synthetic-data disclosure and the separation between simulated evidence
    and real customer, independent-review, or production evidence.
+
+## Latest measurement — 2026-11-03
+
+This section supersedes the earlier snapshot above as the latest local measurement;
+the 2026-10-31 details remain historical. The simulated release gate returned
+`SIMULATED_PRODUCTION_READY` (exit 0), while the separate `production` profile
+returned `NOT_READY` (exit 1). The committed release manifest has
+`release_approved: false`. This is not authorization for a customer or production
+deployment.
+
+- Full suite: **2,088 passed, 19 deselected**. The 19 deselected tests remain open;
+  the ten-phase execution is incomplete.
+- Readiness harness: 12/12 with label `SIMULATION_READINESS_EVIDENCED`; 20 engine
+  calls using synthetic fixtures.
+- Driver isolation: 12/12; migration drift: control plane 21/21 and App 70/70.
+- Nine simulation gate receipts: ML-DSA-65 signature, ordered hash chain, and
+  offline verification passed. The receipts prove pack integrity, not an external
+  identity or independent review.
+- No real client, external legal review, remote CI, or external service was used.
+  The existing `v0.9.1-candidate` tag was not moved; no terminal tag was created.
+  No remote is configured, so no push occurred.
+- A transient local CLI classification incident and its correction are documented
+  in the [detailed execution report](production_readiness/PRODUCTION_READINESS_DETAILED_REPORT_2026-11-03.md).
+
+Full phase status, blocker limits and evidence links are in the
+[2026-11-03 execution report](production_readiness/PRODUCTION_READINESS_DETAILED_REPORT_2026-11-03.md)
+and the
+[evidence pack](production_readiness/evidence/simulated-production-2026-11-03/).

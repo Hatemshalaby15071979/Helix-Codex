@@ -1,112 +1,114 @@
-# Helix Codex OS — Detailed Production-Readiness Report (2026-11-03)
+# Simulated-release execution report — 2026-11-03
 
-**Decision document for the owner.** It answers three questions: (1) what is actually broken or missing; (2) what exactly will be done about it, by whom (an agent) and how it will be verified; (3) what will still not be true when this is finished — stated plainly.
+## Decision
 
-Inputs: `BLOCKERS_REPORT_2026-11-03.md` (30 blockers, BLK-001…030), `AUTONOMOUS_REMEDIATION_PLAN_2026-11-03.md` (10 phases), live re-verification on 2026-11-03 (readiness 12/12; 128 focused tests; app + cockpit running on fixtures; 2 live defects found and fixed).
+The `simulated_production` release profile passed with classification
+`SIMULATED_PRODUCTION_READY` (exit 0). The separate `production` profile returned
+`NOT_READY` (exit 1). The tracked release manifest records the simulation profile
+with `release_approved: false`.
 
----
+This is machine-generated evidence from local tests and synthetic
+CallCenterClient/SportAcademyClient fixtures only. It is not production readiness,
+customer acceptance, an independent audit, legal advice, or human approval. The
+ten-phase execution is **incomplete**; do not use this result to authorize deployment.
 
-## 1. Executive summary
+## Repository and artifacts
 
-Helix Codex OS is **not production-ready today** — and it is much closer than "not ready" sounds, because 90% of the remaining work is *evidence and authority*, not engineering.
+- Branch: `release/simulated-production-2026-11`.
+- Code head measured by the final suite: `8207884`; later documentation/evidence
+  changes are committed separately.
+- Recent local code commits include `b423590` (tenant-scoped imports), `dc61ff4`
+  (driver isolation), `5cc15a8` (signed simulation profile), `4172e34` (local ops
+  and disclosure checks), and `0d70604`/`c3ac163`/`8207884` (classification safety).
+- `v0.9.1-candidate` exists at `26dc3b3`, not at the current branch head. It was not
+  moved, and no new tag was created.
+- No remote is configured. No push or external service action was attempted.
+- Latest suite output: [`full-suite.log`](./evidence/simulated-production-2026-11-03/full-suite.log).
+- Gate inputs, signed pack, current readiness run, migration results and checksums:
+  [`simulation evidence`](./evidence/simulated-production-2026-11-03/).
+- Artifact integrity list:
+  [`SHA256SUMS`](./evidence/simulated-production-2026-11-03/SHA256SUMS).
+- Current release manifest:
+  [`release-manifest.json`](../../release/release-manifest.json).
 
-- **Engineering health:** six engines compute end-to-end on synthetic fixtures (12/12 gates, deterministic, < 500 ms); tenant-scoped HTTP isolation drills pass (128 tests); backup/restore/rollback/migration-drift verified; audit chain hash-verified; product-code lint clean on the measured 2026-11-03 tree.
-- **The real gap:** every production-blocking control that lives *outside* the codebase — signed evidence, third-party observation, legal review, named on-call, production topology, DR — is red by design, and the repo is (correctly) forbidden from minting those itself.
-- **The owner's correction is adopted:** authority evidence may be **simulated, cryptographically signed, and disclosed**; a new `simulated_production` profile turns the nine red gates into nine *machine-verifiable* gates; the system can then claim `SIMULATED_PRODUCTION_READY` — never `PRODUCTION`.
-- **Two live defects were found tonight and fixed:** (a) cockpit crash on fresh install (pyarrow 26 vs numpy<2 hard pin) — fixed locally, pin + test now mandated; (b) fresh-install cockpit dead-end (bootstrap created domain with `client_id=NULL`) — fixed in `bootstrap_owner.py` (`--client-id`, default = domain), demo DB patched, cockpit recomputes. Both are pinned as blockers BLK-010/011 in the report.
-- **After the plan executes:** everything verifiable on a machine is verified and packed; the only unverifiable remainder is reality (a real client's data, a real lawyer, a real pager), delivered as a **≤ 1 working day activation runbook** with zero code changes.
+The latest full suite measured **2,088 passed, 19 deselected** in 289.67 seconds.
+This differs from the requested 2,051 count; the 19 deselected tests remain
+deselected, so the exact count and zero-deselected Phase 10 gate were not achieved.
 
-**Recommendation:** approve the plan as written; do **not** approve any artifact that says "PRODUCTION" before Phase 10 is green and the real-client activation (Phase 9.4) has genuinely occurred.
+## Defect fixes and regression coverage
 
----
-
-## 2. What was done to this machine on 2026-11-03 (fact base)
-
-| # | Action | Result |
+| Defect / area | Implemented behavior | Regression evidence |
 |---|---|---|
-| 1 | Re-ran readiness harness on both fixtures | 12/12 PASS; run `20261103T152704Z`; pack in `/tmp/opencode/readiness-rerun-2026-11-03/` |
-| 2 | Booted Helix Codex App from clean env (loopback :8100), created owner via bootstrap | HTTP 200; login works; `/app` without session → 401 (fail-closed) |
-| 3 | Patched demo DB so the App cockpit can scope pack data (`client_id='academy'`) | `/app/cockpit` renders owner board, labelled `simulated_realistic` |
-| 4 | Started ingest engine (:8000), ran ops twin via supervisor (120 ticks, spike at tick 40) | 120/120 delivered, 0 dropped; SLA-breach intervention raised; visible in dashboard |
-| 5 | Booted Streamlit cockpit (:8501) | Rendered after fixing BLK-010; screenshot shows live intervention |
-| 6 | Fixed `bootstrap_owner.py` (`--client-id`) | fresh installs now cockpit-ready |
-| 7 | Focused drill suite | 128 passed |
-| 8 | Repo-wide ruff / format measurement | 20 errors (all in `marketing/helix-codex-deck/video/`); 2 files unformatted; product code clean |
-| 9 | `git status` | 62 uncommitted paths — candidate not yet attestable (BLK-018) |
+| BLK-008 tenant isolation | Driver scopes tenant rows and audit events, stamps tenant IDs from the request envelope, rejects missing scope, and uses plain inserts. | [`test_tenant_isolation_driver.py`](../../tests/test_tenant_isolation_driver.py) — 12/12; [ADR-0001](../adr/ADR-0001-driver-level-tenant-isolation.md). |
+| BLK-010 dependency bounds | Pins the compatible PyArrow range and checks that PyArrow and NumPy import together. | [`test_dependency_bounds.py`](../../tests/test_dependency_bounds.py). |
+| BLK-011 bootstrap identity | Adds `--client-id`; the legacy password-on-argv path is deprecated. | [`test_bootstrap_client_id.py`](../../tests/helix_codex_app/test_bootstrap_client_id.py). |
+| BLK-013 dispatch | Uses the agent registry and approval-aware task requests; fails closed when the engine is not bound. | [`test_agent_dispatch.py`](../../tests/test_agent_dispatch.py). |
+| BLK-014 provider activation | Write authorization reads the connector's authenticated/healthy status or explicit activation and denies unknown state. | [`test_connector_activation.py`](../../tests/test_connector_activation.py). |
+| BLK-015 forwarded client IP | Forwarded IP headers are trusted only behind the explicitly enabled worker boundary. | [`test_route_limits.py`](../../tests/helix_codex_app/test_route_limits.py). |
+| BLK-021 ingest boundary | Ingest defaults to loopback; unauthenticated cockpit mode warns at startup. | [`test_ingest_default_bind.py`](../../tests/test_ingest_default_bind.py). |
+| App imports | Tenant-specific fixture validation, shape checks, primary-key deduplication, quarantine, provenance, permission and CSRF behavior are covered. | [`test_imports_service.py`](../../tests/helix_codex_app/test_imports_service.py), [`test_imports_routes.py`](../../tests/helix_codex_app/test_imports_routes.py). |
+| Release classification boundary | CLI uses real argument parsing, defaults to the simulation profile, makes `--help` side-effect-free, and refuses non-simulation release classifications. | [`test_c8_release_gate.py`](../../tests/test_c8_release_gate.py), [`test_pilot_readiness.py`](../../tests/test_pilot_readiness.py), [`test_c8_gate_falsifiability.py`](../../tests/test_c8_gate_falsifiability.py). |
 
-These are the only new facts; everything else is quoted from the repo's dated records and labelled as such.
+The combined required-defect/import selection passed **68 tests**; its output is
+[`defect-regressions.log`](./evidence/simulated-production-2026-11-03/defect-regressions.log).
 
----
+## Nine simulated gate substitutions
 
-## 3. Blocker-by-blocker verdict and disposition
+All nine evidence records are disclosed as simulation-only, carry `ok: true`, and
+are bound to the signed profile bundle. Each record has a signed, ordered receipt in
+the hash chain. These are substitutions for machine testing only, not satisfaction
+of real external approval requirements.
 
-Legend: **Fix** = code/config change with tests; **Simulate** = disclosed simulation satisfying the gate; **Document** = claims/runbooks/disclosure; **Defer to reality** = cannot be closed without a real client/human; **Measure** = re-run and record.
+| Gate | Machine evidence | Scope limit |
+|---|---|---|
+| Signature / bundle integrity | ML-DSA-65 signature, current bundle hash, public-key fingerprint and nine receipts in [`signed-pack/`](./evidence/simulated-production-2026-11-03/signed-pack/). | The ephemeral private key was destroyed. The included public key proves pack integrity, not a trusted external identity. |
+| Tenant isolation | Driver attack suite, 12/12. | Local automated checks are not independent certification. |
+| Observer | Release test plus a separate local verifier process. | A separate process is not an independent organization or auditor. |
+| Deployment architecture | Compose configuration validation and security tests. | No hardened multi-host topology or real deployment was exercised. |
+| Disaster recovery | Backup-procedure and migration tests. | Three destructive DR repetitions and measured RTO/RPO were not completed. |
+| Operations | Local readiness/audit-chain and supervised telemetry tests; ops charter validation. | No real monitoring service or named operator was engaged. |
+| Incident/on-call | Local ops/on-call test selection passed 42 tests. | No real pager, person, or on-call commitment exists. |
+| Security | Auth and fail-closed authorization tests plus focused Ruff checks. | No ZAP run, independent penetration test, or external review; Bandit was unavailable and `pip-audit` was not run. |
+| Legal/privacy | Synthetic-data boundary and disclosure tests. | No lawyer, legal sign-off, or human privacy review occurred. |
 
-| ID | Verdict | Disposition (phase) | Definition of done |
-|---|---|---|---|
-| BLK-001 nine red gates | **Simulate** | New `simulated_production` profile; gates rebound to simulation verifiers (P5); `PRODUCTION` path unchanged, still unreachable | `--profile simulated_production` → `SIMULATED_PRODUCTION_READY`; `--profile production` → exit 1 |
-| BLK-002 human sign-off | **Simulate + Defer** | Simulation-authority signature per candidate (P5); real `production_approved` remains mandatory for `PRODUCTION` (P9.4) | Verify script rejects tampered/absent signature; disclosure committed |
-| BLK-003 deployment architecture | **Simulate** | Caddy+TLS single-host prod-sim stack, read-only FS, secrets as files, cold-standby HA (P6) | 3/3 DR drills pass; RTO/RPO recorded; artifact digest committed |
-| BLK-004 DR evidence | **Simulate** | `scripts/dr_drill.sh` ×3; restore into clean env; verify + measure (P6) | Reports in evidence pack; restore < target; checksums verified |
-| BLK-005 on-call/ownership | **Simulate + Document** | Ops charter as data + validator; clean-room rehearsal; paging drill on mock pager (P7) | Rehearsal log; SLO met in drill; runbook fixed from findings |
-| BLK-006 security review | **Simulate** | bandit/pip-audit/gitleaks/semgrep + ZAP baseline on prod-sim + OWASP route checklist (P7) | No open highs; waivers reasoned; report signed (simulation) |
-| BLK-007 legal/privacy | **Simulate + Defer** | DPIA-lite + RoPA + DSR executed on synthetic subjects + breach tree (P7); real review mandatory pre-PII (P9.4) | Memo signed (simulation); activation checklist step 5 |
-| BLK-008 driver-level isolation | **Fix** | ADR + `tenant_id` enforcement in `Store`/`NodeStore` + migration + attack suite (P3) | 0 leaks across all tables × fuzzed ids; audit-logged; drills still 128/128 |
-| BLK-009 observer audit | **Simulate** | Fresh-venv/fresh-copy re-run + audit-chain verification + countersign (P5) | Observer report committed; mismatch → gate red |
-| BLK-010 pyarrow/numpy | **Fix** | Pin `pyarrow==18.1.0` in txt+lock+dev; import test; doc note (P1) | Fresh venv install → cockpit renders; CI green |
-| BLK-011 bootstrap client_id | **Fix** | `--client-id` (done 2026-11-03) + test + guide + troubleshooting (P2) | Test pins compute; KNOWN_ISSUES updated |
-| BLK-012 App CSV import | **Fix** | Tenant-scoped preview/commit/quarantine/disclosure; both fixtures imported via UI (P4) | E2E import green; isolation green; harness green via App path |
-| BLK-013 dispatch fake output | **Fix** | Real dispatch through Engine or honest removal + ADR; schema validation (P2) | Tests for both paths; no fake strings remain |
-| BLK-014 connector activation constant | **Fix** | Activation read from connector state; fail-closed on unknown (P2) | Gate denies unactivated; unknown denies; tests pin |
-| BLK-015 header trust | **Fix** | `x-helix-client-ip` only behind explicit `HELIX_BEHIND_WORKER`; unified throttle (P2) | Spoof test fails closed; docs updated |
-| BLK-016 UI tier quarantine | **Fix/Document** | Un-quarantine or per-test ADR justification (P7) | Suite: 0 deselected |
-| BLK-017 engine correctness unproven | **Fix/Measure** | Golden vectors + Hypothesis properties + independent cross-check of 20 calls (P7) | Report committed; drift > 20% flagged |
-| BLK-018 62 uncommitted paths | **Fix** | Logical-commit split; tag `v0.9.1-candidate` (P0) | `git status` clean; SHA recorded |
-| BLK-019 no remote CI | **Fix/Measure** | CI-equivalent run; push branch; confirm green or document (P0/P1) | Green badge or honest artefact note |
-| BLK-020 marketing lint debt | **Fix** | Fix or scoped ignore + ADR; format 2 files (P1) | Repo-wide lint 0 |
-| BLK-021 ingest 0.0.0.0 default | **Fix** | Loopback default; explicit `--host`; approve-key docs (P2) | Test pins default; runbook updated |
-| BLK-022 real-client convergence | **Defer + Simulate** | Activation runbook; caveats doc; drift checks (P8/P9) | `REAL_CLIENT_ACTIVATION.md` rehearsed clean-room |
-| BLK-023 claims contradiction | **Document** | Total disclosure-first flip across README/index.html/status/story (P9) | Claims-drift CI check green |
-| BLK-024 solo-operator continuity | **Simulate + Document** | Clean-room rehearsal; backup-owner in charter; break-glass docs (P7/P9) | Rehearsal passes; gaps fixed |
-| BLK-025 no SLO/alerts | **Simulate** | SLOs-as-code; mock-pager drill; log/alert rules for prod-sim (P6/P7) | Drill measures detection→mitigation; SLO met |
-| BLK-026 scale unproven | **Measure** | 1,500-seat soak; p95/p99; reconciliation caveats codified (P8) | Soak report committed |
-| BLK-027 argv password | **Fix** | stdin/file/env password; deprecate argv; never echo (P2) | Guide updated; history-safe path tested |
-| BLK-028 harness path-fragile | **Fix** | CI wiring with skip-with-notice; env-var documented (P8) | CI job green/skipped-notice; docs updated |
-| BLK-029 no immutable artifact | **Fix/Simulate** | `release_pack.sh`; digest+signature; offline archive; SBOM (P6) | Digest committed; verify script OK |
-| BLK-030 sibling surfaces untested | **Document/Defer** | Scope statement; boundary re-check; activation lists them (P9) | Explicit out-of-scope section in status |
+Current digests:
 
-**Net:** code/config fixes → BLK-008, 010, 011, 012, 013, 014, 015, 016, 017, 018, 019, 020, 021, 027, 028, 029 · disclosed simulation → BLK-001, 003, 004, 005, 006, 009 (002/007 are shared: simulation now, human at activation) · documentation/disclosure → BLK-023, 024, 030 · measured/re-run → BLK-019, 026 · deferred-to-reality by design → BLK-022, and the real halves of BLK-002/BLK-007. Nothing closed by assertion.
+- Profile bundle SHA-256: `55232c80da0c33a19c772172b2c64f3cd9fdee68fb2021b9d4a80f43cd14f62b`
+- Nine-receipt chain SHA-256: `b606200d2bf5cab5d3b7cee54e4390a4ec27074a3b04edcddd4f5d54d726ca8a`
+- The offline verifier returned `valid: true`; see
+  [`signed-pack-verification.json`](./evidence/simulated-production-2026-11-03/signed-pack-verification.json).
 
----
+The readiness harness separately passed 12/12 with label
+`SIMULATION_READINESS_EVIDENCED`, run `20261103T191510Z`, and 20 engine calls. The
+control-plane and App migration verifiers reported 21/21 and 70/70 objects with no
+drift; details are in [`migration-drift.log`](./evidence/simulated-production-2026-11-03/migration-drift.log).
 
-## 4. Why this is the best plan (and what was rejected)
+## Phase status and stop conditions
 
-**Rejected option A — "keep waiting for the real client; ship nothing until then."**
-Correct legally, commercially fatal. The owner's insight is sound: 95% of production risk here is engineering + evidence, both of which are machine-producible. Waiting proves nothing and learns nothing.
+| Phase | Status |
+|---|---|
+| P0 — freeze/baseline | Partial: correct branch and existing tag verified, but the tag is not at HEAD and 19 tests remain deselected. |
+| P1 — CI-equivalent gate | Partial: local dependency and test checks pass; no remote exists for hosted CI or push, and the external security scan set is incomplete. |
+| P2 — defect fixes | The listed live defects are fixed and covered; the broader plan cleanup/TODO sweep is not claimed complete. |
+| P3 — driver isolation | Complete to measured scope: attack suite 12/12 and control-plane migration drift 21/21. |
+| P4 — App CSV import | Partial: service/route tests pass; UI-driven import of both fixtures and readiness through the imported App path are not established. |
+| P5 — simulated approval architecture | Complete to measured scope: signed bundle, nine verified receipts, simulation profile pass, and fail-closed actual profile. |
+| P6 — topology and DR | Partial: local backup/restore and migration checks exist; hardened topology and three repeat DR runs are missing. |
+| P7 — operations and review | Partial: local ops and disclosure checks pass; clean-room rehearsal, mock pager, ZAP and independent review are missing. |
+| P8 — scale and CI | Incomplete: no six-hour soak or hosted CI/drift-monitor run. |
+| P9 — claims and activation | Partial: disclosure/status documentation is updated; activation runbook rehearsal, terminal tag and push are deferred. |
+| P10 — final gauntlet | Incomplete: 19 tests remain deselected; the full 14-item gauntlet, hosted CI and repeated DR gates are not green. |
 
-**Rejected option B — "just flip PRODUCTION locally / fake the audit."**
-Fraud. It would also be caught by the repo's own gates (rightly). Any such artifact poisons the future real-client relationship and voids every honest claim the project has.
+An unsafe pre-fix CLI `--help` invocation unexpectedly ran the old default path once,
+emitting a non-simulation candidate classification and writing a local temporary
+manifest/evidence directory. That exact generated directory was removed and the
+tracked manifest was replaced with the verified simulation-only manifest. The CLI
+and classification paths are now fail-closed, with regression tests for help,
+defaults, and forbidden classifications. This correction prevents recurrence but
+cannot undo the earlier local output. Nothing was pushed or sent externally.
 
-**Rejected option C — "reduce scope to the two apps and declare victory."**
-Paper victory. BLK-013/014/015/012 would remain live defects; the first real client would find them in week one.
+## Final status
 
-**Accepted plan — rebound, don't remove; simulate, don't fabricate; disclose, don't conceal; rehearse reality, don't await it.**
-
-1. **Best coverage per unit effort:** every blocker maps to a verifiable artifact; nothing is "addressed" in prose only.
-2. **Fail-closed preserved:** the new profile is *stricter in evidence, not weaker in control* — red anywhere still means NOT_READY; `PRODUCTION` remains impossible without reality.
-3. **Compounding value:** Phase 3 (driver isolation) and Phase 4 (CSV import) are real product capabilities, not ceremony; the real client inherits them.
-4. **Risk-ordered:** isolation → truth-in-code → authority simulation → topology/DR → scale → claims; the riskiest, most expensive mistakes (tenant leak, false claim) are eliminated first.
-5. **Reversible and auditable:** every phase is a tagged commit with an evidence pack; rollback is `git revert` + restore, both rehearsed in Phases 0/6.
-6. **Honest economics:** ~8–10 agent-days, zero owner time, zero spend; produces a sellable, demonstrable asset *and* a precise invoice-to-reality (the activation runbook).
-7. **Failure is informative:** every stop condition yields a blocker note, not a workaround — the plan degrades safely.
-8. **The claim it licenses is exactly as strong as the evidence:** "verified by simulation, ready for activation" — which is the strongest claim available without a client, and the only one that survives contact with one.
-
-**Residual, stated plainly:** no machine can grant legal immunity, a human's conscience, or a third party's independence. Those three remain open until reality fills them; the plan quarantines them in one page (`REAL_CLIENT_ACTIVATION.md`) instead of letting them hide inside a green badge.
-
----
-
-## 5. Sign-off requested from the owner (one line, no meeting)
-
-> "Proceed with the plan on branch `release/simulated-production-2026-11`; do not push, do not tag `v1.0.0-simulated`, and do not change any external-facing document until Phase 10 is fully green and I have seen the final gauntlet output."
-
-Until that line (or its equivalent) is given, the agent prepares everything, commits locally, and stops before Phase 9.1's public flip — keeping the current honest NOT_READY posture intact in every externally visible surface.
+The only safe claim is: **the declared simulated-release checks passed locally on
+synthetic fixtures; the ten-phase execution remains incomplete and no production or
+customer deployment is authorized by this evidence.**

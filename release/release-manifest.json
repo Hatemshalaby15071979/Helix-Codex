@@ -1,18 +1,18 @@
 {
   "manifest_schema_version": "1.0",
   "product": "Helix-Prime-Codex",
-  "release_profile": "controlled_pilot",
-  "classification": "CONTROLLED_PILOT_READY",
-  "release_approved": true,
+  "release_profile": "simulated_production",
+  "classification": "SIMULATED_PRODUCTION_READY",
+  "release_approved": false,
   "version": "0.9.0-c8",
-  "git_commit": "b913b7234edfe159a9beaba14c904423149406c2",
-  "git_branch": "main",
-  "build_timestamp": "2026-09-24T17:08:51.490667Z",
-  "python_version": "3.12.10",
-  "platform": "win32",
+  "git_commit": "8207884e0dbc9260889095513edf428cbe8368c8",
+  "git_branch": "release/simulated-production-2026-11",
+  "build_timestamp": "2026-11-03T19:16:33.798514Z",
+  "python_version": "3.12.15",
+  "platform": "linux",
   "supported_python": ">=3.12,<3.13",
   "dependency_lock_ref": "release/requirements.lock.txt",
-  "dependency_lock_count": 339,
+  "dependency_lock_count": 418,
   "enabled_capabilities": [
     "control_plane",
     "six_engines",
@@ -42,9 +42,10 @@
     "Sibling transport is local/in-process only; network sibling transport deferred.",
     "No autonomous irreversible/financial/personnel/compliance/external-communication actions.",
     "Pilot data must be limited to synthetic or explicitly consented data.",
-    "Production label not claimed without every production gate passing."
+    "This simulation-only branch never emits a production classification."
   ],
   "evidence_refs": [
-    "evidence\\releases\\20260924T170851Z"
+    "docs/production_readiness/evidence/simulated-production-2026-11-03/signed-pack",
+    "docs/production_readiness/evidence/simulated-production-2026-11-03/final-gate-results.json"
   ]
 }
