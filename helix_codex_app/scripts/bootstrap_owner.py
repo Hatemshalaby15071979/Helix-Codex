@@ -34,6 +34,7 @@ def bootstrap_owner(
     username: str,
     password_secret: str,
     display_name: str | None = None,
+    client_id: str | None = None,
 ) -> dict:
     """Create a domain and its first owner account, and record the event.
 
@@ -50,7 +51,7 @@ def bootstrap_owner(
         repo = AccountRepository(conn)
 
         tenant_id = domain_name
-        domain = repo.create_domain(domain_name, tenant_id)
+        domain = repo.create_domain(domain_name, tenant_id, client_id=client_id)
         account = repo.create_account(
             domain.domain_id,
             username,
@@ -82,6 +83,7 @@ def bootstrap_owner(
         return {
             "domain": domain_name,
             "tenant_id": tenant_id,
+            "client_id": client_id,
             "account_id": account.account_id,
             "username": account.username,
             "role_id": "owner",
@@ -102,6 +104,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--username", required=True, help="owner username")
     parser.add_argument("--password", required=True, help="owner password (min 8 chars)")
     parser.add_argument("--display-name", default=None, help="owner display name")
+    parser.add_argument(
+        "--client-id",
+        default=None,
+        help=(
+            "client identifier for the domain (defaults to the domain name). "
+            "The cockpit pack scopes its data by tenant and client, so a fresh "
+            "install without one renders 'no pack data can be scoped'."
+        ),
+    )
     args = parser.parse_args(argv)
 
     if len(args.password) < MIN_PASSWORD_LENGTH:
@@ -111,6 +122,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 1
 
+    client_id = args.client_id if args.client_id is not None else args.domain
     try:
         result = bootstrap_owner(
             db_path=args.db_path,
@@ -118,6 +130,7 @@ def main(argv: list[str] | None = None) -> int:
             username=args.username,
             password_secret=args.password,
             display_name=args.display_name,
+            client_id=client_id,
         )
     except Exception as exc:
         print(f"bootstrap failed: {exc}", file=sys.stderr)
