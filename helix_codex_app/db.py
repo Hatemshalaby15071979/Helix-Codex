@@ -42,6 +42,7 @@ NODE_KINDS = GOVERNED_MEMORY_KINDS | frozenset(
         "document",
         "event",
         "event_response",
+        "import_batch",
         "message",
         "notification",
         "oncall_shift",
@@ -59,6 +60,38 @@ NODE_KINDS = GOVERNED_MEMORY_KINDS | frozenset(
 NODE_NATURES = GOVERNED_MEMORY_NATURES | frozenset({"system_event"})
 
 _SCHEMA_DDL: tuple[str, ...] = (
+    """
+    CREATE TABLE IF NOT EXISTS import_batches (
+        batch_id TEXT PRIMARY KEY,
+        tenant_id TEXT NOT NULL,
+        client_id TEXT,
+        domain_id TEXT,
+        filename TEXT NOT NULL,
+        table_name TEXT NOT NULL,
+        status TEXT NOT NULL,
+        rows_total INTEGER NOT NULL DEFAULT 0,
+        rows_loaded INTEGER NOT NULL DEFAULT 0,
+        rows_rejected INTEGER NOT NULL DEFAULT 0,
+        errors_json TEXT NOT NULL DEFAULT '[]',
+        provenance_data_mode TEXT NOT NULL DEFAULT 'simulated_realistic',
+        created_by TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    )
+    """,
+    "CREATE INDEX IF NOT EXISTS idx_import_batches_tenant ON import_batches(tenant_id, created_at DESC)",
+    """
+    CREATE TABLE IF NOT EXISTS imported_rows (
+        import_id TEXT PRIMARY KEY,
+        batch_id TEXT NOT NULL REFERENCES import_batches(batch_id),
+        tenant_id TEXT NOT NULL,
+        table_name TEXT NOT NULL,
+        row_pk TEXT NOT NULL,
+        row_json TEXT NOT NULL,
+        created_at TEXT NOT NULL
+    )
+    """,
+    "CREATE UNIQUE INDEX IF NOT EXISTS ux_imported_rows_tenant_table_pk ON imported_rows(tenant_id, table_name, row_pk)",
+    "CREATE INDEX IF NOT EXISTS idx_imported_rows_tenant_batch ON imported_rows(tenant_id, batch_id)",
     """
     CREATE TABLE IF NOT EXISTS nodes (
         node_id TEXT PRIMARY KEY,

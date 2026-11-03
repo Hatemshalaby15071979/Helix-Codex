@@ -34,6 +34,7 @@ from helix_codex_app.modules.calendar.service import CalendarService
 from helix_codex_app.modules.cockpit.router import cockpit_router
 from helix_codex_app.modules.docs.router import docs_router
 from helix_codex_app.modules.identity.router import identity_router, passwordless_demo_router
+from helix_codex_app.modules.imports.router import imports_router
 from helix_codex_app.modules.lowcode.router import lowcode_router
 from helix_codex_app.modules.memory.router import memory_router
 from helix_codex_app.modules.messaging.router import messaging_router
@@ -178,6 +179,7 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
     app.include_router(health_router)
     app.include_router(shell_router)
     app.include_router(identity_router)
+    app.include_router(imports_router)
     if settings.enable_passwordless_demo:
         app.include_router(passwordless_demo_router)
     app.include_router(admin_router)

@@ -261,14 +261,16 @@ external security review, and no certified data-isolation evidence.
 - Limits any inference from a passing local suite or synthetic-fixture drill to
   independently verified production correctness.
 
-## 11. The App has no CSV upload/import workflow
+## 11. Simulated fixture CSV import (implemented; real-client scope remains unproven)
 
-The production-readiness harness ingests synthetic raw exports and runs the
-fixture/engine gates. The App itself has no CSV upload route. The 2026-10-31 simulated
-design-partner drill used the harness for fixture ingestion and then exercised the App's
-authenticated document/task APIs with source-derived summaries. It did not upload raw
-CSV files through the App.
+The App now has an authenticated, CSRF-protected import path for curated CSVs
+matching the `callcenterclient` and `sportacademyclient` fixture schemas. Preview
+is read-only; commit is transactional; malformed or cross-profile files are
+quarantined without partial rows. Tenant scoping, primary-key idempotency, audit
+nodes, and `simulated_realistic` provenance are covered by
+`tests/helix_codex_app/test_imports_service.py` and
+`tests/helix_codex_app/test_imports_routes.py`.
 
-- Limits claims that the App itself ingests client CSV data. If in-App import is a
-  product requirement, implement a tenant-scoped, authenticated import path and test
-  its validation, quarantine, disclosure, and isolation behavior.
+This closes the missing App-route finding for the two synthetic fixtures only.
+It does not prove arbitrary schema convergence, ingestion of real client data,
+or readiness for customer use. See `docs/release/app-data-import.md`.

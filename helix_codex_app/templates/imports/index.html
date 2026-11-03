@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% import "partials/page_head.html" as head %}
+{% block title %}Import data — Helix Codex{% endblock %}
+{% block content %}
+{% call head.page_head("Import data", "Stage one curated CSV at a time; rows remain scoped to your tenant.", "Administration") %}
+{% endcall %}
+
+<div class="callout callout--warning" role="note">
+  <strong>SIMULATION — synthetic data only.</strong>
+  This importer accepts only the callcenterclient and sportacademyclient fixture schemas.
+  Imports are tenant-scoped and labelled <code>simulated_realistic</code>.
+</div>
+
+<section aria-labelledby="upload-title">
+  <h2 id="upload-title">Curated CSV</h2>
+  <form id="import-form" enctype="multipart/form-data">
+    <label for="import-file">Choose a curated <code>16_DATA/curated/*.csv</code> file</label>
+    <input id="import-file" name="file" type="file" accept=".csv,text/csv" required>
+    <button type="submit" data-action="preview">Preview</button>
+    <button type="submit" data-action="commit">Validate and import</button>
+  </form>
+  <p id="import-progress" role="status" aria-live="polite"></p>
+  <pre id="import-result" aria-live="polite"></pre>
+  <table id="import-errors" hidden>
+    <caption>Validation errors</caption>
+    <thead><tr><th>Line</th><th>Code</th><th>Reason</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section aria-labelledby="batches-title">
+  <h2 id="batches-title">Recent imports</h2>
+  {% if batches %}
+  <table>
+    <thead><tr><th>File</th><th>Table</th><th>Status</th><th>Rows</th><th>Provenance</th></tr></thead>
+    <tbody>
+      {% for batch in batches %}
+      <tr>
+        <td><a href="/app/import/{{ batch.batch_id }}">{{ batch.filename }}</a></td>
+        <td>{{ batch.table_name }}</td>
+        <td>{{ batch.status }}</td>
+        <td>{{ batch.rows_loaded }} / {{ batch.rows_total }}</td>
+        <td>{{ batch.provenance_data_mode }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No import batches yet.</p>
+  {% endif %}
+</section>
+
+<script>
+(() => {
+  const form = document.getElementById("import-form");
+  const progress = document.getElementById("import-progress");
+  const result = document.getElementById("import-result");
+  const errors = document.getElementById("import-errors");
+  const errorBody = errors.querySelector("tbody");
+  const csrf = {{ csrf_token|tojson }};
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const action = event.submitter?.dataset.action;
+    if (!action) return;
+    progress.textContent = action === "preview" ? "Validating CSV…" : "Importing CSV…";
+    result.textContent = "";
+    errorBody.replaceChildren();
+    errors.hidden = true;
+    try {
+      const response = await fetch(`/app/import/${action}`, {
+        method: "POST",
+        headers: {"X-CSRF-Token": csrf},
+        body: new FormData(form),
+      });
+      const report = await response.json();
+      result.textContent = JSON.stringify(report, null, 2);
+      for (const item of report.errors || []) {
+        const row = document.createElement("tr");
+        for (const value of [item.line ?? "", item.code ?? "", item.message ?? ""]) {
+          const cell = document.createElement("td");
+          cell.textContent = String(value);
+          row.append(cell);
+        }
+        errorBody.append(row);
+      }
+      errors.hidden = errorBody.childElementCount === 0;
+      progress.textContent = response.ok ? "Complete." : "Validation refused; no rows were imported.";
+    } catch (error) {
+      progress.textContent = `Import request failed: ${error}`;
+    }
+  });
+})();
+</script>
+{% endblock %}
