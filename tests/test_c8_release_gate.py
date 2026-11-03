@@ -33,11 +33,11 @@ def test_never_emits_bare_production():
     assert result == "NOT_READY"
 
 
-def test_production_candidate_when_all_gates_green():
+def test_production_candidate_profile_never_emits_a_release_classification():
     result = profiles.classify_from_gate_results(
         "production_candidate", profiles.GATE_NAMES, release_approved=True
     )
-    assert result == "PRODUCTION_CANDIDATE"
+    assert result == "NOT_READY"
 
 
 def test_controlled_pilot_when_all_gates_green():
@@ -220,17 +220,18 @@ def test_derived_values_match_the_hardcoded_ones_they_replaced():
     # Exact equality intentionally rejects a bare production classification.
     assert set(profiles.ALLOWED_FINAL_CLASSIFICATIONS) == {
         "CONTROLLED_PILOT_READY",
-        "PRODUCTION_CANDIDATE",
         "SIMULATED_PRODUCTION_READY",
     }
-    assert profiles.DEFAULT_C8_CLASSIFICATION == "PRODUCTION_CANDIDATE"
+    assert profiles.DEFAULT_C8_CLASSIFICATION == "CONTROLLED_PILOT_READY"
 
 
 # ── manifest ───────────────────────────────────────────────────────────────
 
 
 def test_manifest_required_fields():
-    m = manifest.build_manifest(classification="PRODUCTION_CANDIDATE")
+    m = manifest.build_manifest(
+        classification="SIMULATED_PRODUCTION_READY", profile="simulated_production"
+    )
     for key in [
         "product",
         "release_profile",
@@ -246,12 +247,16 @@ def test_manifest_required_fields():
         assert key in m
     assert m["product"] == "Helix-Prime-Codex"
     assert "cloud_deployment" in m["disabled_capabilities"]
-    assert m["classification"] == "PRODUCTION_CANDIDATE"
+    assert m["classification"] == "SIMULATED_PRODUCTION_READY"
 
 
 def test_manifest_refuses_bare_production_classification():
     with pytest.raises(ValueError, match="simulation-only release"):
         manifest.build_manifest(classification="PRODUCTION")
+    with pytest.raises(ValueError, match="simulation-only release"):
+        manifest.build_manifest(classification="PRODUCTION_CANDIDATE")
+    with pytest.raises(ValueError, match="simulation-only release"):
+        manifest.build_manifest(classification="PRODUCTION_READY")
 
 
 def test_manifest_schema_accepts_every_profile_and_classification_the_code_can_produce():
@@ -542,21 +547,54 @@ def test_soak_bounded_within_limits():
 # ── gate end-to-end ────────────────────────────────────────────────────────
 
 
-def test_gate_returns_candidate_or_ready():
+def test_gate_candidate_profile_fails_closed():
     from release import gate
 
     summary = gate.run_gate(
         profile="production_candidate", num_soak_workflows=3, write_evidence=False
     )
-    assert summary["classification"] in {"PRODUCTION_CANDIDATE", "CONTROLLED_PILOT_READY"}
-    assert summary["exit_code"] == 0
+    assert summary["classification"] == "NOT_READY"
+    assert summary["exit_code"] == 1
+
+
+def test_release_gate_help_does_not_run_a_gate(monkeypatch, capsys):
+    from release import gate
+
+    def unexpected_run(**kwargs):
+        pytest.fail(f"help unexpectedly ran a release gate: {kwargs}")
+
+    monkeypatch.setattr(gate, "run_gate", unexpected_run)
+    with pytest.raises(SystemExit) as exc_info:
+        gate.main(["--help"])
+
+    assert exc_info.value.code == 0
+    assert "simulated_production" in capsys.readouterr().out
+
+
+def test_release_gate_cli_defaults_to_simulation_without_writing(monkeypatch, capsys):
+    from release import gate
+
+    calls = {}
+
+    def capture_run(**kwargs):
+        calls.update(kwargs)
+        return {"classification": "NOT_READY", "exit_code": 1}
+
+    monkeypatch.setattr(gate, "run_gate", capture_run)
+    assert gate.main(["--no-write-evidence"]) == 1
+    assert calls == {
+        "profile": "simulated_production",
+        "num_soak_workflows": 5,
+        "write_evidence": False,
+    }
+    assert "NOT_READY" in capsys.readouterr().out
 
 
 def test_gate_controlled_pilot_ready():
     from release import gate
 
     summary = gate.run_gate(profile="controlled_pilot", num_soak_workflows=3, write_evidence=False)
-    assert summary["classification"] in {"CONTROLLED_PILOT_READY", "PRODUCTION_CANDIDATE"}
+    assert summary["classification"] == "CONTROLLED_PILOT_READY"
     assert summary["exit_code"] == 0
 
 

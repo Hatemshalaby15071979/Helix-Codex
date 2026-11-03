@@ -265,8 +265,9 @@ def classify_from_gate_results(
 
     - Unknown profile -> NOT_READY.
     - If any required gate for the requested profile is red -> NOT_READY.
-    - production always returns NOT_READY in this simulation-only release; its
-      external evidence is not substituted by the simulated profile.
+    - production and production_candidate always return NOT_READY in this
+      simulation-only release; only the explicitly simulated profile may report
+      SIMULATED_PRODUCTION_READY.
     The permitted set is `allowed_final` in release-profiles.yaml; a
     classification outside it is still reported, but makes the gate exit non-zero.
     """
@@ -275,7 +276,7 @@ def classify_from_gate_results(
     required = PROFILE_REQUIRED_GATES[profile]
     missing = [g for g in required if g not in green_gates]
 
-    if profile == "production":
+    if profile in {"production", "production_candidate"}:
         return "NOT_READY"
 
     if profile == "simulated_production":
@@ -284,8 +285,6 @@ def classify_from_gate_results(
     if not missing:
         if profile == "controlled_pilot":
             return "CONTROLLED_PILOT_READY"
-        if profile == "production_candidate":
-            return "PRODUCTION_CANDIDATE"
         if profile == "app_pilot":
             return "CONTROLLED_PILOT_READY"
         return profile

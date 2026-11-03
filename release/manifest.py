@@ -113,13 +113,13 @@ def data_schema_versions() -> Dict[str, str]:
 
 def build_manifest(
     classification: str = "PENDING",
-    profile: str = "production_candidate",
+    profile: str = "simulated_production",
     release_approved: bool = False,
     include_full_path: bool = False,
 ) -> Dict[str, Any]:
     """Build a deterministic, machine-readable release manifest."""
-    if classification == "PRODUCTION":
-        raise ValueError("this simulation-only release cannot emit a production classification")
+    if "PRODUCTION" in classification and classification != "SIMULATED_PRODUCTION_READY":
+        raise ValueError("this simulation-only release cannot emit that classification")
     deps = _read_versions("release/requirements.lock.txt")
     manifest: Dict[str, Any] = {
         "manifest_schema_version": MANIFEST_SCHEMA_VERSION,

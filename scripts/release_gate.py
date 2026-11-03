@@ -3,12 +3,13 @@
 Helix Prime Codex C8 — single local release-gate command.
 
 Usage:
-    python3 scripts/release_gate.py [--profile simulated_production|production_candidate|controlled_pilot] [--no-write-evidence]
+    python3 scripts/release_gate.py [--profile PROFILE] [--soak COUNT] [--no-write-evidence]
 
 Emits a deterministic classification:
-    CONTROLLED_PILOT_READY, PRODUCTION_CANDIDATE, or SIMULATED_PRODUCTION_READY.
+    CONTROLLED_PILOT_READY, SIMULATED_PRODUCTION_READY, or NOT_READY.
 
-The production profile always returns NOT_READY on this simulation-only branch.
+The default profile is simulated_production. The production and
+production_candidate profiles always return NOT_READY on this branch.
 
 NOTE — by default this command is not a read-only check. It writes an evidence
 pack and regenerates `release/release-manifest.json`, and that write records

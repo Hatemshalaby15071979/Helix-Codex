@@ -165,10 +165,9 @@ required_gates:
 # Final classifications permitted by this simulation-only execution.
 allowed_final:
   - CONTROLLED_PILOT_READY
-  - PRODUCTION_CANDIDATE
   - SIMULATED_PRODUCTION_READY
 
-default_c8: PRODUCTION_CANDIDATE
+default_c8: CONTROLLED_PILOT_READY
 
 # Scope and evidence policy for each release profile. These fields shape blast
 # radius and ceremony; they never remove a required gate.

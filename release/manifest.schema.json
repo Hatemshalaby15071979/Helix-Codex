@@ -46,7 +46,6 @@
         "alpha",
         "internal_pilot",
         "CONTROLLED_PILOT_READY",
-        "PRODUCTION_CANDIDATE",
         "SIMULATED_PRODUCTION_READY"
       ]
     },

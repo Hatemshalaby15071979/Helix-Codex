@@ -4,10 +4,10 @@ Helix Prime Codex C8 — release gate orchestrator.
 Runs every gate in the requested profile, aggregates pass/fail, and emits a
 deterministic classification. Final classifications allowed by C8:
     CONTROLLED_PILOT_READY  (profile=controlled_pilot, all gates green)
-    PRODUCTION_CANDIDATE    (profile=production_candidate, all gates green)
     SIMULATED_PRODUCTION_READY (profile=simulated_production, all gates green)
 
-The production profile is permanently NOT_READY in this simulation-only branch.
+The production and production-candidate profiles are NOT_READY in this
+simulation-only branch.
 The simulated profile records no human approval and verifies its nine receipts
 both in-process and through a separate local verifier process.
 
@@ -20,6 +20,7 @@ non-zero on any gate failure or disallowed classification.
 
 from __future__ import annotations
 
+import argparse
 import datetime
 import json
 import os
@@ -787,7 +788,7 @@ GATE_IMPL = {
 
 
 def run_gate(
-    profile: str = "production_candidate",
+    profile: str = "simulated_production",
     num_soak_workflows: int = 5,
     write_evidence: bool = True,
 ) -> Dict[str, Any]:
@@ -915,21 +916,25 @@ def _verify_simulation_in_subprocess(pack_dir: pathlib.Path) -> tuple[bool, str]
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    argv = list(sys.argv[1:] if argv is None else argv)
-    profile = "production_candidate"
-    write_evidence = "--no-write-evidence" not in argv
-    if "--profile" in argv:
-        i = argv.index("--profile")
-        if i + 1 < len(argv):
-            profile = argv[i + 1]
-    if "--soak" in argv:
-        i = argv.index("--soak")
-        if i + 1 < len(argv):
-            pass  # soak count parsed in python path
-    if profile not in profiles.PROFILE_ORDER:
-        print(f"ERROR: unknown profile {profile!r}")
-        return 2
-    summary = run_gate(profile=profile, write_evidence=write_evidence)
+    parser = argparse.ArgumentParser(description="Run Helix's local release gates.")
+    parser.add_argument(
+        "--profile",
+        choices=profiles.PROFILE_ORDER,
+        default="simulated_production",
+        help="release profile (default: simulated_production)",
+    )
+    parser.add_argument("--soak", type=int, default=5, help="bounded soak workflow count")
+    parser.add_argument(
+        "--no-write-evidence",
+        action="store_true",
+        help="do not write evidence or update the release manifest",
+    )
+    args = parser.parse_args(sys.argv[1:] if argv is None else argv)
+    summary = run_gate(
+        profile=args.profile,
+        num_soak_workflows=args.soak,
+        write_evidence=not args.no_write_evidence,
+    )
     print(json.dumps(summary, default=str, indent=2))
     return summary["exit_code"]
 

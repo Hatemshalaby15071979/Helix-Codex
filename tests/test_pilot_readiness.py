@@ -333,8 +333,8 @@ def test_smoke_nuance_components_and_alias_are_informational():
 # ── C0-C8 regression ────────────────────────────────────────────────────────
 
 
-def test_c8_regression_production_candidate_still_emits_candidate():
+def test_c8_regression_candidate_profile_fails_closed():
     result = profiles.classify_from_gate_results(
         "production_candidate", profiles.GATE_NAMES, release_approved=True
     )
-    assert result == "PRODUCTION_CANDIDATE"
+    assert result == "NOT_READY"
