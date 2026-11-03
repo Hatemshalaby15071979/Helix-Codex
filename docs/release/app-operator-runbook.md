@@ -279,7 +279,7 @@ docker compose -p "$RESTORE_PROJECT" -f infra/docker/docker-compose.app.yml \
 Verify the restored tenant rows and health endpoint after the drill. Never
 stamp, upgrade, or otherwise rehearse migrations against the active volume.
 
-## Upgrade and rollback safely (backup first)
+## Upgrade safely (backup first)
 
 Never upgrade without a fresh, verified backup. Compose keeps versioned
 image tags when a unique `HELIX_APP_IMAGE_TAG` is supplied; record the

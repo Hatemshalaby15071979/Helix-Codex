@@ -8,14 +8,20 @@ domain and the first owner so the operator can log in and invite the rest
 of the team.
 
 Usage:
-    python helix_codex_app/scripts/bootstrap_owner.py \\
-        --domain mycompany --username admin --password mypassword
+    HELIX_OWNER_PASSWORD=your-password python helix_codex_app/scripts/bootstrap_owner.py \\
+        --domain mycompany --username admin --password-env HELIX_OWNER_PASSWORD
+
+The password may also come from --password-stdin or --password-file PATH;
+argv --password still works but is deprecated (it leaks into shell history).
+The domain's client_id defaults to the domain name; pass --client-id to set
+it explicitly (the cockpit pack scopes its data by tenant and client).
 
 Exit 0 = owner created. Exit 1 = bootstrap failed.
 """
 from __future__ import annotations
 
 import argparse
+import os
 import pathlib
 import sys
 import uuid
@@ -93,6 +99,66 @@ def bootstrap_owner(
         db.close(conn)
 
 
+def _read_first_line(stream) -> str:
+    line = stream.readline()
+    return line.rstrip("\n").rstrip("\r")
+
+
+def _resolve_password(args: argparse.Namespace, parser: argparse.ArgumentParser) -> str | None:
+    """Resolve the owner password from exactly one source.
+
+    Order of preference is irrelevant because exactly one may be given.
+    argv ``--password`` still works but warns, since it leaks into shell
+    history and the process list.
+    """
+    sources = [
+        bool(args.password),
+        bool(args.password_env),
+        bool(args.password_stdin),
+        bool(args.password_file),
+    ]
+    chosen = sum(sources)
+    if chosen != 1:
+        parser.error(
+            "provide exactly one of --password, --password-env, --password-stdin or --password-file"
+        )
+
+    resolved: str
+    if args.password is not None:
+        print(
+            "warning: --password exposes the secret in shell history and the process list; "
+            "use --password-env, --password-stdin or --password-file next time",
+            file=sys.stderr,
+        )
+        resolved = args.password
+    elif args.password_env is not None:
+        value = os.environ.get(args.password_env, "")
+        if not value:
+            print(f"error: environment variable {args.password_env!r} is unset or empty", file=sys.stderr)
+            return None
+        resolved = value
+    elif args.password_stdin:
+        resolved = _read_first_line(sys.stdin)
+        if not resolved:
+            print("error: stdin did not yield a password line", file=sys.stderr)
+            return None
+    else:
+        path = pathlib.Path(args.password_file)
+        try:
+            resolved = _read_first_line(path.open("r", encoding="utf-8"))
+        except OSError as exc:
+            print(f"error: cannot read password file {path}: {exc}", file=sys.stderr)
+            return None
+        if not resolved:
+            print(f"error: password file {path} is empty", file=sys.stderr)
+            return None
+
+    if len(resolved) < MIN_PASSWORD_LENGTH:
+        print(f"error: password must be at least {MIN_PASSWORD_LENGTH} characters", file=sys.stderr)
+        return None
+    return resolved
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db-path", default="helix_codex_app/app.db")
@@ -102,8 +168,32 @@ def main(argv: list[str] | None = None) -> int:
         help="domain name, e.g. mycompany (used as tenant id and login suffix)",
     )
     parser.add_argument("--username", required=True, help="owner username")
-    parser.add_argument("--password", required=True, help="owner password (min 8 chars)")
     parser.add_argument("--display-name", default=None, help="owner display name")
+    password_group = parser.add_argument_group(
+        "password (exactly one is required; argv --password is deprecated)"
+    )
+    password_group.add_argument(
+        "--password",
+        default=None,
+        help="DEPRECATED: visible in shell history and the process list. Prefer --password-env, --password-stdin or --password-file.",
+    )
+    password_group.add_argument(
+        "--password-env",
+        default=None,
+        metavar="VAR",
+        help="name of an environment variable holding the password",
+    )
+    password_group.add_argument(
+        "--password-stdin",
+        action="store_true",
+        help="read the password from the first line of stdin",
+    )
+    password_group.add_argument(
+        "--password-file",
+        default=None,
+        metavar="PATH",
+        help="read the password from the first line of PATH (file mode is not checked; keep it 0600)",
+    )
     parser.add_argument(
         "--client-id",
         default=None,
@@ -115,11 +205,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    if len(args.password) < MIN_PASSWORD_LENGTH:
-        print(
-            f"error: password must be at least {MIN_PASSWORD_LENGTH} characters",
-            file=sys.stderr,
-        )
+    owner_pw = _resolve_password(args, parser)
+    if owner_pw is None:
         return 1
 
     client_id = args.client_id if args.client_id is not None else args.domain
@@ -128,7 +215,7 @@ def main(argv: list[str] | None = None) -> int:
             db_path=args.db_path,
             domain_name=args.domain,
             username=args.username,
-            password_secret=args.password,
+            password_secret=owner_pw,
             display_name=args.display_name,
             client_id=client_id,
         )

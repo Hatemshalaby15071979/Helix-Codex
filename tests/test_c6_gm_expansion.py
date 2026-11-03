@@ -483,14 +483,28 @@ def test_audit_log_identity_fields_use_canonical_names():
         assert agent_name == role["maps_to_agent"], f"Role {rid} agent_name != maps_to_agent"
 
 
-def test_existing_four_agent_regression():
-    """Existing four agents still work with unchanged identities."""
+def test_existing_four_agent_regression(monkeypatch):
+    """Existing four agents still work with unchanged identities.
+
+    Hermetic: the Ollama session is patched to refuse the connection, which is
+    the scenario the offline marker is built for. A reachable-but-slow local
+    Ollama (no bound on inference time) made this test environment-dependent.
+    """
+    import requests
+
+    from app.command_center.agents import base_agent
+
+    class _OfflineSession:
+        def post(self, *args, **kwargs):
+            raise requests.exceptions.ConnectionError("simulated offline")
+
+    monkeypatch.setattr(base_agent, "LLM_SESSION", _OfflineSession())
     for name in ["SAMI", "SUBY", "PHILI", "WILI"]:
         agent = AgentRegistry.get_agent(name)
         assert agent is not None, f"Existing agent {name} missing"
         # Verify identity unchanged
         assert agent.name == name
-        # Verify they can process a simple request (no Ollama needed - will get LLM error but that's ok)
+        # Verify they can process a simple request (offline mode returns the deterministic marker)
         result = agent.process_request("test")
         assert isinstance(result, str)
 
@@ -557,11 +571,24 @@ def test_existing_c0_c5_regression():
         engine.store.close()
 
 
-def test_ollama_unavailable_behavior():
-    """New agents (canonical names) handle Ollama unavailable gracefully."""
+def test_ollama_unavailable_behavior(monkeypatch):
+    """New agents (canonical names) handle Ollama unavailable gracefully.
+
+    Hermetic: the Ollama session is patched to refuse the connection, so this
+    exercises the deterministic offline path instead of a live model.
+    """
+    import requests
+
+    from app.command_center.agents import base_agent
+
+    class _OfflineSession:
+        def post(self, *args, **kwargs):
+            raise requests.exceptions.ConnectionError("simulated offline")
+
+    monkeypatch.setattr(base_agent, "LLM_SESSION", _OfflineSession())
     for name in ["ANDY", "NONO", "MAYA", "LIZA", "TOMY"]:
         agent = AgentRegistry.get_agent(name)
-        # This will attempt to call Ollama and get an error, but should not crash
+        # Offline mode must return a deterministic string, not raise
         result = agent.process_request("test query")
         assert isinstance(result, str)
         # Should contain error message or fallback

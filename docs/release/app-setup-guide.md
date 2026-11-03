@@ -47,14 +47,19 @@ in the operator runbook.
 
 ## Step 5 — Create the first owner account
 
-Replace `mycompany`, `admin`, and `mypassword` with your own values:
+Replace `mycompany`, `admin` and the password variable with your own values:
 
 ```
-docker compose -f infra/docker/docker-compose.app.yml exec helix-app \
+docker compose -f infra/docker/docker-compose.app.yml exec -e HELIX_OWNER_PASSWORD=your-password helix-app \
     python helix_codex_app/scripts/bootstrap_owner.py \
     --db-path /data/helix_codex_app/app.db --domain mycompany \
-    --username admin --password mypassword
+    --username admin --password-env HELIX_OWNER_PASSWORD
 ```
+
+The password never appears on the command line; point `--password-env` at any variable you set,
+or use `--password-stdin` / `--password-file`. The older `--password` flag still works but is
+deprecated — it leaks into shell history. The domain's client id defaults to the domain name;
+pass `--client-id` to set it explicitly (the cockpit pack scopes its data by tenant and client).
 
 You should see: `owner created: admin@mycompany`.
 
