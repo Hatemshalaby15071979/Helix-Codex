@@ -81,6 +81,13 @@ def test_memory_service_uses_the_bridge_not_the_parent():
     assert service.ProposalNotApprovableError is parent.ProposalNotApprovableError
 
 
+def test_import_service_uses_the_tenant_scope_bridge():
+    from control_plane.store import TenantScopeMissing as ParentTenantScopeMissing
+    from helix_codex_app.integration.control_plane_bridge import TenantScopeMissing
+
+    assert TenantScopeMissing is ParentTenantScopeMissing
+
+
 def test_lockout_duration_has_one_source():
     from helix_codex_app.modules.identity import service as identity_service
     from helix_codex_app.security.accounts import LOCK_MINS

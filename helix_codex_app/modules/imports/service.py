@@ -23,7 +23,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-from control_plane.store import TenantScopeMissing
+from helix_codex_app.integration.control_plane_bridge import TenantScopeMissing
 from helix_codex_app.modules.imports import schema as schemas
 
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2})?)?$")
