@@ -17,6 +17,18 @@ from control_plane.workflow import Workflow
 DEFAULT_DB_PATH = "control_plane/workflow.db"
 
 
+class TenantScopeMissing(ValueError):
+    """A tenant-scoped query was attempted with an empty tenant id (fail closed)."""
+
+
+def _require_tenant(tenant_id: Optional[str]) -> str:
+    if tenant_id is None:
+        raise TenantScopeMissing("tenant_id is required for this scoped query")
+    if not str(tenant_id).strip():
+        raise TenantScopeMissing("tenant_id must be a non-empty string")
+    return str(tenant_id)
+
+
 class Store:
     """
     Durable store with SQLite. Smallest safe local-first implementation.
@@ -70,6 +82,7 @@ class Store:
         )
         cur.execute("CREATE INDEX IF NOT EXISTS idx_workflows_corr ON workflows(correlation_id)")
         self._init_governance_schema(cur)
+        self._migrate_tenant_columns(cur)
         self.conn.commit()
 
     def _init_governance_schema(self, cur: sqlite3.Cursor) -> None:
@@ -157,6 +170,41 @@ class Store:
             """
         )
 
+    def _migrate_tenant_columns(self, cur: sqlite3.Cursor) -> None:
+        """Add and backfill tenant_id on workflows/events (idempotent).
+
+        Driver-level isolation: every tenant-bearing table carries the tenant
+        on the row itself, so scoped queries filter at SQL level instead of
+        post-filtering in Python. Legacy rows are backfilled from the JSON
+        payload (top-level tenant_id, then correlation.tenant_id).
+        """
+        wf_cols = {r[1] for r in cur.execute("PRAGMA table_info(workflows)")}
+        if "tenant_id" not in wf_cols:
+            cur.execute("ALTER TABLE workflows ADD COLUMN tenant_id TEXT NOT NULL DEFAULT ''")
+        ev_cols = {r[1] for r in cur.execute("PRAGMA table_info(events)")}
+        if "tenant_id" not in ev_cols:
+            cur.execute("ALTER TABLE events ADD COLUMN tenant_id TEXT NOT NULL DEFAULT ''")
+        cur.execute(
+            """UPDATE workflows SET tenant_id = COALESCE(
+                   json_extract(data, '$.tenant_id'),
+                   json_extract(data, '$.correlation.tenant_id'),
+                   '')
+               WHERE tenant_id = ''"""
+        )
+        cur.execute(
+            """UPDATE events SET tenant_id = COALESCE(
+                   (SELECT COALESCE(
+                       json_extract(w.data, '$.tenant_id'),
+                       json_extract(w.data, '$.correlation.tenant_id'),
+                       '')
+                    FROM workflows w
+                    WHERE w.workflow_id = events.aggregate_id),
+                   '')
+               WHERE tenant_id = ''"""
+        )
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_workflows_tenant ON workflows(tenant_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_events_tenant ON events(tenant_id)")
+
     # ── workflows ────────────────────────────────────────────────────────────
 
     def create_workflow(self, workflow: Workflow) -> Workflow:
@@ -177,16 +225,22 @@ class Store:
                 self.conn.execute("ROLLBACK")
                 data = json.loads(row[0])
                 return Workflow.from_dict(data)
-            # Insert new
+            # Insert new (tenant stamped on the row for driver-level scoping)
+            tenant_id = (
+                getattr(workflow, "tenant_id", None)
+                or getattr(workflow.correlation, "tenant_id", None)
+                or ""
+            )
             data_json = json.dumps(workflow.to_dict(), default=str)
             cur.execute(
-                "INSERT INTO workflows (workflow_id, idempotency_key, correlation_id, data, updated_at) VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO workflows (workflow_id, idempotency_key, correlation_id, data, updated_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?)",
                 (
                     workflow.workflow_id,
                     workflow.idempotency_key,
                     workflow.correlation.correlation_id,
                     data_json,
                     workflow.updated_at,
+                    tenant_id,
                 ),
             )
             self.conn.commit()
@@ -221,6 +275,20 @@ class Store:
         data = json.loads(row[0])
         return Workflow.from_dict(data)
 
+    def get_workflow_scoped(self, workflow_id: str, tenant_id: str) -> Optional[Workflow]:
+        """Driver-level scoped read: foreign tenant rows are invisible (None)."""
+        tenant = _require_tenant(tenant_id)
+        cur = self.conn.cursor()
+        cur.execute(
+            "SELECT data FROM workflows WHERE workflow_id = ? AND tenant_id = ?",
+            (workflow_id, tenant),
+        )
+        row = cur.fetchone()
+        if row is None:
+            return None
+        data = json.loads(row[0])
+        return Workflow.from_dict(data)
+
     def get_workflow_by_idempotency(self, idempotency_key: str) -> Optional[Workflow]:
         cur = self.conn.cursor()
         cur.execute("SELECT data FROM workflows WHERE idempotency_key = ?", (idempotency_key,))
@@ -246,10 +314,18 @@ class Store:
             raise ValueError(f"Store.update_workflow: workflow {workflow.workflow_id!r} not found")
         self.conn.commit()
 
-    def list_workflows(self, limit: int = 100) -> List[Workflow]:
+    def list_workflows(self, limit: int = 100, tenant_id: Optional[str] = None) -> List[Workflow]:
         cur = self.conn.cursor()
-        cur.execute("SELECT data FROM workflows ORDER BY updated_at DESC LIMIT ?", (limit,))
-        rows = cur.fetchall()
+        if tenant_id is None:
+            cur.execute("SELECT data FROM workflows ORDER BY updated_at DESC LIMIT ?", (limit,))
+            rows = cur.fetchall()
+        else:
+            tenant = _require_tenant(tenant_id)
+            cur.execute(
+                "SELECT data FROM workflows WHERE tenant_id = ? ORDER BY updated_at DESC LIMIT ?",
+                (tenant, limit),
+            )
+            rows = cur.fetchall()
         return [Workflow.from_dict(json.loads(r[0])) for r in rows]
 
     # ── events ───────────────────────────────────────────────────────────────
@@ -287,9 +363,13 @@ class Store:
                     f"expected {expected}, got {event.sequence} (max existing {max_seq})"
                 )
 
+            tenant_row = cur.execute(
+                "SELECT tenant_id FROM workflows WHERE workflow_id = ?", (event.aggregate_id,)
+            ).fetchone()
+            event_tenant = tenant_row[0] if tenant_row else ""
             data_json = json.dumps(event.to_dict(), default=str)
             cur.execute(
-                "INSERT INTO events (event_id, aggregate_id, sequence, correlation_id, data, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO events (event_id, aggregate_id, sequence, correlation_id, data, timestamp, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 (
                     event.event_id,
                     event.aggregate_id,
@@ -297,6 +377,7 @@ class Store:
                     event.correlation_id,
                     data_json,
                     event.timestamp,
+                    event_tenant,
                 ),
             )
             self.conn.commit()
@@ -324,6 +405,17 @@ class Store:
         cur = self.conn.cursor()
         cur.execute(
             "SELECT data FROM events WHERE aggregate_id = ? ORDER BY sequence ASC", (aggregate_id,)
+        )
+        rows = cur.fetchall()
+        return [Event.from_dict(json.loads(r[0])) for r in rows]
+
+    def get_events_scoped(self, aggregate_id: str, tenant_id: str) -> List[Event]:
+        """Driver-level scoped replay: foreign tenant events are invisible."""
+        tenant = _require_tenant(tenant_id)
+        cur = self.conn.cursor()
+        cur.execute(
+            "SELECT data FROM events WHERE aggregate_id = ? AND tenant_id = ? ORDER BY sequence ASC",
+            (aggregate_id, tenant),
         )
         rows = cur.fetchall()
         return [Event.from_dict(json.loads(r[0])) for r in rows]
@@ -496,9 +588,18 @@ class Store:
             )
         return row
 
-    def get_workflow_task(self, task_id: str) -> Optional[Dict[str, Any]]:
+    def get_workflow_task(
+        self, task_id: str, tenant_id: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
         cur = self.conn.cursor()
-        cur.execute("SELECT * FROM workflow_tasks WHERE task_id = ?", (task_id,))
+        if tenant_id is None:
+            cur.execute("SELECT * FROM workflow_tasks WHERE task_id = ?", (task_id,))
+        else:
+            tenant = _require_tenant(tenant_id)
+            cur.execute(
+                "SELECT * FROM workflow_tasks WHERE task_id = ? AND tenant_id = ?",
+                (task_id, tenant),
+            )
         row = cur.fetchone()
         return self._task_row_to_dict(row) if row else None
 
@@ -509,6 +610,8 @@ class Store:
         tenant_id: Optional[str] = None,
         limit: int = 100,
     ) -> List[Dict[str, Any]]:
+        if tenant_id is not None and not str(tenant_id).strip():
+            raise TenantScopeMissing("tenant_id must be a non-empty string when scoping")
         cur = self.conn.cursor()
         if state and tenant_id:
             cur.execute(
@@ -588,10 +691,42 @@ class Store:
         *,
         task_id: Optional[str] = None,
         correlation_id: Optional[str] = None,
+        tenant_id: Optional[str] = None,
         limit: int = 200,
     ) -> List[Dict[str, Any]]:
+        """List audit events; pass tenant_id to scope at SQL level.
+
+        audit_events has no tenant column of its own (the ledger is shared), so
+        the scope is enforced with an EXISTS subquery against workflow_tasks,
+        which carries tenant_id. Rows that cannot be tied to the tenant are
+        invisible rather than merely filtered in Python.
+        """
+        if tenant_id is not None and not str(tenant_id).strip():
+            raise TenantScopeMissing("tenant_id must be a non-empty string when scoping")
         cur = self.conn.cursor()
-        if task_id:
+        if tenant_id is not None:
+            tenant = str(tenant_id)
+            scope = (
+                "EXISTS (SELECT 1 FROM workflow_tasks t "
+                "WHERE (t.task_id = audit_events.task_id OR t.workflow_id = audit_events.workflow_id) "
+                "AND t.tenant_id = ?)"
+            )
+            if task_id:
+                cur.execute(
+                    f"SELECT * FROM audit_events WHERE task_id = ? AND {scope} ORDER BY rowid ASC LIMIT ?",
+                    (task_id, tenant, limit),
+                )
+            elif correlation_id:
+                cur.execute(
+                    f"SELECT * FROM audit_events WHERE correlation_id = ? AND {scope} ORDER BY rowid ASC LIMIT ?",
+                    (correlation_id, tenant, limit),
+                )
+            else:
+                cur.execute(
+                    f"SELECT * FROM audit_events WHERE {scope} ORDER BY rowid ASC LIMIT ?",
+                    (tenant, limit),
+                )
+        elif task_id:
             cur.execute(
                 "SELECT * FROM audit_events WHERE task_id = ? ORDER BY rowid ASC LIMIT ?",
                 (task_id, limit),

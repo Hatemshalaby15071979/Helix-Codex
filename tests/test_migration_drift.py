@@ -119,7 +119,7 @@ def test_baseline_migration_file_declares_head_revision():
     }
     heads = [rev for rev in contents if rev not in referenced]
     assert len(heads) == 1, f"expected exactly one head, got {heads}"
-    assert heads[0] == "0001_baseline", f"unexpected head: {heads[0]}"
+    assert heads[0] == "0002_tenant_isolation", f"unexpected head: {heads[0]}"
 
 
 def test_store_database_schema_dump_is_closed_cleanly(tmp_path):

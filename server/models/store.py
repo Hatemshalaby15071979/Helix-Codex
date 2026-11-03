@@ -12,6 +12,10 @@ from typing import Any, Sequence
 from server.models.node import Node, NodeKind
 
 
+class NodeExistsError(ValueError):
+    """A node with this id already exists; silent overwrite is refused."""
+
+
 class NodeStore:
     """SQLite-backed node store with tenant isolation."""
 
@@ -76,31 +80,39 @@ class NodeStore:
         if self._conn is None:
             raise RuntimeError("Not connected")
 
-        self._conn.execute(
-            """
-            INSERT OR REPLACE INTO nodes (
-                node_id, tenant_id, client_id, correlation_id, causation_id,
-                classification, nature, created_by, created_at, kind, body,
-                provenance_source, provenance_data_mode, provenance_retrieved_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                node.envelope.node_id,
-                node.envelope.tenant_id,
-                node.envelope.client_id,
-                node.envelope.correlation_id,
-                node.envelope.causation_id,
-                node.envelope.classification.value,
-                node.envelope.nature.value,
-                node.envelope.created_by,
-                node.envelope.created_at,
-                node.kind.value,
-                json.dumps(node.body),
-                node.envelope.provenance.source,
-                node.envelope.provenance.data_mode,
-                node.envelope.provenance.retrieved_at,
-            ),
-        )
+        # Plain INSERT: a node_id collision across (or within) tenants must
+        # never silently overwrite the stored row. The caller's tenant stamp
+        # comes from the envelope, never from a request payload.
+        try:
+            self._conn.execute(
+                """
+                INSERT INTO nodes (
+                    node_id, tenant_id, client_id, correlation_id, causation_id,
+                    classification, nature, created_by, created_at, kind, body,
+                    provenance_source, provenance_data_mode, provenance_retrieved_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    node.envelope.node_id,
+                    node.envelope.tenant_id,
+                    node.envelope.client_id,
+                    node.envelope.correlation_id,
+                    node.envelope.causation_id,
+                    node.envelope.classification.value,
+                    node.envelope.nature.value,
+                    node.envelope.created_by,
+                    node.envelope.created_at,
+                    node.kind.value,
+                    json.dumps(node.body),
+                    node.envelope.provenance.source,
+                    node.envelope.provenance.data_mode,
+                    node.envelope.provenance.retrieved_at,
+                ),
+            )
+        except sqlite3.IntegrityError as exc:
+            raise NodeExistsError(
+                f"node {node.envelope.node_id!r} already exists; refusing to overwrite"
+            ) from exc
         self._conn.commit()
         return node
 

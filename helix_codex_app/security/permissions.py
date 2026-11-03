@@ -31,6 +31,7 @@ PERMISSIONS: tuple[str, ...] = (
     "cockpit.view",
     "admin.users",
     "packs.manage",
+    "import.run",
 )
 
 # "demo" is the public walkthrough role. It is scoped by the policy bridge to one
@@ -49,6 +50,7 @@ _PERMISSION_KEYS = PERMISSIONS
 PERMISSION_MATRIX: dict[str, dict[str, bool | str]] = {
     "owner": {key: True for key in _PERMISSION_KEYS},
     "manager": {
+        "import.run": True,
         "chat.use": True,
         "docs.read": True,
         "docs.write": True,
@@ -64,6 +66,7 @@ PERMISSION_MATRIX: dict[str, dict[str, bool | str]] = {
         "packs.manage": False,
     },
     "employee": {
+        "import.run": False,
         "chat.use": True,
         "docs.read": True,
         "docs.write": True,
@@ -79,6 +82,7 @@ PERMISSION_MATRIX: dict[str, dict[str, bool | str]] = {
         "packs.manage": False,
     },
     "contractor": {
+        "import.run": False,
         "chat.use": True,
         "docs.read": True,
         "docs.write": True,
@@ -94,6 +98,7 @@ PERMISSION_MATRIX: dict[str, dict[str, bool | str]] = {
         "packs.manage": False,
     },
     "external": {
+        "import.run": False,
         "chat.use": True,
         "docs.read": "scoped",
         "docs.write": False,
@@ -109,6 +114,7 @@ PERMISSION_MATRIX: dict[str, dict[str, bool | str]] = {
         "packs.manage": False,
     },
     "demo": {
+        "import.run": False,
         "chat.use": False,
         "docs.read": False,
         "docs.write": False,
@@ -124,6 +130,7 @@ PERMISSION_MATRIX: dict[str, dict[str, bool | str]] = {
         "packs.manage": False,
     },
     "catalog": {
+        "import.run": False,
         "chat.use": True,
         "docs.read": True,
         "docs.write": True,
