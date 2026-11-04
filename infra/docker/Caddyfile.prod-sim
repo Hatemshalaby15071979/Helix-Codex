@@ -1,0 +1,42 @@
+# SIMULATION ONLY — TLS front door for the local prod-sim topology.
+#
+# `tls internal` issues a certificate from Caddy's local CA, which is enough to
+# prove the HTTPS path and header behaviour on this host. It is NOT a publicly
+# trusted certificate and must never be presented as one. To use real test-CA
+# material instead, mount cert/key files and replace the `tls` line.
+{
+	admin 127.0.0.1:2019
+	auto_https disable_redirects
+	# IP-address clients (curl, Python, most probes) do not send SNI. Without a
+	# default, Caddy cannot select the internal-CA certificate and aborts the
+	# handshake with an internal_error alert.
+	default_sni 127.0.0.1
+}
+
+{$HELIX_SIM_SITE_ADDRESS:https://127.0.0.1:8443} {
+	tls internal
+
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "geolocation=(), microphone=(), camera=()"
+		-Server
+	}
+
+	# Liveness and readiness stay unauthenticated so probes work; every other
+	# route is passed through to the API, which enforces bearer-token scope.
+	reverse_proxy helix-api:8000 {
+		health_uri /readyz
+		health_interval 30s
+		health_timeout 5s
+	}
+
+	log {
+		output stdout
+		format json
+	}
+}

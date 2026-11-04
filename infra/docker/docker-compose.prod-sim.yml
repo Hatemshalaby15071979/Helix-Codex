@@ -1,0 +1,177 @@
+# Helix Codex OS — SIMULATED production topology (P6 evidence)
+#
+# SIMULATION ONLY. This file describes a hardened single-host topology that is
+# exercised locally to produce `production_deployment_architecture` evidence.
+# Nothing here is operated by a provider, reviewed by a third party, or approved
+# for real client data. Read PRODUCTION-SIM-TOPOLOGY.md before using it.
+#
+# What it demonstrates:
+#   * TLS termination in front of the API (Caddy, internal CA by default)
+#   * loopback-only host publishing; no service exposes 0.0.0.0
+#   * read-only root filesystems, all capabilities dropped, no-new-privileges
+#   * non-root application user (the image already runs uid 10001)
+#   * secrets delivered as mounted files, never as compose environment values
+#   * restart policies, liveness/readiness probes, and a local log sink
+#
+# Start (from the repository root):
+#   infra/docker/prepare-prod-sim-secrets.sh
+#   docker compose -f infra/docker/docker-compose.prod-sim.yml up -d --build
+#   curl --cacert infra/docker/secrets/caddy-root.crt https://127.0.0.1:8443/readyz
+#
+# Stop and remove only this simulation's disposable state:
+#   docker compose -f infra/docker/docker-compose.prod-sim.yml down -v
+#
+# The volumes are project-scoped by COMPOSE_PROJECT_NAME (default: directory
+# name). Never run `down -v` against a stack you did not create for this drill.
+
+name: helix-prod-sim
+
+services:
+  caddy:
+    image: caddy:2.8.4
+    depends_on:
+      helix-api:
+        condition: service_healthy
+    ports:
+      # Loopback only. Remote access terminates at an operator-managed tunnel.
+      - "127.0.0.1:${HELIX_SIM_HTTPS_PORT:-8443}:8443"
+    environment:
+      HELIX_SIM_SITE_ADDRESS: "${HELIX_SIM_SITE_ADDRESS:-https://127.0.0.1:8443}"
+    volumes:
+      - ./Caddyfile.prod-sim:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    # The official Caddy binary carries file capability cap_net_bind_service;
+    # executing it with every capability dropped fails with EPERM. Grant only
+    # that one (8443 needs none, but the binary's exec check does).
+    cap_add:
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "tcp://127.0.0.1:24224"
+        fluentd-async: "true"
+        fluentd-retry-wait: "1s"
+        fluentd-max-retries: "10"
+        tag: "prod-sim.caddy"
+
+  helix-api:
+    image: helix-prime-api:${HELIX_API_IMAGE_TAG:-prod-sim}
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+    # The published port stays on loopback for the drill. Caddy reaches the
+    # container over the compose network, so nothing is exposed to the LAN.
+    ports:
+      - "127.0.0.1:${HELIX_SIM_API_PORT:-8000}:8000"
+    # Secrets are read from mounted files at container start and exported only
+    # into this process. They are never written to the compose file, the image,
+    # or `docker inspect` environment output.
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        export HELIX_API_TOKEN="$$(cat /run/secrets/helix_api_token)"
+        export HELIX_API_TOKEN_ROLE="$$(cat /run/secrets/helix_api_token_role)"
+        export HELIX_API_TOKEN_TENANT_ID="$$(cat /run/secrets/helix_api_token_tenant_id)"
+        export HELIX_API_TOKEN_CLIENT_ID="$$(cat /run/secrets/helix_api_token_client_id)"
+        exec uvicorn server.app:create_app --factory --host 0.0.0.0 --port 8000
+    environment:
+      HELIX_ENV: simulated_production
+      HELIX_DB_PATH: /data/control_plane/workflow.db
+      HELIX_AUDIT_DB_PATH: /data/security/audit.db
+      HELIX_HOST: "0.0.0.0"
+      HELIX_SAMPLE_DATA_MODE: "false"
+      HELIX_API_ALLOW_GLOBAL_OPERATOR: "false"
+      PYTHONPATH: /app
+    # Structured logs default to the relative path observability/logs.jsonl. Run
+    # from the writable data volume so the read-only root filesystem stays intact.
+    working_dir: /data
+    secrets:
+      - helix_api_token
+      - helix_api_token_role
+      - helix_api_token_tenant_id
+      - helix_api_token_client_id
+    volumes:
+      - helix_sim_data:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    stop_grace_period: 30s
+    healthcheck:
+      # Readiness, not liveness: 503 while the audit ledger is unverifiable.
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz')"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "tcp://127.0.0.1:24224"
+        fluentd-async: "true"
+        fluentd-retry-wait: "1s"
+        fluentd-max-retries: "10"
+        tag: "prod-sim.api"
+
+  # Local log sink. Fluent Bit listens on loopback only and writes JSON lines to
+  # a named volume so the drill can assert that application logs left the
+  # container. This is not a central logging service.
+  log-sink:
+    image: fluent/fluent-bit:3.1.9
+    command: ["/fluent-bit/bin/fluent-bit", "--config", "/etc/fluent-bit/prod-sim.conf"]
+    ports:
+      - "127.0.0.1:24224:24224"
+    volumes:
+      - ./fluent-bit.prod-sim.conf:/etc/fluent-bit/prod-sim.conf:ro
+      - helix_sim_logs:/logs
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/fluent-bit/bin/fluent-bit", "--version"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
+
+secrets:
+  helix_api_token:
+    file: ./secrets/helix_api_token
+  helix_api_token_role:
+    file: ./secrets/helix_api_token_role
+  helix_api_token_tenant_id:
+    file: ./secrets/helix_api_token_tenant_id
+  helix_api_token_client_id:
+    file: ./secrets/helix_api_token_client_id
+
+volumes:
+  helix_sim_data:
+  helix_sim_logs:
+  caddy_data:
+  caddy_config:

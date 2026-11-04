@@ -101,3 +101,6 @@ deploy/worker/.wrangler/
 # Generated PDF exports of markdown sources are build artifacts, not sources.
 docs/*.pdf
 !docs/Helix_Codex_System_Analysis_and_Design.pdf
+
+# Prod-sim drill credentials and CA material — generated locally, never committed.
+infra/docker/secrets/
