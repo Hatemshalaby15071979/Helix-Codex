@@ -1,0 +1,79 @@
+name: Readiness (simulated)
+
+# The synthetic tenant fixtures are not committed (198 MB + 106 MB), so this job
+# detects them and skips the fixture-dependent gates with an explicit notice.
+# A fixture-absent run is not a pass for the readiness harness; it is a known
+# limitation of a clean checkout. The harness itself fails the job whenever the
+# fixtures are present and any gate is red.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Detect synthetic fixtures
+        id: fixtures
+        env:
+          HELIX_TENANT_DATA_DIR: ${{ vars.HELIX_TENANT_DATA_DIR }}
+        run: |
+          if [ -n "${HELIX_TENANT_DATA_DIR:-}" ] && [ -d "$HELIX_TENANT_DATA_DIR/callcenterclient" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "Synthetic fixtures detected at $HELIX_TENANT_DATA_DIR"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Synthetic fixtures are absent; readiness harness skipped (not a pass)."
+          fi
+
+      - name: Claims vocabulary check
+        run: |
+          python scripts/check_claims_drift.py
+
+      - name: Fixture-drift check (fixtures required)
+        if: steps.fixtures.outputs.present == 'true'
+        env:
+          HELIX_TENANT_DATA_DIR: ${{ vars.HELIX_TENANT_DATA_DIR }}
+        run: |
+          python scripts/check_fixture_drift.py
+
+      - name: Readiness harness (fixtures required)
+        if: steps.fixtures.outputs.present == 'true'
+        env:
+          HELIX_TENANT_DATA_DIR: ${{ vars.HELIX_TENANT_DATA_DIR }}
+        run: |
+          python scripts/production_readiness/run.py \
+            --out evidence/production_readiness/ci-run --json
+
+      - name: App import drill (fixtures required)
+        if: steps.fixtures.outputs.present == 'true'
+        env:
+          HELIX_TENANT_DATA_DIR: ${{ vars.HELIX_TENANT_DATA_DIR }}
+        run: |
+          python scripts/app_import_drill.py --out evidence/app-import
+
+      - name: Upload evidence pack
+        if: steps.fixtures.outputs.present == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: readiness-evidence
+          path: |
+            evidence/production_readiness/ci-run
+            evidence/app-import
+          if-no-files-found: warn
