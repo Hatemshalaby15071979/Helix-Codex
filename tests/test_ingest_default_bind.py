@@ -33,9 +33,9 @@ def test_host_flag_overrides_default(monkeypatch):
         captured.update(host=host, port=port)
 
     monkeypatch.setattr(ingest_engine.uvicorn, "run", _fake_run)
-    monkeypatch.setattr("sys.argv", ["ingest_engine.py", "--host", "0.0.0.0", "--port", "8010"])
+    monkeypatch.setattr("sys.argv", ["ingest_engine.py", "--host", "0.0.0.0", "--port", "8010"])  # noqa: S104
     ingest_engine.main()
-    assert captured["host"] == "0.0.0.0"
+    assert captured["host"] == "0.0.0.0"  # noqa: S104
     assert captured["port"] == 8010
 
 

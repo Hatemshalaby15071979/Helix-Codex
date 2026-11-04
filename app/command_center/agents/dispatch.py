@@ -17,14 +17,12 @@ from datetime import datetime, timezone
 from typing import Any, Mapping
 
 from contracts.task import CorrelationContext, TaskRequest
-
 from contracts.toolcall import (
     TOOLS,
     ToolCall,
     ToolCallEnvelope,
     ToolResult,
 )
-
 
 # Per-tool argument schemas: required key -> (type, max length). Validation is
 # strict: unknown keys are refused rather than silently ignored (fail closed).
@@ -252,7 +250,9 @@ class AgentDispatch:
         context: Mapping[str, Any],
     ) -> ToolResult:
         """Handle submit_task: submit to the bound Engine, or fail closed."""
-        return await self._submit_through_engine(tool_call, context, default_capability="task_submission")
+        return await self._submit_through_engine(
+            tool_call, context, default_capability="task_submission"
+        )
 
     async def _handle_request_approval(
         self,
@@ -260,7 +260,9 @@ class AgentDispatch:
         context: Mapping[str, Any],
     ) -> ToolResult:
         """Handle request_approval: submit to the bound Engine, or fail closed."""
-        return await self._submit_through_engine(tool_call, context, default_capability="approval_request")
+        return await self._submit_through_engine(
+            tool_call, context, default_capability="approval_request"
+        )
 
     async def _handle_read_document(
         self,

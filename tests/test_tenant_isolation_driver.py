@@ -17,7 +17,6 @@ level, not by post-filtering in Python:
 
 from __future__ import annotations
 
-import json
 from datetime import datetime, timezone
 
 import pytest
@@ -113,7 +112,7 @@ def _seed_store(store: Store) -> None:
                 "1.0",
             ),
         )
-    for event_id, corr, task_id, wf_id, tenant in (
+    for event_id, corr, task_id, wf_id, _tenant in (
         ("aud-a", "corr-a", "task-a", "wf-a", "tenant-a"),
         ("aud-b", "corr-b", "task-b", "wf-b", "tenant-b"),
     ):

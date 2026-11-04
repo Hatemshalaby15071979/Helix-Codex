@@ -711,19 +711,21 @@ class Store:
                 "WHERE (t.task_id = audit_events.task_id OR t.workflow_id = audit_events.workflow_id) "
                 "AND t.tenant_id = ?)"
             )
+            # `scope` is a constant fragment defined above; every value is bound with
+            # `?`, so the interpolation cannot carry caller input into the SQL text.
             if task_id:
                 cur.execute(
-                    f"SELECT * FROM audit_events WHERE task_id = ? AND {scope} ORDER BY rowid ASC LIMIT ?",
+                    f"SELECT * FROM audit_events WHERE task_id = ? AND {scope} ORDER BY rowid ASC LIMIT ?",  # noqa: S608
                     (task_id, tenant, limit),
                 )
             elif correlation_id:
                 cur.execute(
-                    f"SELECT * FROM audit_events WHERE correlation_id = ? AND {scope} ORDER BY rowid ASC LIMIT ?",
+                    f"SELECT * FROM audit_events WHERE correlation_id = ? AND {scope} ORDER BY rowid ASC LIMIT ?",  # noqa: S608
                     (correlation_id, tenant, limit),
                 )
             else:
                 cur.execute(
-                    f"SELECT * FROM audit_events WHERE {scope} ORDER BY rowid ASC LIMIT ?",
+                    f"SELECT * FROM audit_events WHERE {scope} ORDER BY rowid ASC LIMIT ?",  # noqa: S608
                     (tenant, limit),
                 )
         elif task_id:

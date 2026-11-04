@@ -1003,7 +1003,11 @@ app = create_app(manager=manager)
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--host", default="127.0.0.1", help="bind address (default: loopback; use --host 0.0.0.0 only inside a trusted network)")
+    parser.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="bind address (default: loopback; use --host 0.0.0.0 only inside a trusted network)",
+    )
     parser.add_argument("--port", type=int, default=8000, help="bind port")
     parser.add_argument("--log-level", default="info", help="uvicorn log level")
     args = parser.parse_args()

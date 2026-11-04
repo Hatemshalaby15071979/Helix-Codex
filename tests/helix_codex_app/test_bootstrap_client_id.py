@@ -18,7 +18,9 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = REPO_ROOT / "helix_codex_app" / "scripts" / "bootstrap_owner.py"
 
 
-def _run(db_path: Path, *extra: str, password: str = "test-password-123") -> subprocess.CompletedProcess[str]:
+def _run(
+    db_path: Path, *extra: str, password: str = "test-password-123"
+) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [
             sys.executable,
@@ -70,10 +72,14 @@ def test_password_via_env_only(tmp_path: Path, monkeypatch) -> None:
         [
             sys.executable,
             str(SCRIPT),
-            "--db-path", str(db_path),
-            "--domain", "demo",
-            "--username", "owner",
-            "--password-env", "HELIX_BOOTSTRAP_PASSWORD",
+            "--db-path",
+            str(db_path),
+            "--domain",
+            "demo",
+            "--username",
+            "owner",
+            "--password-env",
+            "HELIX_BOOTSTRAP_PASSWORD",
         ],
         capture_output=True,
         text=True,

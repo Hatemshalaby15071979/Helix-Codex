@@ -134,7 +134,10 @@ def _resolve_password(args: argparse.Namespace, parser: argparse.ArgumentParser)
     elif args.password_env is not None:
         value = os.environ.get(args.password_env, "")
         if not value:
-            print(f"error: environment variable {args.password_env!r} is unset or empty", file=sys.stderr)
+            print(
+                f"error: environment variable {args.password_env!r} is unset or empty",
+                file=sys.stderr,
+            )
             return None
         resolved = value
     elif args.password_stdin:
