@@ -57,11 +57,26 @@ def run_supervisor(
 
 
 def alive(pid: int) -> bool:
-    """Report whether a process id is still present in the OS process table."""
-    listing = subprocess.run(
-        ["tasklist", "/FI", f"PID eq {pid}", "/NH"], capture_output=True, text=True
-    ).stdout
-    return str(pid) in listing
+    """Report whether a process id is still present and not a zombie."""
+    if os.name == "nt":
+        listing = subprocess.run(
+            ["tasklist", "/FI", f"PID eq {pid}", "/NH"], capture_output=True, text=True
+        ).stdout
+        return str(pid) in listing
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        # The process exists but belongs to another user; we can still see it.
+        return True
+    try:
+        stat = Path(f"/proc/{pid}/stat").read_text(encoding="utf-8")
+    except OSError:
+        return True
+    if ")" not in stat:
+        return True
+    return stat.rsplit(")", 1)[-1].split()[0] != "Z"
 
 
 def summary(stderr: str) -> str:
@@ -274,6 +289,12 @@ def test_interrupt_exit_code(check: Check) -> None:
 
 def test_interrupt_terminates(check: Check, engine: LiveEngine) -> None:
     """An operator interrupt leaves no surviving twin, whatever killed it."""
+    if os.name == "nt":
+        popen_kwargs: dict[str, Any] = {
+            "creationflags": subprocess.CREATE_NEW_PROCESS_GROUP,
+        }
+    else:
+        popen_kwargs = {"start_new_session": True}
     process = subprocess.Popen(
         [
             sys.executable,
@@ -291,7 +312,7 @@ def test_interrupt_terminates(check: Check, engine: LiveEngine) -> None:
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,
+        **popen_kwargs,
     )
     twin_pid: int | None = None
     deadline = time.monotonic() + 20.0
@@ -304,11 +325,18 @@ def test_interrupt_terminates(check: Check, engine: LiveEngine) -> None:
             break
     check("twin pid observed in the operator log", twin_pid is not None, str(twin_pid))
     check("twin running before the interrupt", twin_pid is not None and alive(twin_pid))
-    os.kill(process.pid, signal.CTRL_BREAK_EVENT)
+    if os.name == "nt":
+        os.kill(process.pid, signal.CTRL_BREAK_EVENT)
+        expected_codes = (130, -1073741510, 3221225786)
+        signal_name = "CTRL_BREAK"
+    else:
+        os.killpg(process.pid, signal.SIGINT)
+        expected_codes = (130, -signal.SIGINT)
+        signal_name = "SIGINT"
     process.wait(timeout=30)
     check(
-        "process ended on the console control event",
-        process.returncode in (130, -1073741510, 3221225786),
+        f"process ended on the {signal_name} event",
+        process.returncode in expected_codes,
         f"{process.returncode} (Windows reports STATUS_CONTROL_C_EXIT when the OS, "
         "not Python, handles CTRL_BREAK)",
     )

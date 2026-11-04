@@ -1,7 +1,8 @@
-"""Shared machinery for the quarantined cockpit integration tier.
+"""Shared machinery for the cockpit integration tier.
 
-These tests spawn live servers and drive a real Streamlit script runner, so they are
-held out of the 1,758-test baseline. Run them explicitly:
+These tests spawn live servers and drive a real Streamlit script runner. They are
+part of the default suite; the ``ui_integration`` marker remains available to run
+only this tier:
 
     python -m pytest tests/integration/ui/cockpit/ -m ui_integration
 
@@ -36,7 +37,6 @@ from typing import Any
 
 import pytest
 
-UI_MARKER = "ui_integration"
 REPO_ROOT = Path(__file__).resolve().parents[4]
 ENGINE_HEALTH_TIMEOUT_SECONDS = 30.0
 PROCESS_STOP_GRACE_SECONDS = 10.0
@@ -45,23 +45,15 @@ OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
-    """Deselect this tier unless the run names its marker.
+    """Keep the marker selectable without excluding the tier from the default run.
 
-    `addopts` cannot hold this line on its own. A `-m` on the command line replaces
-    the one in `addopts`, so the documented baseline run (`-m "not smoke"`) would
-    silently collect every server-spawning test in here. Deselecting at collection
-    time holds for every invocation that does not ask for the marker by name,
-    including runs driven from CI or from a remembered command line.
+    This hook used to deselect the tier unless ``-m ui_integration`` was named. The
+    tests are now portable and fast enough for the default suite, and the plan's
+    Phase-10 gate requires ``pytest -q`` to report **0 deselected**. The hook is kept
+    as a documented no-op seam: a future platform-specific hold-out belongs here,
+    next to the reason, rather than in a hidden command-line flag.
     """
-    if UI_MARKER in (config.getoption("markexpr") or ""):
-        return
-    keep: list[pytest.Item] = []
-    drop: list[pytest.Item] = []
-    for item in items:
-        (drop if UI_MARKER in item.keywords else keep).append(item)
-    if drop:
-        items[:] = keep
-        config.hook.pytest_deselected(items=drop)
+    del config, items
 
 
 class CheckLog:
