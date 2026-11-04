@@ -1,0 +1,200 @@
+name: helix-prod-sim
+services:
+  caddy:
+    cap_drop:
+      - ALL
+    depends_on:
+      helix-api:
+        condition: service_healthy
+        required: true
+    environment:
+      HELIX_SIM_SITE_ADDRESS: https://127.0.0.1:8443
+    healthcheck:
+      test:
+        - CMD
+        - caddy
+        - validate
+        - --config
+        - /etc/caddy/Caddyfile
+        - --adapter
+        - caddyfile
+      timeout: 5s
+      interval: 30s
+      retries: 3
+      start_period: 10s
+    image: caddy:2.8.4
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: tcp://127.0.0.1:24224
+        fluentd-async: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: 1s
+        tag: prod-sim.caddy
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 8443
+        published: "8443"
+        protocol: tcp
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - type: bind
+        source: [LOCAL_PATH]/[REDACTED_VOLUME]/Career/cloned_repos/Helix-Prime/infra/docker/Caddyfile.prod-sim
+        target: /etc/caddy/Caddyfile
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: volume
+        source: caddy_data
+        target: /data
+        volume: {}
+      - type: volume
+        source: caddy_config
+        target: /config
+        volume: {}
+  helix-api:
+    build:
+      context: [LOCAL_PATH]/[REDACTED_VOLUME]/Career/cloned_repos/Helix-Prime
+      dockerfile: infra/docker/Dockerfile
+    cap_drop:
+      - ALL
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        export HELIX_API_TOKEN="$$(cat /run/secrets/helix_api_token)"
+        export HELIX_API_TOKEN_ROLE="$$(cat /run/secrets/helix_api_token_role)"
+        export HELIX_API_TOKEN_TENANT_ID="$$(cat /run/secrets/helix_api_token_tenant_id)"
+        export HELIX_API_TOKEN_CLIENT_ID="$$(cat /run/secrets/helix_api_token_client_id)"
+        exec uvicorn server.app:create_app --factory --host 0.0.0.0 --port 8000
+    environment:
+      HELIX_API_ALLOW_GLOBAL_OPERATOR: "false"
+      HELIX_AUDIT_DB_PATH: /data/security/audit.db
+      HELIX_DB_PATH: /data/control_plane/workflow.db
+      HELIX_ENV: simulated_production
+      HELIX_HOST: 0.0.0.0
+      HELIX_SAMPLE_DATA_MODE: "false"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz')
+      timeout: 5s
+      interval: 30s
+      retries: 3
+      start_period: 20s
+    image: helix-prime-api:prod-sim
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: tcp://127.0.0.1:24224
+        fluentd-async: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: 1s
+        tag: prod-sim.api
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 8000
+        published: "8000"
+        protocol: tcp
+    read_only: true
+    restart: unless-stopped
+    secrets:
+      - source: helix_api_token
+        target: /run/secrets/helix_api_token
+      - source: helix_api_token_role
+        target: /run/secrets/helix_api_token_role
+      - source: helix_api_token_tenant_id
+        target: /run/secrets/helix_api_token_tenant_id
+      - source: helix_api_token_client_id
+        target: /run/secrets/helix_api_token_client_id
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 30s
+    tmpfs:
+      - /tmp
+    volumes:
+      - type: volume
+        source: helix_sim_data
+        target: /data
+        volume: {}
+  log-sink:
+    cap_drop:
+      - ALL
+    command:
+      - /fluent-bit/bin/fluent-bit
+      - --config
+      - /etc/fluent-bit/prod-sim.conf
+    healthcheck:
+      test:
+        - CMD
+        - /fluent-bit/bin/fluent-bit
+        - --version
+      timeout: 5s
+      interval: 30s
+      retries: 3
+      start_period: 5s
+    image: fluent/fluent-bit:3.1.9
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 24224
+        published: "24224"
+        protocol: tcp
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - type: bind
+        source: [LOCAL_PATH]/[REDACTED_VOLUME]/Career/cloned_repos/Helix-Prime/infra/docker/fluent-bit.prod-sim.conf
+        target: /etc/fluent-bit/prod-sim.conf
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: volume
+        source: helix_sim_logs
+        target: /logs
+        volume: {}
+networks:
+  default:
+    name: helix-prod-sim_default
+volumes:
+  caddy_config:
+    name: helix-prod-sim_caddy_config
+  caddy_data:
+    name: helix-prod-sim_caddy_data
+  helix_sim_data:
+    name: helix-prod-sim_helix_sim_data
+  helix_sim_logs:
+    name: helix-prod-sim_helix_sim_logs
+secrets:
+  helix_api_token:
+    name: helix-prod-sim_helix_api_token
+    file: [LOCAL_PATH]/[REDACTED_VOLUME]/Career/cloned_repos/Helix-Prime/infra/docker/secrets/helix_api_token
+  helix_api_token_client_id:
+    name: helix-prod-sim_helix_api_token_client_id
+    file: [LOCAL_PATH]/[REDACTED_VOLUME]/Career/cloned_repos/Helix-Prime/infra/docker/secrets/helix_api_token_client_id
+  helix_api_token_role:
+    name: helix-prod-sim_helix_api_token_role
+    file: [LOCAL_PATH]/[REDACTED_VOLUME]/Career/cloned_repos/Helix-Prime/infra/docker/secrets/helix_api_token_role
+  helix_api_token_tenant_id:
+    name: helix-prod-sim_helix_api_token_tenant_id
+    file: [LOCAL_PATH]/[REDACTED_VOLUME]/Career/cloned_repos/Helix-Prime/infra/docker/secrets/helix_api_token_tenant_id

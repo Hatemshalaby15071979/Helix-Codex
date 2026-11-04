@@ -14,6 +14,7 @@ Gates backend: `release/profiles.py`
 | `internal_pilot` | internal team only | no |
 | `controlled_pilot` | human-supervised, synthetic/consented data | yes (goal) |
 | `production_candidate` | evidence pack accepted, NOT released | yes (goal) |
+| `simulated_production` | machine-verifiable simulation; never a human approval | simulation only |
 | `production` | requires production-only gates NOT satisfied in C8 | NO |
 
 ## Gate set
@@ -52,7 +53,16 @@ locally, the C8 gate can only ever emit `CONTROLLED_PILOT_READY` or
   -> `PRODUCTION_CANDIDATE`
 - all required gates green + requested profile `controlled_pilot`
   -> `CONTROLLED_PILOT_READY`
+- all 14 shared gates green + all 9 production-only gates satisfied by the
+  **simulation** verifiers and the offline simulation sign-off verified
+  + requested profile `simulated_production`
+  -> `SIMULATED_PRODUCTION_READY` (never a production classification)
 - any red gate -> `NOT_READY` (non-zero exit)
+
+`SIMULATED_PRODUCTION_READY` is a simulation result. It is not a customer pilot,
+independent audit, legal review, human approval, certification, or deployment
+authorization. See `SIMULATION_DISCLOSURE.md` and
+`docs/release/REAL_CLIENT_ACTIVATION.md`.
 
 ## Boundary / non-goals (from C8 ticket)
 

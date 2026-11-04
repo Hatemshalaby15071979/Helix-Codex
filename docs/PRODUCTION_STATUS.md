@@ -1,15 +1,24 @@
 # Helix Prime — current release and verification status
 
-**Status measured:** 2026-10-31
-**Release classification:** `CONTROLLED_PILOT_READY` in the local C8 profile;
-`NOT_READY` for production.
+**Status measured:** 2026-11-04
+**Release classification:** `SIMULATED_PRODUCTION_READY` in the local
+`simulated_production` profile (synthetic fixtures, machine evidence);
+`NOT_READY` for `production`.
 **Deployment position:** not authorized for first-customer or production deployment.
+**Disclosure:** simulation only. No human, legal, independent, or hosted-CI approval
+is claimed. See [`SIMULATION_DISCLOSURE.md`](../SIMULATION_DISCLOSURE.md).
 
 This page is the concise current-status summary. Dated logs and evidence packs are
-historical snapshots and remain unchanged. The detailed implementation ledger is
-[`AGENTS.md`](../AGENTS.md); the production boundary is
-[`release-boundary.md`](release/release-boundary.md).
+historical snapshots and remain unchanged. The latest measured section is
+[2026-11-04](#latest-measurement--2026-11-04); the 2026-10-31 and 2026-11-03 text
+below is kept as history. The detailed implementation ledger is [`AGENTS.md`](../AGENTS.md);
+the production boundary is [`release-boundary.md`](release/release-boundary.md).
 The broader documentation map is [`DOCUMENTATION_STATUS.md`](DOCUMENTATION_STATUS.md).
+
+> **Historical snapshots follow.** The sections from "What was verified" down to the
+> "2026-11-03" measurement are dated records and are kept unchanged. The current
+> state is the [2026-11-04](#latest-measurement--2026-11-04) section at the bottom of
+> this page.
 
 ## What was verified
 
@@ -127,3 +136,64 @@ Full phase status, blocker limits and evidence links are in the
 [2026-11-03 execution report](production_readiness/PRODUCTION_READINESS_DETAILED_REPORT_2026-11-03.md)
 and the
 [evidence pack](production_readiness/evidence/simulated-production-2026-11-03/).
+
+## Latest measurement — 2026-11-04
+
+This section supersedes the 2026-10-31 and 2026-11-03 snapshots above as the current
+local measurement. The simulated release gate returned `SIMULATED_PRODUCTION_READY`
+(exit 0) and the separate `production` profile returned `NOT_READY` (exit 1). This is
+a simulation result on synthetic fixtures only; it is not authorization for a
+customer or production deployment.
+
+- **Full suite:** **2,107 passed, 0 deselected** in 325.97 s. The previously
+  quarantined cockpit UI tier is un-quarantined and part of the default suite; run
+  alone it reports 19 passed in 11.52 s.
+- **Lint/format:** `ruff check .` exit 0 (0 findings) and `ruff format --check .`
+  clean across 474 files; `scripts/check_dependencies.py` passes. The repository-wide
+  lint/format debt listed as a "next action" in the historical section above is
+  resolved.
+- **Readiness harness:** 12/12 with label `SIMULATION_READINESS_EVIDENCED`
+  (run `20261104T023559Z`); 20 engine calls on synthetic fixtures.
+- **App CSV import drill:** authenticated HTTP import for both tenants —
+  `callcenterclient` 6 tables / 17,944 rows and `sportacademyclient` 8 tables /
+  166,739 rows, 0 failed; idempotent re-import and cross-tenant isolation verified.
+  Curated CSVs without a declared schema (33 and 32 respectively) are skipped by
+  design, not an error.
+- **Disaster-recovery drill:** 3/3 PASS (backup → destroy → restore → verify); RTO
+  ≈ 0.003 s and RPO ≈ 0.0002 s on local disposable state; audit chain verified each
+  run.
+- **Bounded ingest soak:** 1,500-seat shape, 2 min at 5 ticks/s — 600/600 accepted,
+  0 dropped, p95 2.83 ms, RSS growth ratio 1.001, healthy after. The six-hour shape
+  (`--minutes 360`) has **not** been run.
+- **Simulated production topology:** `docker-compose.prod-sim.yml` parses
+  (`docker compose config` exit 0); all three containers reach `healthy`; HTTPS
+  `/readyz` 200 through Caddy (internal CA); security headers present; read-only
+  roots, `cap_drop: [ALL]`, and non-root uid verified; logs delivered to the local
+  sink; `down -v` removed all disposable volumes.
+- **Gates:** `release_gate.py --profile simulated_production` →
+  `SIMULATED_PRODUCTION_READY` (exit 0); `--profile production` → `NOT_READY`
+  (exit 1, nine production-only gates red by design).
+- **Signed simulation pack:** nine simulation receipts and the ordered hash chain
+  verified offline (`valid: true`); this proves pack integrity, not an external
+  identity or independent review.
+- **Claims and fixture drift:** `check_claims_drift.py` PASS; `check_fixture_drift.py`
+  PASS against the committed baseline.
+
+### Remaining limitations (recorded, not waived)
+
+- **Hosted CI:** no remote is configured, so no hosted CI run exists for this tree;
+  the local CI-equivalent commands were run in order but no green badge is claimed.
+- **External security tools:** `gitleaks`, `semgrep`, `ZAP`, `syft`, and `cosign` are
+  unavailable on this host; `bandit` and `pip-audit` are runnable locally. No
+  external scan result is claimed.
+- **Scale:** the six-hour 1,500-seat soak has not run; only the bounded 2-minute
+  shape is measured. The topology is a single host (single point of failure) with a
+  cold-standby plan only.
+- **Approval:** no human, legal, or independent review occurred; the nine
+  production-only gates remain red until real external evidence exists.
+
+The full 14-item gauntlet record is in
+[`evidence/final-gauntlet-2026-11-04/`](production_readiness/evidence/final-gauntlet-2026-11-04/);
+the phase status and limitations are in the
+[2026-11-04 execution report](production_readiness/PRODUCTION_READINESS_DETAILED_REPORT_2026-11-04.md);
+the activation path is [`REAL_CLIENT_ACTIVATION.md`](release/REAL_CLIENT_ACTIVATION.md).

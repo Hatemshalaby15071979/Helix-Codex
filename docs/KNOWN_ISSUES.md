@@ -9,10 +9,11 @@ test/synthetic data.
 > synthetic data or a reading of source. There is no real customer traffic; the demo
 > data is synthetic by design.
 
-> **Current validation:** the local suite reported 2,000 passed / 19 deselected; the
-> latest fixture/engine readiness run passed 12/12 gates. A separate local App/API
-> drill and a simulated design-partner drill passed their stated scopes. None is an
-> independent accuracy, security, legal, or production certification.
+> **Current validation:** the local suite reported 2,107 passed / 0 deselected; the
+> latest fixture/engine readiness run passed 12/12 gates. The cockpit UI tier is
+> un-quarantined, and the App CSV import drill, disaster-recovery drill, and simulated
+> production topology passed their stated scopes. None is an independent accuracy,
+> security, legal, or production certification.
 >
 > **Fixed, retained as the record.** Issues 1 and 2 are fixed in commits `2c9d606`
 > and `64928da`; issue 4's Erlang C implementation and issue 5's CX configuration
@@ -274,3 +275,12 @@ nodes, and `simulated_realistic` provenance are covered by
 This closes the missing App-route finding for the two synthetic fixtures only.
 It does not prove arbitrary schema convergence, ingestion of real client data,
 or readiness for customer use. See `docs/release/app-data-import.md`.
+
+**2026-11-04 drill:** authenticated HTTP import ran end to end against a
+disposable local app database. `callcenterclient` imported 6 tables (17,944
+rows) and `sportacademyclient` imported 8 tables (166,739 rows); 33 and 32
+curated CSVs respectively were skipped because no schema contract exists for
+them. Zero imports failed. Re-importing `agents.csv` and `athletes.csv` left row
+counts unchanged (idempotent), and a cross-tenant batch probe returned `404`.
+This is a simulation-only result on synthetic files; see
+`docs/production_readiness/evidence/final-gauntlet-2026-11-04/`.

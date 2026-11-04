@@ -1,0 +1,25 @@
+[PASS] PR-G01 fixture integrity + disclosure — both fixtures match their hash manifest and carry disclosure
+[PASS] PR-G02 raw-layer defect detection — all declared raw defects detected and cleaned
+[PASS] PR-G03 WFM staffing on real queue-day volume — Erlang C staffing is plausible on both fixtures
+[PASS] PR-G04 RTA adherence on roster/attendance data — adherence reproduces the fixture within 2pp
+[PASS] PR-G05 CX risk on real ticket/attendance cohorts — risk is bounded and ordered with CSAT
+[PASS] PR-G06 B2B onboarding from client profile — SOP + staffing plan generated from tenant profile
+[PASS] PR-G07 Personnel pipeline from requisitions/coaches — pipeline carries the real requisition and candidate
+[PASS] PR-G08 CRM pipeline on tenant account value — deal value is carried from tenant finance data
+[PASS] PR-G09 engine authorisation fails closed — all six adapters deny an unknown role
+[PASS] PR-G10 synthetic-data disclosure on results — every tenant-derived result is labelled sample
+[PASS] PR-G11 determinism of engine results — repeated calls are byte-identical in their metrics
+[PASS] PR-G12 engine latency budget — all 20 calls under 5000ms
+{
+  "checksums": {
+    "EVIDENCE_SUMMARY.md": "9cec48548b06fed6b354c8ec41b2604c686b46b08b508b71cc4af90a8fa7f5e2",
+    "engine_calls.json": "bf30e8fad01696d2f98567902bd2f958343929f02e3869b37a2cc4a785847e5e",
+    "gate_results.json": "46ff5fa883b1a1a006d06fbb187d9705da28f26cd333fa1e20e08df2b4dde5c2",
+    "run_manifest.json": "aeeb2846d4ea973a761fe58c714b3867bbdc7bb351f73c158fac5bbfd28e6af1"
+  },
+  "gates": 12,
+  "label": "SIMULATION_READINESS_EVIDENCED",
+  "out": "docs/production_readiness/evidence/final-gauntlet-2026-11-04/readiness",
+  "passed": 12,
+  "run_id": "20261104T023559Z"
+}

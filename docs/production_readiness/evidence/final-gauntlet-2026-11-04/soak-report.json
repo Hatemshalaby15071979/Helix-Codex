@@ -1,0 +1,83 @@
+{
+  "configuration": {
+    "minutes": 2.0,
+    "rate_per_second": 5.0,
+    "seats": 1500
+  },
+  "disclosure": "SIMULATION ONLY. Synthetic telemetry against a locally spawned ingest engine. No hosted deployment, real traffic, or production capacity is measured.",
+  "duration_seconds": 130.724,
+  "engine_log_tail": "/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:45524 - \"POST /api/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:45524 - \"POST /api/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:45524 - \"POST /api/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:45524 - \"POST /api/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:45524 - \"POST /api/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:45524 - \"POST /api/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:45524 - \"POST /api/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:45524 - \"POST /api/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:45524 - \"POST /api/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:45524 - \"POST /api/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:45524 - \"POST /api/v1/telemetry HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:35010 - \"GET /healthz HTTP/1.1\" 200 OK\nINFO:     Shutting down\nINFO:     Waiting for application shutdown.\nINFO:     Application shutdown complete.\nINFO:     Finished server process [43060]\n",
+  "error_count": 0,
+  "errors": [],
+  "generated_at": "2026-11-04T02:22:35.981224Z",
+  "healthy_after": true,
+  "latency_ms": {
+    "max": 17.772,
+    "p50": 1.61,
+    "p95": 2.831,
+    "p99": 3.607
+  },
+  "memory_kib": {
+    "end": 53056,
+    "growth_ratio": 1.001,
+    "samples": [
+      {
+        "at": 0.54,
+        "rss_kib": 53012
+      },
+      {
+        "at": 10.54,
+        "rss_kib": 53052
+      },
+      {
+        "at": 20.54,
+        "rss_kib": 53056
+      },
+      {
+        "at": 30.54,
+        "rss_kib": 53056
+      },
+      {
+        "at": 40.54,
+        "rss_kib": 53056
+      },
+      {
+        "at": 50.54,
+        "rss_kib": 53056
+      },
+      {
+        "at": 60.54,
+        "rss_kib": 53056
+      },
+      {
+        "at": 70.55,
+        "rss_kib": 53056
+      },
+      {
+        "at": 80.55,
+        "rss_kib": 53056
+      },
+      {
+        "at": 90.55,
+        "rss_kib": 53056
+      },
+      {
+        "at": 100.55,
+        "rss_kib": 53056
+      },
+      {
+        "at": 110.55,
+        "rss_kib": 53056
+      },
+      {
+        "at": 120.55,
+        "rss_kib": 53056
+      }
+    ],
+    "start": 53012
+  },
+  "passed": true,
+  "ticks_accepted": 600,
+  "ticks_dropped": 0,
+  "ticks_sent": 600
+}

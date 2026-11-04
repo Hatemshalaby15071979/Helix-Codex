@@ -1,0 +1,999 @@
+{
+  "checks": {
+    "callcenterclient": {
+      "idempotency": {
+        "file": "agents.csv",
+        "ok": true,
+        "rows_after": 17944,
+        "rows_before": 17944,
+        "status": 200
+      },
+      "isolation": {
+        "batch_id": "import-5cc9a1e7547240569799bc97ad1d840c",
+        "ok": true,
+        "probe_tenant": "sportacademyclient",
+        "status": 404
+      }
+    },
+    "sportacademyclient": {
+      "idempotency": {
+        "file": "athletes.csv",
+        "ok": true,
+        "rows_after": 166739,
+        "rows_before": 166739,
+        "status": 200
+      },
+      "isolation": {
+        "batch_id": "import-6b1e1547585c4ba5913c498c50262660",
+        "ok": true,
+        "probe_tenant": "callcenterclient",
+        "status": 404
+      }
+    }
+  },
+  "disclosure": "SIMULATION ONLY. Synthetic curated fixtures, a disposable local SQLite app database, and the real authenticated App import routes. No real client data was uploaded and no external service was contacted.",
+  "generated_at": "2026-11-04T02:20:02.220908Z",
+  "passed": true,
+  "tenants": {
+    "callcenterclient": {
+      "failed": 0,
+      "files": [
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/leavers (missing ['hire_date', 'last_day', 'leaver_id', 'reason', 'regretted']; unexpected ['decision', 'review_date', 'reviewer_id', 'system'])"
+            }
+          ],
+          "file": "access_reviews.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/rosters_daily (missing ['actual_hours', 'aux_hours', 'conformance_pct', 'handle_hours', 'roster_date']; unexpected ['absenteeism_pct', 'churn_score', 'csat_pct', 'engagement_score', 'qa_pct'])"
+            }
+          ],
+          "file": "agent_churn.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/rosters_daily (missing ['actual_hours', 'aux_hours', 'conformance_pct', 'roster_date', 'roster_state']; unexpected ['absenteeism_pct', 'aht_seconds', 'csat_pct', 'escalation_pct', 'fcr_pct'])"
+            }
+          ],
+          "file": "agent_monthly_performance.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['agent_id', 'assessor_id', 'certified_on', 'last_assessed', 'proficiency'])"
+            }
+          ],
+          "file": "agent_skills.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "batch_id": "import-5cc9a1e7547240569799bc97ad1d840c",
+          "commit_status": 200,
+          "errors": [],
+          "file": "agents.csv",
+          "preview_status": 200,
+          "rows_loaded": 1500,
+          "rows_total": 1500,
+          "status": "imported",
+          "table": "agents"
+        },
+        {
+          "batch_id": "import-8233a573c629415eb8deed2241c3af62",
+          "commit_status": 200,
+          "errors": [],
+          "file": "applicants.csv",
+          "preview_status": 200,
+          "rows_loaded": 6000,
+          "rows_total": 6000,
+          "status": "imported",
+          "table": "applicants"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/squads (missing ['age_group', 'capacity', 'coach_id', 'enrolled', 'level']; unexpected ['asset_id', 'asset_type', 'assigned_to', 'cost_usd', 'model'])"
+            }
+          ],
+          "file": "assets.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['duration_minutes', 'findings', 'result', 'scenario', 'test_date'])"
+            }
+          ],
+          "file": "bcp_tests.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/rate_cards (missing ['channel', 'currency', 'rate_card_id', 'rate_effective_usd', 'rate_usd']; unexpected ['actual_usd', 'line_item', 'month', 'plan_usd', 'variance_pct'])"
+            }
+          ],
+          "file": "budget_vs_actual.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['amount_usd', 'capex_id', 'category', 'requested_on', 'status'])"
+            }
+          ],
+          "file": "capex.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/tickets (missing ['assignee_id', 'channel', 'first_reply_minutes', 'group_id', 'organization_id']; unexpected ['account_id', 'case_number', 'closed_at', 'contact_id', 'csat_score'])"
+            }
+          ],
+          "file": "cases.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['asset_id', 'ci_id', 'criticality', 'hostname', 'last_seen'])"
+            }
+          ],
+          "file": "cmdb.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/sessions (missing ['attended', 'booked', 'capacity', 'end_time', 'facility_id']; unexpected ['agent_id', 'agent_rating', 'duration_minutes', 'evaluation_id', 'focus_area'])"
+            }
+          ],
+          "file": "coaching_sessions.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['contract_id', 'employee_id', 'employment_type', 'end_date', 'shift_pattern'])"
+            }
+          ],
+          "file": "contracts.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/rate_cards (missing ['channel', 'currency', 'rate_card_id', 'rate_effective_usd', 'rate_usd']; unexpected ['churn_rate_pct', 'churned', 'customers', 'month', 'primary_reason'])"
+            }
+          ],
+          "file": "customer_churn.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/leavers (missing ['hire_date', 'leaver_id', 'reason', 'regretted', 'replacement_req_id']; unexpected ['enps', 'exit_id', 'rating_growth', 'rating_manager', 'rating_pay'])"
+            }
+          ],
+          "file": "exit_interviews.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/rate_cards (missing ['currency', 'rate_card_id', 'rate_effective_usd', 'rate_usd', 'valid_from']; unexpected ['actual_aht', 'actual_volume', 'date', 'error_pct', 'forecast_aht'])"
+            }
+          ],
+          "file": "forecast_daily.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/rate_cards (missing ['channel', 'currency', 'rate_card_id', 'rate_effective_usd', 'rate_usd']; unexpected ['actual_fte', 'attrition_assumption_pct', 'hiring_plan', 'month', 'planned_fte'])"
+            }
+          ],
+          "file": "headcount_plan.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "too_many_rows",
+              "line": null,
+              "message": "118137 data rows exceed the 100000 row cap"
+            }
+          ],
+          "file": "intraday_15min.csv",
+          "reason": "validation errors",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/invoices (missing ['amount_egp', 'athlete_id', 'discount_egp', 'program', 'total_egp']; unexpected ['account', 'management_fee_usd', 'paid_on', 'revenue_usd', 'sla_credit_usd'])"
+            }
+          ],
+          "file": "invoices.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/requisitions (missing ['account', 'budget_egp', 'closed_on', 'opened_on', 'openings']; unexpected ['category', 'duration_minutes', 'impact', 'incident_id', 'resolved_at'])"
+            }
+          ],
+          "file": "it_incidents.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/requisitions (missing ['account', 'budget_egp', 'closed_on', 'opened_on', 'openings']; unexpected ['assignee_id', 'category', 'channel', 'closed_at', 'created_at'])"
+            }
+          ],
+          "file": "it_tickets.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['avg_rating', 'helpful_votes', 'kb_id', 'month', 'reader_role'])"
+            }
+          ],
+          "file": "kb_usage.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/leavers (unexpected ['account'])"
+            }
+          ],
+          "file": "leavers.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['annual_cost_usd', 'licence_id', 'seats_purchased', 'seats_used', 'status'])"
+            }
+          ],
+          "file": "licences.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/rate_cards (missing ['channel', 'currency', 'rate_card_id', 'rate_effective_usd', 'rate_usd']; unexpected ['employee_id', 'function', 'job_title', 'level', 'manager_id'])"
+            }
+          ],
+          "file": "org_hierarchy.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/rate_cards (missing ['channel', 'currency', 'rate_card_id', 'rate_effective_usd', 'rate_usd']; unexpected ['allowances_egp', 'base_egp', 'deductions_egp', 'employee_id', 'employer_cost_egp'])"
+            }
+          ],
+          "file": "payroll_monthly.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "batch_id": "import-42d73eb2adc94de396e910b0b8d1aa1d",
+          "commit_status": 200,
+          "errors": [],
+          "file": "pnl_monthly.csv",
+          "preview_status": 200,
+          "rows_loaded": 24,
+          "rows_total": 24,
+          "status": "imported",
+          "table": "pnl_monthly"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['agent_id', 'calibration_batch', 'closing', 'communication', 'compliance'])"
+            }
+          ],
+          "file": "qa_evaluations.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "batch_id": "import-e16165e4a1044200b8b731ad4ce803f9",
+          "commit_status": 200,
+          "errors": [],
+          "file": "queue_metrics_daily.csv",
+          "preview_status": 200,
+          "rows_loaded": 10220,
+          "rows_total": 10220,
+          "status": "imported",
+          "table": "queue_metrics_daily"
+        },
+        {
+          "batch_id": "import-9a2e44998ccf48f2b0487add70903b16",
+          "commit_status": 200,
+          "errors": [],
+          "file": "rate_cards.csv",
+          "preview_status": 200,
+          "rows_loaded": 20,
+          "rows_total": 20,
+          "status": "imported",
+          "table": "rate_cards"
+        },
+        {
+          "batch_id": "import-34210bb7d0ae4049b6453a056b856172",
+          "commit_status": 200,
+          "errors": [],
+          "file": "requisitions.csv",
+          "preview_status": 200,
+          "rows_loaded": 180,
+          "rows_total": 180,
+          "status": "imported",
+          "table": "requisitions"
+        },
+        {
+          "errors": [
+            {
+              "code": "too_many_rows",
+              "line": null,
+              "message": "547500 data rows exceed the 100000 row cap"
+            }
+          ],
+          "file": "rosters_daily.csv",
+          "reason": "validation errors",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['days_to_close', 'event_date', 'event_id', 'event_type', 'severity'])"
+            }
+          ],
+          "file": "security_events.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/coaches (missing ['certification_status', 'coach_id', 'email', 'monthly_salary_egp', 'sport']; unexpected ['account', 'employee_id', 'job_title', 'language_primary', 'language_secondary'])"
+            }
+          ],
+          "file": "support_staff.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/rate_cards (missing ['channel', 'currency', 'rate_card_id', 'rate_effective_usd', 'rate_usd']; unexpected ['agent_count', 'pod_id', 'site', 'team_id', 'tl1_id'])"
+            }
+          ],
+          "file": "teams.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "numeric",
+              "line": 2,
+              "message": "column 'escalation_level' is not a number: 'none'"
+            },
+            {
+              "code": "numeric",
+              "line": 3,
+              "message": "column 'escalation_level' is not a number: 'TL1'"
+            },
+            {
+              "code": "numeric",
+              "line": 4,
+              "message": "column 'escalation_level' is not a number: 'none'"
+            }
+          ],
+          "file": "tickets.csv",
+          "reason": "validation errors",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/applicants (missing ['applicant_id', 'applied_on', 'hired_employee_id', 'outcome', 'req_id']; unexpected ['agent_id', 'category', 'completed_on', 'course_id', 'course_name'])"
+            }
+          ],
+          "file": "training_records.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['annual_cost_usd', 'category', 'contract_end', 'contract_start', 'seats'])"
+            }
+          ],
+          "file": "vendors.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        }
+      ],
+      "imported": 6,
+      "rows": 17944,
+      "skipped": 33
+    },
+    "sportacademyclient": {
+      "failed": 0,
+      "files": [
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/leavers (missing ['hire_date', 'last_day', 'leaver_id', 'reason', 'regretted']; unexpected ['decision', 'review_date', 'reviewer_id', 'system'])"
+            }
+          ],
+          "file": "access_reviews.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/applicants (missing ['account']; unexpected ['role'])"
+            }
+          ],
+          "file": "applicants.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['attendance_id', 'attendance_status', 'late_flag', 'minutes_attended', 'reason']; unexpected ['assessment_date', 'assessment_id', 'assessment_type', 'assessor_id', 'overall_score'])"
+            }
+          ],
+          "file": "assessments.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/squads (missing ['age_group', 'capacity', 'coach_id', 'enrolled', 'level']; unexpected ['asset_id', 'asset_type', 'assigned_to', 'cost_egp', 'model'])"
+            }
+          ],
+          "file": "assets.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['attendance_id', 'attendance_status', 'late_flag', 'minutes_attended', 'reason']; unexpected ['attendance_pct', 'churn_score', 'overall_score', 'parent_engagement', 'payment_delays'])"
+            }
+          ],
+          "file": "athlete_churn.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['attendance_id', 'attendance_status', 'late_flag', 'minutes_attended', 'reason']; unexpected ['attendance_pct', 'coach_rating', 'injury_days', 'month', 'overall_score'])"
+            }
+          ],
+          "file": "athlete_monthly_performance.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "batch_id": "import-6b1e1547585c4ba5913c498c50262660",
+          "commit_status": 200,
+          "errors": [],
+          "file": "athletes.csv",
+          "preview_status": 200,
+          "rows_loaded": 3200,
+          "rows_total": 3200,
+          "status": "imported",
+          "table": "athletes"
+        },
+        {
+          "errors": [
+            {
+              "code": "too_many_rows",
+              "line": null,
+              "message": "421975 data rows exceed the 100000 row cap"
+            }
+          ],
+          "file": "attendance.csv",
+          "reason": "validation errors",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['duration_minutes', 'findings', 'result', 'scenario', 'test_date'])"
+            }
+          ],
+          "file": "bcp_tests.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['actual_egp', 'line_item', 'month', 'owner', 'plan_egp'])"
+            }
+          ],
+          "file": "budget_vs_actual.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/invoices (missing ['athlete_id', 'discount_egp', 'invoice_id', 'issued_on', 'month']; unexpected ['capex_id', 'category', 'requested_on', 'useful_life_years'])"
+            }
+          ],
+          "file": "capex.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['asset_id', 'ci_id', 'criticality', 'hostname', 'last_seen'])"
+            }
+          ],
+          "file": "cmdb.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/squads (missing ['age_group', 'capacity', 'enrolled', 'level', 'program']; unexpected ['end_date', 'hours_per_week', 'role', 'start_date'])"
+            }
+          ],
+          "file": "coach_assignments.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/squads (missing ['age_group', 'capacity', 'enrolled', 'program', 'site']; unexpected ['certification', 'expires_on', 'issued_on', 'issuer', 'verified_on'])"
+            }
+          ],
+          "file": "coach_certifications.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "batch_id": "import-639118ee6568443da40af6fa8c9dd741",
+          "commit_status": 200,
+          "errors": [],
+          "file": "coaches.csv",
+          "preview_status": 200,
+          "rows_loaded": 168,
+          "rows_total": 168,
+          "status": "imported",
+          "table": "coaches"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['attendance_id', 'attendance_status', 'late_flag', 'minutes_attended', 'reason']; unexpected ['competition_id', 'event', 'medal', 'position', 'result_id'])"
+            }
+          ],
+          "file": "competition_results.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/squads (missing ['age_group', 'capacity', 'coach_id', 'enrolled', 'program']; unexpected ['competition_id', 'end_date', 'name', 'start_date'])"
+            }
+          ],
+          "file": "competitions.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/squads (missing ['age_group', 'coach_id', 'enrolled', 'level', 'program']; unexpected ['facility_id', 'facility_type', 'hourly_cost_egp', 'name', 'surface'])"
+            }
+          ],
+          "file": "facilities.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/forecast_daily (missing ['actual_attendance', 'actual_sessions', 'error_pct', 'forecast_athletes', 'forecast_attendance']; unexpected ['facility_id', 'facility_type', 'maintenance_flag', 'revenue_egp', 'slots_available'])"
+            }
+          ],
+          "file": "facility_utilization.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['churn_rate_pct', 'churned', 'families', 'month', 'primary_reason'])"
+            }
+          ],
+          "file": "family_churn.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "batch_id": "import-9e65d76716e44c4297f55ece242064b4",
+          "commit_status": 200,
+          "errors": [],
+          "file": "feedback_surveys.csv",
+          "preview_status": 200,
+          "rows_loaded": 20000,
+          "rows_total": 20000,
+          "status": "imported",
+          "table": "feedback_surveys"
+        },
+        {
+          "batch_id": "import-d28908cfcbb84bffb80163f198938509",
+          "commit_status": 200,
+          "errors": [],
+          "file": "forecast_daily.csv",
+          "preview_status": 200,
+          "rows_loaded": 5840,
+          "rows_total": 5840,
+          "status": "imported",
+          "table": "forecast_daily"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['actual_fte', 'attrition_pct', 'function', 'hiring_plan', 'month'])"
+            }
+          ],
+          "file": "headcount_plan.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['attendance_id', 'attendance_status', 'late_flag', 'minutes_attended', 'reason']; unexpected ['body_area', 'days_out', 'injury_date', 'injury_id', 'mechanism'])"
+            }
+          ],
+          "file": "injuries.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "batch_id": "import-43f355ba4fa344baa4e66ec289d872aa",
+          "commit_status": 200,
+          "errors": [],
+          "file": "invoices.csv",
+          "preview_status": 200,
+          "rows_loaded": 66501,
+          "rows_total": 66501,
+          "status": "imported",
+          "table": "invoices"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/requisitions (missing ['account', 'budget_egp', 'closed_on', 'opened_on', 'openings']; unexpected ['category', 'duration_minutes', 'impact', 'incident_id', 'resolved_at'])"
+            }
+          ],
+          "file": "it_incidents.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/requisitions (missing ['account', 'budget_egp', 'closed_on', 'opened_on', 'openings']; unexpected ['assignee_id', 'category', 'channel', 'closed_at', 'created_at'])"
+            }
+          ],
+          "file": "it_tickets.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['avg_rating', 'helpful_votes', 'kb_id', 'month', 'reader_role'])"
+            }
+          ],
+          "file": "kb_usage.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "batch_id": "import-667989ee592c454d901049afb5f28316",
+          "commit_status": 200,
+          "errors": [],
+          "file": "leavers.csv",
+          "preview_status": 200,
+          "rows_loaded": 104,
+          "rows_total": 104,
+          "status": "imported",
+          "table": "leavers"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['annual_cost_egp', 'licence_id', 'seats_purchased', 'seats_used', 'status'])"
+            }
+          ],
+          "file": "licences.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/leavers (missing ['hire_date', 'last_day', 'leaver_id', 'reason', 'regretted']; unexpected ['allowances_egp', 'base_egp', 'deductions_egp', 'employer_cost_egp', 'gross_egp'])"
+            }
+          ],
+          "file": "payroll_monthly.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['admin_egp', 'athletes', 'coaching_egp', 'depreciation_egp', 'ebitda_egp'])"
+            }
+          ],
+          "file": "pnl_monthly.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/rate_cards (missing ['account', 'channel', 'rate_effective_usd', 'rate_usd']; unexpected ['annual_fee_egp', 'membership_type', 'monthly_fee_egp', 'program'])"
+            }
+          ],
+          "file": "rate_cards.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/requisitions (missing ['account', 'priority']; unexpected ['sport'])"
+            }
+          ],
+          "file": "requisitions.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['days_to_close', 'event_date', 'event_id', 'event_type', 'severity'])"
+            }
+          ],
+          "file": "security_events.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "batch_id": "import-158c3acfc3a64801b9648fc91d453097",
+          "commit_status": 200,
+          "errors": [],
+          "file": "sessions.csv",
+          "preview_status": 200,
+          "rows_loaded": 70680,
+          "rows_total": 70680,
+          "status": "imported",
+          "table": "sessions"
+        },
+        {
+          "batch_id": "import-7e80b3d5a1df41d4878eef44db8c8691",
+          "commit_status": 200,
+          "errors": [],
+          "file": "squads.csv",
+          "preview_status": 200,
+          "rows_loaded": 246,
+          "rows_total": 246,
+          "status": "imported",
+          "table": "squads"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/coaches (missing ['certification_status', 'coach_id', 'first_name', 'last_name', 'level']; unexpected ['employee_id', 'function', 'manager_id'])"
+            }
+          ],
+          "file": "support_staff.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is callcenterclient/applicants (missing ['account', 'applicant_id', 'applied_on', 'hired_employee_id', 'outcome']; unexpected ['category', 'coach_id', 'completed_on', 'course_name', 'hours'])"
+            }
+          ],
+          "file": "training_records.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        },
+        {
+          "errors": [
+            {
+              "code": "schema",
+              "line": 1,
+              "message": "unrecognised export shape; closest match is sportacademyclient/attendance (missing ['athlete_id', 'attendance_id', 'attendance_status', 'late_flag', 'minutes_attended']; unexpected ['annual_cost_egp', 'category', 'contract_end', 'contract_start', 'owner'])"
+            }
+          ],
+          "file": "vendors.csv",
+          "reason": "no matching schema",
+          "status": "skipped"
+        }
+      ],
+      "imported": 8,
+      "rows": 166739,
+      "skipped": 32
+    }
+  }
+}

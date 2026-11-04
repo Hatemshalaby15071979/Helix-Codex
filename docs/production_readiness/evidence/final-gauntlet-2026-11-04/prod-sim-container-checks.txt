@@ -1,0 +1,11 @@
+helix-prod-sim-caddy-1	Up 23 seconds (healthy)
+helix-prod-sim-log-sink-1	Up About a minute (healthy)
+helix-prod-sim-helix-api-1	Up 3 minutes (healthy)
+
+ReadonlyRootfs=true CapDrop=[ALL] SecurityOpt=[no-new-privileges:true] User=helix WorkingDir=/data
+
+uid=10001(helix) gid=10001(helix) groups=10001(helix)
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+touch: cannot touch '/root-write-probe': Read-only file system
+READONLY_ROOT_CONFIRMED

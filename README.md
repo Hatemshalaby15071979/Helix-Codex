@@ -8,9 +8,9 @@
 [![CI](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/workflows/CI/badge.svg)](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions)
 ![licence](https://img.shields.io/badge/licence-MIT-blue)
 [![last commit](https://img.shields.io/github/last-commit/<YOUR_GITHUB_ORG>/Helix-Prime)](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/commits/main)
-![local verification](https://img.shields.io/badge/local%20verification-pass%20(2026--10--31)-brightgreen)
+![local verification](https://img.shields.io/badge/local%20verification-pass%20(2026--11--04)-brightgreen)
 
-*Local verification measured 2026-10-31. The latest recorded remote CI result is older; it is not evidence for the current local source tree.*
+*Local verification measured 2026-11-04 (simulation only, synthetic fixtures). The latest recorded remote CI result is older; it is not evidence for the current local source tree.*
 
 <!-- The workflow badge is a remote reference, not a local verification result.
      Use the dated local-verification badge and status section below for this checkout. -->
@@ -37,11 +37,12 @@ surface — so a decision is gated, recorded, and inspectable before it runs.
 > **Operating principle.** No generative model sits in the execution path. On a live floor, a hallucinated action is an SLA breach, not a quirky output — so a deterministic, rules-based gate decides what actually executes, and every decision is recorded before it runs. When the gate holds a submission, it reports the held state; it does not force the run.
 
 > [!IMPORTANT]
-> **Positioning (2026-10-31).** Local-first governed operations core. A controlled-pilot
-> profile and a simulated two-tenant design-partner drill passed locally; six engines
-> computed on disclosed synthetic fixtures. No real customer pilot or first-customer
-> deployment has occurred. Production remains `NOT_READY`: nine production-only gates
-> still require evidence and authority that cannot be simulated locally.
+> **Positioning (2026-11-04).** Local-first governed operations core. The
+> `simulated_production` profile passed locally (`SIMULATED_PRODUCTION_READY`, a
+> simulation classification on synthetic fixtures) and six engines computed on
+> disclosed synthetic fixtures. No real customer pilot or first-customer deployment
+> has occurred. Production remains `NOT_READY`: nine production-only gates still
+> require evidence and authority that cannot be simulated locally.
 
 The canonical artifact is **`helix-api`**, a governed FastAPI spine where identity,
 RBAC, approvals, the kill switch, metrics, and the audit chain are enforced. The
@@ -145,32 +146,35 @@ with it.
 - **`audit_events`** — append-only, hash-chained ledger; exportable evidence pack.
 - **Deployment** — `infra/docker/docker-compose.yml` runs the same `helix-api` plus the cockpit and an Ollama sidecar; a Cloudflare Quick Tunnel can front a temporary demo but is not left running between sessions. No durable public service is claimed.
 
-## Current status & verification (2026-10-31)
+## Current status & verification (2026-11-04)
 
 This is a local verification snapshot, not a production or customer-acceptance claim.
 The detailed source of truth is [`docs/PRODUCTION_STATUS.md`](docs/PRODUCTION_STATUS.md);
 the documentation map is [`docs/DOCUMENTATION_STATUS.md`](docs/DOCUMENTATION_STATUS.md);
-dated run records remain historical evidence.
+dated run records remain historical evidence. The simulation disclosure is
+[`SIMULATION_DISCLOSURE.md`](SIMULATION_DISCLOSURE.md).
 
 | Check | Result | Evidence |
 |---|---|---|
-| Full pytest suite | **2,000 passed, 19 deselected** | Local Python 3.12 run recorded in `AGENTS.md` §28 |
-| Focused readiness/regression tests | **33 passed** | `AGENTS.md` §27 |
+| Full pytest suite | **2,107 passed, 0 deselected** | [`full-suite.log`](docs/production_readiness/evidence/final-gauntlet-2026-11-04/full-suite.log) |
+| Cockpit UI tier | **19 passed**, un-quarantined and part of the default suite | [`ui-tier.log`](docs/production_readiness/evidence/final-gauntlet-2026-11-04/ui-tier.log) |
+| Lint / format / dependencies | `ruff check .` 0 findings; `ruff format --check .` clean (474 files); `check_dependencies.py` pass | [`ruff-check.log`](docs/production_readiness/evidence/final-gauntlet-2026-11-04/ruff-check.log) |
 | Tenant fixture fidelity | **24/24 acceptance checks**; CallCenterClient 98/98; SportAcademyClient 121/121 | `AGENTS.md` §27 |
-| Engine readiness | **12/12 gates; 20 calls across six engines and two synthetic tenants; zero errors** | `docs/production_readiness/evidence/2026-10-31-final/` |
-| App/API tenant and operations drill | **Passed**, including backup, restore, migration, rollback, persistence, and cross-tenant controls | [`docs/release/app-tenant-ops-drill-2026-10-31.md`](docs/release/app-tenant-ops-drill-2026-10-31.md) |
-| Simulated design-partner drill | **PASS_SIMULATED, 14/14 checks**; deterministic simulated reviewer checks, not independent reviews | [`docs/production_readiness/simulated-design-partner-drill-2026-10-31.md`](docs/production_readiness/simulated-design-partner-drill-2026-10-31.md) |
-| Changed-path Ruff checks | **Clean** | `AGENTS.md` §28 |
-| Repository-wide lint/format | **Existing debt remains:** 21 Ruff findings; 346 files need formatting | `AGENTS.md` §27 |
-| C8 `controlled_pilot` / `production` profiles | `CONTROLLED_PILOT_READY` / `NOT_READY` | `AGENTS.md` §27 |
+| Engine readiness | **12/12 gates; 20 calls across six engines and two synthetic tenants; zero errors** | [`readiness-run.json`](docs/production_readiness/evidence/final-gauntlet-2026-11-04/readiness-run.json) |
+| App CSV import drill | **Passed** — both tenants imported over authenticated HTTP routes, idempotent + cross-tenant isolated | [`app-import-report.md`](docs/production_readiness/evidence/final-gauntlet-2026-11-04/app-import-report.md) |
+| Disaster-recovery drill | **3/3 PASS**; RTO ≈ 0.003 s, RPO ≈ 0.0002 s | [`dr-report.md`](docs/production_readiness/evidence/final-gauntlet-2026-11-04/dr-report.md) |
+| Bounded ingest soak | **PASS** — 600/600 ticks, 0 dropped, p95 2.83 ms, flat memory (2 min shape; 6 h not run) | [`soak-report.md`](docs/production_readiness/evidence/final-gauntlet-2026-11-04/soak-report.md) |
+| Simulated production topology | **Passed** — compose config valid, containers healthy, TLS + headers, hardening + log sink verified, teardown clean | [`PRODUCTION-SIM-TOPOLOGY.md`](infra/docker/PRODUCTION-SIM-TOPOLOGY.md) |
+| `simulated_production` / `production` profiles | `SIMULATED_PRODUCTION_READY` (exit 0) / `NOT_READY` (exit 1) | [`gate-simulated.log`](docs/production_readiness/evidence/final-gauntlet-2026-11-04/gate-simulated.log) |
 
-`CONTROLLED_PILOT_READY` is an internal, self-approved gate classification; it does
-not mean a real pilot has run. The latest recorded remote CI result is from 2026-10-05
-and predates the current local work. No current remote CI result is asserted here.
-Production remains blocked on nine production-only evidence gates, including signed
-evidence, certified isolation, external security/privacy review, deployment/DR evidence,
-and named operations/on-call ownership. There is no production deployment, real customer
-traffic, external audit, certification, or verified revenue.
+`SIMULATED_PRODUCTION_READY` is a simulation classification on synthetic fixtures; it
+does not mean a real pilot, customer acceptance, independent audit, or production
+deployment has occurred. The latest recorded remote CI result predates the current
+local work; no current remote CI result is asserted here. Production remains blocked
+on nine production-only evidence gates, including signed evidence, certified isolation,
+external security/privacy review, deployment/DR evidence, and named operations/on-call
+ownership. There is no production deployment, real customer traffic, external audit,
+certification, or verified revenue.
 
 > [!NOTE]
 > **The pipeline went green on 2026-09-29 for the first time.** It had failed at
@@ -198,10 +202,10 @@ shown at all.
 | Fail-closed gate: unknown role / unknown classification / forbidden classification / non-owned engine → `dead_letter` | enforced; 4 hard-deny branches | `control_plane/governance.py:972-1022`; `tests/test_governance_fail_closed.py` |
 | Gate boundaries → `awaiting_approval`: financial limit exceeded, confidence < `0.75`, explicit approval | 3 boundary branches | `control_plane/governance.py:1027-1065`; `MIN_AUTONOMY_CONFIDENCE` at `:64` |
 | Every governance decision is written to the hash-chained `audit_events` ledger before it runs | emit at submit | `control_plane/engine.py:839-840` |
-| Full test suite passes | **2,000 passed, 19 deselected** (local Python 3.12 snapshot, 2026-10-31) | `AGENTS.md` §28 |
-| Coverage floor (80%) met | **86.91%** (last measured by CI on 2026-10-05; not re-measured in the 2026-10-31 local run) | `.github/workflows/ci.yml` |
-| `ruff check` clean on the 17 CI paths | **0 errors** (exit 0) | local run, 2026-10-05 |
-| `ruff format --check .` clean repo-wide | **438 files formatted** (exit 0) | local run, 2026-10-05 |
+| Full test suite passes | **2,107 passed, 0 deselected** (local Python 3.12 snapshot, 2026-11-04) | [`full-suite.log`](docs/production_readiness/evidence/final-gauntlet-2026-11-04/full-suite.log) |
+| Coverage floor (80%) met | **86.91%** (last measured by CI on 2026-10-05; not re-measured in the 2026-11-04 local run) | `.github/workflows/ci.yml` |
+| `ruff check .` clean repo-wide | **0 findings** (exit 0) | local run, 2026-11-04 |
+| `ruff format --check .` clean repo-wide | **474 files formatted** (exit 0) | local run, 2026-11-04 |
 | WFM demo returns an Erlang C answer through the gate, recorded in the audit trail | four-number input → answer; demonstrated end to end on a real server 2026-09-30 (`POST /app/api/ops/demo/wfm` → 201, `GET /app/ops/audit/{correlation_id}` → 200) | `helix_codex_app/integration/engine_bridge.py:529-587`; `helix_codex_app/modules/ops/router.py:207`; `docs/verification/2026-09-30.md` |
 | `data_mode: "simulated_realistic"` and `is_sample: true` are server-owned; a request cannot set them | injected at bridge; extra keys refused `400` | `engine_bridge.py:586-587`, `:538-539`; `router.py:223-227` |
 | Least-privilege demo identity: one permission (`ops.view`), not in the engine catalog | design enforced | "The governed demo path" section above; `helix_codex_app/security/permissions.py` |
@@ -211,10 +215,9 @@ shown at all.
 | Limit | Measured | Source |
 | --- | --- | --- |
 | Rate limiting trusts a header set by an external Worker | `x-helix-client-ip` trust fails if app exposed without the Worker | `helix_codex_app/security/route_limits.py:124`; `client_ip.py:24-28` |
-| Cockpit UI tier quarantined | 19 tests deselected | `tests/integration/ui/cockpit/` conftest (quarantined tier); `AGENTS.md` §19 |
 | `dispatch.py` agent dispatch is a stub returning fake output | `Called …` / `Task submitted` placeholders | `app/command_center/agents/dispatch.py:84,187,204,217,231` |
 | Coverage floor measures execution, not result correctness | the suite now pins WFM's Erlang C to textbook reference values (`tests/test_wfm_erlang_c.py`); the other engines' result accuracy is still not validated against an external reference | `docs/verification/2026-09-30.md` |
-| Latest remote CI result predates current local source | Last recorded green run is 2026-10-05; current source was verified locally on 2026-10-31 | `AGENTS.md` §28 |
+| Latest remote CI result predates current local source | Last recorded green run is 2026-10-05; current source was verified locally on 2026-11-04 | `AGENTS.md` §28 |
 
 #### Fixed since this table was written
 
@@ -223,6 +226,7 @@ is kept rather than deleted.
 
 | Formerly a limit | What was wrong | Fixed in |
 | --- | --- | --- |
+| Cockpit UI tier quarantined | 19 UI tests deselected by a conftest collection hook | 2026-11-04 — `tests/integration/ui/cockpit/conftest.py` deselection hook is now a documented no-op; the supervisor test is portable (`/proc`-based liveness and POSIX `SIGINT`/`killpg` alongside Windows `CTRL_BREAK_EVENT`); 19/19 pass on Linux as part of the default suite |
 | Gate `oversight_only` flag parsed but never enforced | an oversight role with no `target_engine` could still reach `EXECUTING` | `2c9d606`, `64928da` — `evaluate_gate()` hard-denies oversight-only seats (`oversight_only`, `dead_letter`) regardless of `target_engine`; `owns_engine(None)` reflects an engine-less seat; `Engine.submit` and `GovernedWorkflowManager.submit` both act on the refusal. `tests/test_gate_oversight_and_approval.py` |
 | `Engine.submit` did not forward `requires_approval` to the gate | the gate's `approval_requested` branch was unreachable on the `Engine.submit` path | `2c9d606` — `Engine.submit` now forwards `requires_approval`; both submission paths agree on the gate's verdict. `tests/test_gate_oversight_and_approval.py` |
 | CX churn scorer assumed AHT ≤ 0.5 minutes | the `/0.5` (minutes) divisor pinned any realistic AHT to 0 (max risk); callers actually pass AHT as a 0-1 fraction | `fix/cx-aht-normalization` — AHT normalized as `1 - value` (goodness); threshold band recalibrated to critical 0.3/high 0.5/medium 0.7 in `risk_scorer.py:57-66`; `config/risk_thresholds.yaml:16` synced; regression test `tests/test_cx_aht_normalization.py` |

@@ -1,0 +1,4 @@
+helix-prod-sim_caddy_config
+helix-prod-sim_caddy_data
+helix-prod-sim_helix_sim_data
+helix-prod-sim_helix_sim_logs
