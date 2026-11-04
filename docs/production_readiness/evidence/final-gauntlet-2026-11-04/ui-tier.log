@@ -1,0 +1,24 @@
+...................                                                      [100%]
+============================= slowest 20 durations =============================
+1.80s call     tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_cancellation_reaps
+1.13s call     tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_reap_isolated
+0.91s call     tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_backoff_and_drop
+0.73s call     tests/integration/ui/cockpit/test_cockpit_ui_integration.py::test_decision_lifecycle
+0.67s call     tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_interrupt_terminates
+0.62s call     tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_happy_path
+0.46s call     tests/integration/ui/cockpit/test_cockpit_engine_integration.py::test_stream_lifecycle
+0.30s setup    tests/integration/ui/cockpit/test_cockpit_ui_integration.py::test_decision_lifecycle
+0.30s setup    tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_happy_path
+0.30s setup    tests/integration/ui/cockpit/test_cockpit_ui_integration.py::test_stale_snapshot_retained
+0.30s setup    tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_rejection_aborts
+0.30s setup    tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_interrupt_terminates
+0.30s call     tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_rejection_aborts
+0.25s teardown tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_interrupt_terminates
+0.23s call     tests/integration/ui/cockpit/test_cockpit_ui_integration.py::test_stale_snapshot_retained
+0.21s teardown tests/integration/ui/cockpit/test_cockpit_ui_integration.py::test_decision_lifecycle
+0.21s teardown tests/integration/ui/cockpit/test_cockpit_ui_integration.py::test_stale_snapshot_retained
+0.21s call     tests/integration/ui/cockpit/test_cockpit_ui_integration.py::test_degraded_engine_unreachable
+0.20s teardown tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_happy_path
+0.20s call     tests/integration/ui/cockpit/test_cockpit_engine_integration.py::test_stalled_peer_is_pruned_within_send_timeout
+19 passed in 11.52s
+EXIT=0

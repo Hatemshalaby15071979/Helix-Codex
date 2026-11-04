@@ -1,0 +1,79 @@
+{
+  "startup": {
+    "ok": true,
+    "duration_ms": 78.5,
+    "slo_le_ms": 10000.0,
+    "slo_met": true,
+    "detail": "engine + store constructible"
+  },
+  "readiness": {
+    "components": {
+      "control_plane_store": {
+        "component": "control_plane_store",
+        "ok": true,
+        "message": "store reachable",
+        "details": {
+          "db_path": "control_plane/workflow.db"
+        }
+      },
+      "event_replay": {
+        "component": "event_replay",
+        "ok": true,
+        "message": "replay ok"
+      },
+      "capability_registry": {
+        "component": "capability_registry",
+        "ok": true,
+        "message": "registry ok",
+        "details": {
+          "agents": 9
+        }
+      },
+      "role_catalog": {
+        "component": "role_catalog",
+        "ok": true,
+        "message": "catalog ok",
+        "details": {
+          "roles": 9
+        }
+      },
+      "ollama": {
+        "component": "ollama",
+        "ok": true,
+        "message": "ollama reachable",
+        "details": {
+          "url": "http://localhost:11434/api/tags"
+        }
+      },
+      "filesystem": {
+        "component": "filesystem",
+        "ok": true,
+        "message": "all required paths present",
+        "details": {
+          "paths": [
+            "evidence",
+            "control_plane",
+            "security",
+            "observability",
+            "organization",
+            "contracts"
+          ]
+        }
+      }
+    },
+    "healthy": 5,
+    "total": 5,
+    "healthy_pct": 100.0,
+    "ready": true,
+    "slo_met": true,
+    "ollama_present": true
+  },
+  "storage": {
+    "control_plane_db": true,
+    "audit_db": true,
+    "all_writable": true
+  }
+}
+
+READY=True (required components; Ollama optional)
+EXIT=0

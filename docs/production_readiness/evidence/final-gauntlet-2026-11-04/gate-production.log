@@ -1,0 +1,111 @@
+{
+  "created_at": "2026-11-04T02:35:34.118490Z",
+  "profile": "production",
+  "classification": "NOT_READY",
+  "all_gates_green": false,
+  "gates": {
+    "repository_state": {
+      "ok": true,
+      "detail": "repository_state: git + runtime detectable (64bf08516054)"
+    },
+    "reproducible_install": {
+      "ok": true,
+      "detail": "reproducible_install: setup doc=True (docs/release/setup-guide.md), 126 declared deps"
+    },
+    "configuration_validation": {
+      "ok": true,
+      "detail": "configuration: gates=True profiles=True schema=True"
+    },
+    "dependency_locking": {
+      "ok": true,
+      "detail": "dependency_locking: 126 pinned"
+    },
+    "startup_readiness": {
+      "ok": true,
+      "detail": "startup_readiness: all_ok=True startup_ok=True ready=True storage_writable=True"
+    },
+    "backup_restore": {
+      "ok": true,
+      "detail": "backup_restore: audit_chain=True api_nodes=1 schema_ok=True (chain valid with 2 records)"
+    },
+    "rollback": {
+      "ok": true,
+      "detail": "rollback: previous identity restored ok=True"
+    },
+    "data_isolation": {
+      "ok": true,
+      "detail": "data_isolation_ok=True class=True deny_default=True"
+    },
+    "audit_integrity": {
+      "ok": true,
+      "detail": "audit_integrity: isolated probe chain valid with 2 records; runtime chain not declared (set HELIX_AUDIT_DB_PATH=<path> to verify the shipped audit chain)"
+    },
+    "security_checks": {
+      "ok": true,
+      "detail": "security_checks: all_ok=True (secrets_scan:True; classification:True; deny_by_default:True; redaction:True; malformed_output:True; audit_integrity:True)"
+    },
+    "failure_recovery": {
+      "ok": true,
+      "detail": "failure_recovery: all_ok=True"
+    },
+    "performance_limits": {
+      "ok": true,
+      "detail": "performance_limits: soak_ok=True startup_slo=True"
+    },
+    "operator_readiness": {
+      "ok": true,
+      "detail": "operator_readiness: 4/4 docs present and non-empty"
+    },
+    "release_approval": {
+      "ok": true,
+      "detail": "release_approval: approved=True scope_ok=True"
+    },
+    "signed_production_evidence": {
+      "ok": false,
+      "detail": "signed_production_evidence: requires external signed production evidence \u2014 no evidence declared (set HELIX_PRODUCTION_EVIDENCE_DIR; production NOT approved)"
+    },
+    "certified_data_isolation": {
+      "ok": false,
+      "detail": "certified_data_isolation: requires certified tenant/data isolation \u2014 no evidence declared (set HELIX_PRODUCTION_EVIDENCE_DIR; production NOT approved)"
+    },
+    "external_observer_audit": {
+      "ok": false,
+      "detail": "external_observer_audit: requires independent external observer audit \u2014 no evidence declared (set HELIX_PRODUCTION_EVIDENCE_DIR; production NOT approved)"
+    },
+    "production_deployment_architecture": {
+      "ok": false,
+      "detail": "production_deployment_architecture: requires reviewed deployment architecture \u2014 no evidence declared (set HELIX_PRODUCTION_EVIDENCE_DIR; production NOT approved)"
+    },
+    "disaster_recovery_evidence": {
+      "ok": false,
+      "detail": "disaster_recovery_evidence: requires disaster-recovery evidence from production \u2014 no evidence declared (set HELIX_PRODUCTION_EVIDENCE_DIR; production NOT approved)"
+    },
+    "operational_ownership": {
+      "ok": false,
+      "detail": "operational_ownership: requires assigned operational ownership \u2014 no evidence declared (set HELIX_PRODUCTION_EVIDENCE_DIR; production NOT approved)"
+    },
+    "incident_oncall_ownership": {
+      "ok": false,
+      "detail": "incident_oncall_ownership: requires assigned incident/on-call ownership \u2014 no evidence declared (set HELIX_PRODUCTION_EVIDENCE_DIR; production NOT approved)"
+    },
+    "security_review": {
+      "ok": false,
+      "detail": "security_review: requires signed security review \u2014 no evidence declared (set HELIX_PRODUCTION_EVIDENCE_DIR; production NOT approved)"
+    },
+    "legal_privacy_review": {
+      "ok": false,
+      "detail": "legal_privacy_review: requires signed legal/privacy review where applicable \u2014 no evidence declared (set HELIX_PRODUCTION_EVIDENCE_DIR; production NOT approved)"
+    }
+  },
+  "harness": {
+    "all_ok": true,
+    "summary": "harness: 15 checks, failed=[]"
+  },
+  "observability": {
+    "all_ok": true
+  },
+  "evidence_dir": "",
+  "manifest_path": "",
+  "permitted_c8_outcome": false,
+  "exit_code": 1
+}

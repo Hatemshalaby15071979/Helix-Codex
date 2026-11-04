@@ -1,0 +1,3 @@
+Migration drift check: store objects=21, migration objects=21
+No drift: control_plane/store.py and migrations/ head agree.
+EXIT=0

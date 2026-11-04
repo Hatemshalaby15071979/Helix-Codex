@@ -1,0 +1,53 @@
+........................................................................ [  3%]
+........................................................................ [  6%]
+........................................................................ [ 10%]
+........................................................................ [ 13%]
+........................................................................ [ 17%]
+........................................................................ [ 20%]
+........................................................................ [ 23%]
+........................................................................ [ 27%]
+........................................................................ [ 30%]
+........................................................................ [ 34%]
+........................................................................ [ 37%]
+........................................................................ [ 41%]
+........................................................................ [ 44%]
+........................................................................ [ 47%]
+........................................................................ [ 51%]
+........................................................................ [ 54%]
+........................................................................ [ 58%]
+........................................................................ [ 61%]
+........................................................................ [ 64%]
+........................................................................ [ 68%]
+........................................................................ [ 71%]
+........................................................................ [ 75%]
+........................................................................ [ 78%]
+........................................................................ [ 82%]
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+........................................................................ [ 92%]
+........................................................................ [ 95%]
+........................................................................ [ 99%]
+...................                                                      [100%]
+============================= slowest 20 durations =============================
+1.91s call     tests/test_c4_engines.py::test_all_six_adapters_invoke_real_engine_code
+1.81s call     tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_cancellation_reaps
+1.76s call     tests/test_c5_vertical_slice.py::test_existing_c0_c4_regression
+1.22s call     tests/test_pilot.py::test_release_gates
+1.20s call     tests/test_command_center_integration.py::test_release_gates
+1.18s call     tests/test_capabilities_restaurant.py::test_release_gates
+1.16s call     tests/helix_codex_app/test_route_limits.py::test_exhausting_one_route_does_not_lock_another
+1.16s call     tests/test_c8_release_gate.py::test_production_remains_unavailable_even_with_signed_external_evidence
+1.14s call     tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_reap_isolated
+1.06s call     tests/test_simulated_ops_e2e.py::test_local_ready_chain_and_supervised_telemetry
+0.95s call     tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_backoff_and_drop
+0.84s call     tests/test_c5_vertical_slice.py::test_idempotent_repeat_submission
+0.72s call     tests/test_pilot_readiness.py::test_dry_run_is_isolated_and_reports_ready
+0.72s call     tests/integration/ui/cockpit/test_cockpit_supervisor_integration.py::test_interrupt_terminates
+0.69s call     tests/test_pilot_readiness.py::test_dry_run_backup_restore_and_audit_integrity
+0.68s call     tests/test_pilot_readiness.py::test_dry_run_vertical_slice_success_and_denial
+0.68s call     tests/test_pilot_readiness.py::test_dry_run_records_no_data_violations
+0.68s call     tests/test_pilot_readiness.py::test_dry_run_does_not_touch_repo_state
+0.67s call     tests/test_pilot_readiness.py::test_dry_run_verifies_security_gate
+0.67s call     tests/test_pilot_readiness.py::test_smoke_nuance_components_and_alias_are_informational
+2107 passed in 325.97s (0:05:25)
+EXIT=0

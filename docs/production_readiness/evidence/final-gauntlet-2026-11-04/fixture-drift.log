@@ -1,0 +1,2 @@
+FIXTURE_DRIFT: PASS (fixture hashes match the committed baseline)
+EXIT=0
