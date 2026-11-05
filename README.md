@@ -5,26 +5,29 @@
 
 <!-- badges:start -->
 
-[![CI](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/workflows/CI/badge.svg)](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions)
+![hosted CI](https://img.shields.io/badge/hosted%20CI-not%20run-lightgrey)
 ![licence](https://img.shields.io/badge/licence-MIT-blue)
-[![last commit](https://img.shields.io/github/last-commit/<YOUR_GITHUB_ORG>/Helix-Prime)](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/commits/main)
-![local verification](https://img.shields.io/badge/local%20verification-pass%20(2026--11--04)-brightgreen)
+![candidate](https://img.shields.io/badge/candidate-local%20simulation-blue)
 
-*Local verification measured 2026-11-04 (simulation only, synthetic fixtures). The latest recorded remote CI result is older; it is not evidence for the current local source tree.*
+*Local verification measured 2026-11-05 (simulation only, synthetic fixtures). The supplied GitHub destination is currently empty; no hosted CI result exists for this candidate.*
 
-<!-- The workflow badge is a remote reference, not a local verification result.
-     Use the dated local-verification badge and status section below for this checkout. -->
+<!-- Hosted workflow status is unavailable until this local candidate is pushed. -->
 <!-- badges:end -->
 
 **The governed operations core of Helix Codex.**
 
 ![status](https://img.shields.io/badge/status-simulated--validation--passed-blue)
-![CI](https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime/actions/workflows/ci.yml/badge.svg)
 ![Production](https://img.shields.io/badge/production-NOT__READY-red)
 ![Licence](https://img.shields.io/badge/licence-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.12%2B-3776ab)
 
 </div>
+
+## GitHub shipment status (2026-11-05)
+
+The intended public repository is [Hatemshalaby15071979/Helix-Codex](https://github.com/Hatemshalaby15071979/Helix-Codex), which is currently empty. This checkout has not been pushed, so no hosted Actions result exists for this candidate. Local CI-equivalent checks and the synthetic release gate are recorded in [SHIPMENT_READINESS.md](SHIPMENT_READINESS.md). Do not interpret `SIMULATED_PRODUCTION_READY` as production readiness; the production profile remains gated on external evidence and owner approval.
+
+The API uses a dedicated hash-verified runtime lock and its rebuilt simulated-production image was verified locally at 182,121,865 bytes (about 174 MiB). The API-only runtime omits the Streamlit cockpit. CI audits the API lock, uploads CycloneDX dependency and image SBOMs, and runs a SHA-pinned Trivy image scan. The configured image scan and hosted CI have not yet run for this candidate; see the [readiness report](SHIPMENT_READINESS.md).
 
 ## One-line identity
 
@@ -146,9 +149,9 @@ with it.
 - **`audit_events`** — append-only, hash-chained ledger; exportable evidence pack.
 - **Deployment** — `infra/docker/docker-compose.yml` runs the same `helix-api` plus the cockpit and an Ollama sidecar; a Cloudflare Quick Tunnel can front a temporary demo but is not left running between sessions. No durable public service is claimed.
 
-## Current status & verification (2026-11-04)
+## Historical verification snapshot (2026-11-04)
 
-This is a local verification snapshot, not a production or customer-acceptance claim.
+This is a local verification snapshot, not a production or customer-acceptance claim. The newer 2026-11-05 shipment checks are recorded in [`SHIPMENT_READINESS.md`](SHIPMENT_READINESS.md).
 The detailed source of truth is [`docs/PRODUCTION_STATUS.md`](docs/PRODUCTION_STATUS.md);
 the documentation map is [`docs/DOCUMENTATION_STATUS.md`](docs/DOCUMENTATION_STATUS.md);
 dated run records remain historical evidence. The simulation disclosure is
@@ -169,8 +172,8 @@ dated run records remain historical evidence. The simulation disclosure is
 
 `SIMULATED_PRODUCTION_READY` is a simulation classification on synthetic fixtures; it
 does not mean a real pilot, customer acceptance, independent audit, or production
-deployment has occurred. The latest recorded remote CI result predates the current
-local work; no current remote CI result is asserted here. Production remains blocked
+deployment has occurred. The supplied Helix-Codex GitHub repository is empty, so there is no
+hosted CI result for this candidate. Production remains blocked
 on nine production-only evidence gates, including signed evidence, certified isolation,
 external security/privacy review, deployment/DR evidence, and named operations/on-call
 ownership. There is no production deployment, real customer traffic, external audit,
@@ -217,7 +220,7 @@ shown at all.
 | Rate limiting trusts a header set by an external Worker | `x-helix-client-ip` trust fails if app exposed without the Worker | `helix_codex_app/security/route_limits.py:124`; `client_ip.py:24-28` |
 | `dispatch.py` agent dispatch is a stub returning fake output | `Called …` / `Task submitted` placeholders | `app/command_center/agents/dispatch.py:84,187,204,217,231` |
 | Coverage floor measures execution, not result correctness | the suite now pins WFM's Erlang C to textbook reference values (`tests/test_wfm_erlang_c.py`); the other engines' result accuracy is still not validated against an external reference | `docs/verification/2026-09-30.md` |
-| Latest remote CI result predates current local source | Last recorded green run is 2026-10-05; current source was verified locally on 2026-11-04 | `AGENTS.md` §28 |
+| Hosted CI for the supplied `Helix-Codex` repository | Not run; repository is empty and this checkout has no configured remote | This shipment-readiness record |
 
 #### Fixed since this table was written
 
@@ -328,11 +331,11 @@ A reviewer without the install or credentials can still run the test suite and
 
 ## Related work
 
-- [Full portfolio](https://github.com/<YOUR_GITHUB_ORG>/<YOUR_GITHUB_ORG>) — how this project fits the wider work
+- [Full portfolio](https://github.com/Hatemshalaby15071979) — how this project fits the wider work
 
 ## Author
 
-Built by Hatem Shalaby, Contact Centre Operations & AI Implementation Lead | WFM & CX Transformation. Background: https://github.com/<YOUR_GITHUB_ORG>
+Built by Hatem Shalaby, Contact Centre Operations & AI Implementation Lead | WFM & CX Transformation. Background: https://github.com/Hatemshalaby15071979
 
 ## Licence
 

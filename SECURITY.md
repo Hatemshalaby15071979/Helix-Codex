@@ -20,7 +20,7 @@ If you discover a security vulnerability in our code, please report it responsib
 
 ### Contact Information
 
-Report security issues by opening a private advisory on the GitHub repository: `github.com/<YOUR_GITHUB_ORG>/Helix-Prime`. If private advisory reporting is unavailable, email the repository maintainer (contact details on the GitHub profile under the same URL).
+Report security issues by opening a private advisory on the GitHub repository: `github.com/Hatemshalaby15071979/Helix-Codex`. If private advisory reporting is unavailable, use the maintainer contact details on the linked GitHub profile. Do not include live secrets or sensitive customer data in a public issue.
 
 Please include "SECURITY VULNERABILITY" in the subject line.
 
@@ -37,7 +37,7 @@ Please include "SECURITY VULNERABILITY" in the subject line.
 ### Dependencies
 
 - **Regular updates**: Keep dependencies updated to the latest security patches
-- **Vulnerability scanning**: CI runs bandit (static analysis) and pip-audit (dependency audit) on every push
+- **Vulnerability scanning**: the local CI workflow runs Bandit and pip-audit against the full locked dependency set on push and pull request; hosted execution has not been observed because the supplied GitHub repository is empty
 - **Dependency tracking**: Dependabot is configured to open automated dependency-update PRs
 - **License compliance**: Ensure all dependencies comply with project licenses
 
@@ -69,10 +69,10 @@ Please include "SECURITY VULNERABILITY" in the subject line.
 
 ### Automated Testing
 
-- **Static analysis**: CI runs bandit (SAST) and pip-audit (dependency CVE audit)
+- **Static analysis**: the configured local workflow runs Bandit (SAST) and pip-audit (dependency CVE audit); hosted status depends on the first push
 - **Code scanning**: Use GitHub's built-in code scanning features
 - **Dependency scanning**: Dependabot PRs receive CI checks including bandit and pip-audit
-- **Container scanning**: Scan Docker images for vulnerabilities
+- **Container scanning**: a dedicated API-only image is built and locally verified (182,121,865 bytes; about 174 MiB). CI emits CycloneDX SBOMs for the hash-verified Python runtime lock and final image, and uses SHA-pinned Trivy to scan the image for high and critical OS and application vulnerabilities. The configured scanner has not run on this candidate; review and resolve its report before shipment. Hosted CI cannot run until the local candidate is pushed to the empty destination repository.
 
 ### Manual Testing
 
@@ -154,4 +154,4 @@ Generate and submit compliance reports as required by:
 
 Security is everyone's responsibility in the Helix Prime project. By following these guidelines, we can ensure that our systems and applications are secure, compliant, and ready to protect our users' data and privacy.
 
-To learn more about our security practices, contact the maintainer via the GitHub profile: `github.com/<YOUR_GITHUB_ORG>`.
+To learn more about our security practices, contact the maintainer via the GitHub profile: `github.com/Hatemshalaby15071979`.

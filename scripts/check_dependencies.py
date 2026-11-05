@@ -42,12 +42,16 @@ CANONICAL_DEV = REPO_ROOT / "requirements-dev.txt"
 #: which is intentionally absent from requirements.txt. It is therefore exempt
 #: from the "must be in the canonical set" rule and validated separately below.
 LOCK = REPO_ROOT / "release" / "requirements.lock.txt"
+API_INPUT = REPO_ROOT / "release" / "requirements-api.in"
+API_LOCK = REPO_ROOT / "release" / "requirements-api.lock.txt"
 
 #: Manifests allowed to exist. Anything else is drift by definition.
 ALLOWED_MANIFESTS = {
     CANONICAL,
     CANONICAL_DEV,
-    REPO_ROOT / "release" / "requirements.lock.txt",
+    LOCK,
+    API_LOCK,
+    API_INPUT,
 }
 
 #: Directories never scanned (vendored, virtualenvs, caches).
@@ -187,7 +191,7 @@ def check() -> Tuple[List[str], List[str]]:
             )
             continue
 
-        if manifest == CANONICAL or manifest == LOCK:
+        if manifest in {CANONICAL, LOCK, API_INPUT, API_LOCK}:
             continue
 
         for name, spec in sorted(declared.items()):
@@ -243,6 +247,88 @@ def check() -> Tuple[List[str], List[str]]:
                     f"release/requirements.lock.txt: '{name}=={pinned}' violates canonical "
                     f"bound '{name}{spec}' — regenerate the lock"
                 )
+
+    if not API_INPUT.exists():
+        errors.append("release/requirements-api.in is missing")
+    if not API_LOCK.exists():
+        errors.append("release/requirements-api.lock.txt is missing")
+    if API_INPUT.exists() and API_LOCK.exists() and LOCK.exists():
+        api_roots = parse_manifest(API_INPUT)
+        full_lock = parse_manifest(LOCK)
+        api_lock = parse_manifest(API_LOCK)
+
+        for name, spec in sorted(api_roots.items()):
+            if name not in combined:
+                errors.append(
+                    f"release/requirements-api.in: '{name}' is absent from canonical runtime/dev manifests"
+                )
+            elif combined[name] and bounds_conflict(combined[name], spec):
+                errors.append(
+                    f"release/requirements-api.in: '{name}{spec}' conflicts with canonical bound "
+                    f"'{name}{combined[name]}'"
+                )
+            if name not in api_lock:
+                errors.append(
+                    f"release/requirements-api.lock.txt: direct dependency '{name}' is missing"
+                )
+
+        api_lines = API_LOCK.read_text(encoding="utf-8").splitlines()
+        package_hashes: Dict[str, bool] = {}
+        current: Optional[str] = None
+        for line in api_lines:
+            header = re.match(r"^([A-Za-z0-9][A-Za-z0-9._-]*)==", line)
+            if header:
+                current = normalise(header.group(1))
+                package_hashes[current] = False
+            elif current and line.lstrip().startswith("--hash=sha256:"):
+                package_hashes[current] = True
+            elif not line.strip() or line.lstrip().startswith("# via"):
+                current = None
+
+        for name, spec in sorted(api_lock.items()):
+            pinned = spec[2:].rstrip("\\ ").strip() if spec.startswith("==") else ""
+            if not pinned:
+                errors.append(
+                    f"release/requirements-api.lock.txt: '{name}{spec}' is not an exact pin"
+                )
+                continue
+            if not package_hashes.get(name, False):
+                errors.append(
+                    f"release/requirements-api.lock.txt: '{name}' has no SHA-256 artifact hash"
+                )
+            if name not in full_lock:
+                errors.append(
+                    f"release/requirements-api.lock.txt: '{name}' is absent from the canonical full lock"
+                )
+            else:
+                full_pin = full_lock[name][2:].rstrip("\\ ").strip()
+                if pinned != full_pin:
+                    errors.append(
+                        f"release/requirements-api.lock.txt: '{name}=={pinned}' differs from "
+                        f"full lock pin '{full_pin}'"
+                    )
+
+        forbidden_api = {
+            "altair",
+            "bandit",
+            "build",
+            "coverage",
+            "matplotlib",
+            "mypy",
+            "plotly",
+            "pytest",
+            "ruff",
+            "seaborn",
+            "streamlit",
+        }
+        present_forbidden = sorted(forbidden_api & api_lock.keys())
+        if present_forbidden:
+            errors.append(
+                "release/requirements-api.lock.txt includes cockpit/dev-only packages: "
+                + ", ".join(present_forbidden)
+            )
+        if len(api_lock) >= len(full_lock):
+            errors.append("API lock is not smaller than the full release lock")
 
     return errors, warnings
 

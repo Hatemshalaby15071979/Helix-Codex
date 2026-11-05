@@ -18,13 +18,28 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt -r requirements-dev.txt
 ```
 
-The declared dependency set is mirrored in `release/requirements.lock.txt`
-(lock reference; byte-level pinning is produced by the package manager).
+The declared development dependency set is mirrored in
+`release/requirements.lock.txt`; that lock pins versions but is not a
+hash-verified install lock. The API container uses the separately resolved,
+hash-verified `release/requirements-api.lock.txt` runtime set, generated from
+`release/requirements-api.in` with `scripts/compile_api_lock.sh`. The clean
+container install uses pip's `--require-hashes` mode. The API runtime lock does
+not include the Streamlit cockpit or test and lint tools.
+
+To regenerate the API lock after changing API dependencies:
+
+```bash
+scripts/compile_api_lock.sh
+python scripts/check_dependencies.py
+```
+
+Review the resulting lock diff, then rebuild and verify the simulated image as
+described in `infra/docker/PRODUCTION-SIM-TOPOLOGY.md`.
 
 ## Verify
 
 ```bash
-python3 -m pytest -q          # full suite (all green from a clean tree)
+python3 -m pytest -q          # run the full suite; confirm all results are green
 python3 scripts/smoke.py       # engines 6/6, agents 4/4 (registry probes; full 9-agent catalog in organization/role-catalog.yaml)
 python3 scripts/health_check.py
 python3 scripts/release_gate.py --profile production_candidate

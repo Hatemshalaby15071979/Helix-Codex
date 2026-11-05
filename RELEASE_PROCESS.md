@@ -46,6 +46,14 @@ We use semantic versioning (semver) for releases:
 
 ## Pre-Release Checklist
 
+**Current candidate status:** local simulated-image build and HTTPS readiness
+checks pass. The API runtime uses a separately resolved, hash-verified lock and
+the image is about 174 MiB. CI generates and uploads CycloneDX dependency and
+image SBOMs and runs a SHA-pinned Trivy image scan. The scanner has not run on this
+candidate, and hosted CI remains unobserved;
+see `SHIPMENT_READINESS.md`. This checklist remains a release procedure, not a
+claim that those open gates have passed.
+
 ### Documentation
 
 - [ ] Update CHANGELOG.md with new changes
@@ -85,7 +93,10 @@ We use semantic versioning (semver) for releases:
 - [ ] Prepare distribution packages
 - [ ] Update package metadata
 - [ ] Test package installation
-- [ ] Prepare Docker images
+- [x] Generate a separately resolved, hash-checked API runtime lock; do not use the full development lock in the shipping image
+- [x] Rebuild the API image and verify simulated readiness routes (full tests are recorded separately)
+- [ ] Run the configured API image vulnerability scan; review findings and retain the report
+- [x] Generate and upload the API dependency CycloneDX SBOM in CI
 - [ ] Update deployment scripts
 
 ### Release Candidates
@@ -263,7 +274,7 @@ Track the following quality metrics:
 
 The release process is critical for delivering value to customers. By following this structured approach, we can ensure that releases are high-quality, secure, and on schedule.
 
-For more information about the release process, contact the maintainer via the GitHub profile: `github.com/<YOUR_GITHUB_ORG>`. The email addresses listed in earlier drafts (release-manager@, engineering-lead@, ceo@helixprime.io) were fabricated and are void.
+For more information about the release process, contact the maintainer via the GitHub profile: `github.com/Hatemshalaby15071979`. The email addresses listed in earlier drafts (release-manager@, engineering-lead@, ceo@helixprime.io) were fabricated and are void.
 
 > **Scope note.** The generic timeline, stakeholder, and metrics sections above are the
 > template this project started from. The process that is actually enforced is the C8

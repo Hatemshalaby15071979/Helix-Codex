@@ -11,13 +11,16 @@ from __future__ import annotations
 
 import datetime
 import json
+import os
 import pathlib
 import subprocess
 import sys
 import tomllib
 from typing import Any, Dict, List, Optional
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+ROOT = pathlib.Path(
+    os.environ.get("HELIX_ROOT", pathlib.Path(__file__).resolve().parent.parent)
+).resolve()
 
 MANIFEST_SCHEMA_VERSION = "1.0"
 CEREMONY_SUFFIX = "-c8"

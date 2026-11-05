@@ -8,10 +8,13 @@ name: Readiness (simulated)
 
 on:
   push:
-    branches: [main]
+    branches: ['**']
   pull_request:
-    branches: [main]
+    branches: ['**']
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   readiness:
@@ -26,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r release/requirements.lock.txt
           pip install -r requirements-dev.txt
 
       - name: Detect synthetic fixtures

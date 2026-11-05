@@ -1,8 +1,7 @@
 # Helix Codex OS — local-first enterprise runtime (C8)
 #
-# One image runs the deterministic control plane and Streamlit cockpit. The
-# multi-stage build keeps compiler/build artifacts out of the final footprint.
-# SQLite stays local by design; mount /data as the durable tenant-isolated volume.
+# Headless API runtime image. Cockpit and development dependencies stay in the
+# builder/test environment; /data remains the durable tenant-isolated volume.
 
 FROM python:3.12.10-slim AS builder
 
@@ -16,16 +15,14 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
-COPY requirements.txt requirements-dev.txt pyproject.toml release/requirements.lock.txt ./
+COPY requirements.txt requirements-dev.txt pyproject.toml ./
+COPY release/requirements.lock.txt release/requirements-api.lock.txt release/
 RUN python -m venv /opt/venv \
-    && /opt/venv/bin/pip install -r requirements.lock.txt \
-    && /opt/venv/bin/pip install hatchling
+    && /opt/venv/bin/pip install -r release/requirements.lock.txt
 
-# Phase 1 W4 service spine: fastapi, uvicorn, jinja2, sse-starlette, pydantic-settings, httpx.
-# Installing via the pyproject extra ensures the declared bounds are respected.
 COPY . .
-RUN /opt/venv/bin/pip install '.[web]' \
-    && /opt/venv/bin/python -m compileall -q -f . || true
+RUN mkdir -p /dist \
+    && /opt/venv/bin/pip wheel --no-deps --no-build-isolation --wheel-dir /dist .
 
 FROM python:3.12.10-slim AS runtime
 
@@ -33,28 +30,47 @@ ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     HELIX_ENV=local \
+    HELIX_ROOT=/app \
     HELIX_DB_PATH=/data/workflow.db \
     HELIX_AUDIT_DB_PATH=/data/audit.db \
     HELIX_SAMPLE_DATA_MODE=false \
     OLLAMA_HOST=http://ollama:11434 \
     HELIX_OLLAMA_ACCELERATOR=auto
 
+COPY release/requirements-api.lock.txt /tmp/requirements-api.lock.txt
+
+# Upgrade OS packages so the Trivy image scan (HIGH/CRITICAL) starts from
+# current Debian security fixes rather than the base image's snapshot.
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN useradd --create-home --uid 10001 helix \
     && mkdir -p /app /data \
-    && chown -R helix:helix /app /data
+    && chown -R helix:helix /app /data \
+    && python -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --require-hashes -r /tmp/requirements-api.lock.txt \
+    && rm /tmp/requirements-api.lock.txt
 
-COPY --from=builder --chown=helix:helix /opt/venv /opt/venv
+COPY --from=builder /dist/ /tmp/wheels/
+RUN /opt/venv/bin/pip install --no-cache-dir --no-deps /tmp/wheels/*.whl \
+    && rm -rf /tmp/wheels
 WORKDIR /app
-COPY --from=builder --chown=helix:helix /build /app
+COPY --from=builder --chown=helix:helix /build/organization/role-catalog.yaml /app/organization/role-catalog.yaml
+COPY --from=builder --chown=helix:helix /build/organization/capability-registry.yaml /app/organization/capability-registry.yaml
+COPY --from=builder --chown=helix:helix /build/alembic.ini /app/alembic.ini
+COPY --from=builder --chown=helix:helix /build/migrations /app/migrations
 
-# The entrypoint initializes SQLite schemas before Streamlit starts. The
-# process stays unprivileged, and /data is the only writable application path.
+# The entrypoint initializes SQLite schemas before the API starts. The process
+# stays unprivileged; /data is writable and the Compose runtime keeps the root
+# filesystem read-only.
 COPY --chown=helix:helix infra/docker/entrypoint.sh /usr/local/bin/helix-entrypoint
 RUN chmod 0555 /usr/local/bin/helix-entrypoint
 
 USER helix
+WORKDIR /data
 VOLUME ["/data"]
-EXPOSE 8501 8000
+EXPOSE 8000
 
 # Component-level health (control-plane, registries, filesystem; Ollama
 # optional). This is neither the liveness probe (GET /healthz: process alive,
@@ -64,4 +80,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD python scripts/health_check.py --db-path "$HELIX_DB_PATH" || exit 1
 
 ENTRYPOINT ["/usr/local/bin/helix-entrypoint"]
-CMD ["streamlit", "run", "cockpit/cockpit.py", "--server.address=0.0.0.0", "--server.port=8501"]
+CMD ["uvicorn", "server.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]

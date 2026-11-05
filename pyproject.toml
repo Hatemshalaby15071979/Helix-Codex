@@ -65,10 +65,11 @@ web = [
     "pydantic-settings>=2.5",
     "httpx>=0.27",
     "python-multipart>=0.0.9",
+    "requests>=2.31,<3.0.0",
 ]  # mirrored in requirements.txt so a plain -r install can start helix-api
 
 [project.urls]
-Homepage = "https://github.com/<YOUR_GITHUB_ORG>/Helix-Prime"
+Homepage = "https://github.com/Hatemshalaby15071979/Helix-Codex"
 
 # Canonical entry points (S-1/G23/G24). `helix-api` is the ONE deployable
 # artifact: the governed FastAPI service spine. `helix-cockpit` is the
@@ -83,8 +84,8 @@ helix-app = "helix_codex_app.cli:main"
 # Build — explicit package list, NOT auto-discovery.
 # Auto-discovery would swallow demo/, release/, scripts/ and tests/ into the wheel.
 #
-# NOTE: `server` is intentionally absent. W4 creates it; add it to this list
-# in the same commit, because hatchling fails if a listed package is missing.
+# Runtime packages and their data assets are explicit so the API wheel contains
+# the policy catalogs, server templates, static assets, and release verifier.
 # ---------------------------------------------------------------------------
 [tool.hatch.build.targets.wheel]
 packages = [
@@ -105,6 +106,7 @@ packages = [
     "orchestration",
     "organization",
     "pilot",
+    "release",
     "security",
     "server",
 ]
@@ -136,6 +138,7 @@ include = [
     "/pilot",
     "/requirements.txt",
     "/requirements-dev.txt",
+    "/release",
     "/security",
     "/server",
 ]

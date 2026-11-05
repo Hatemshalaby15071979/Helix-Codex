@@ -2,9 +2,14 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    # Run the same required checks on the release/simulation branch and on
+    # contributor branches before they are merged to main.
+    branches: ['**']
   pull_request:
-    branches: [main]
+    branches: ['**']
+
+permissions:
+  contents: read
 
 jobs:
   check:
@@ -27,6 +32,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r release/requirements.lock.txt
+          pip install --require-hashes -r release/requirements-api.lock.txt
           pip install -r requirements-dev.txt
 
       # Every directory that holds shipped Python is linted. This used to cover
@@ -62,6 +68,7 @@ jobs:
         run: |
           bandit -c bandit.yaml -r server/ connectors/ control_plane/ engines/ capabilities/ security/ -ll
           pip-audit -r release/requirements.lock.txt
+          pip-audit -r release/requirements-api.lock.txt --require-hashes --disable-pip --format cyclonedx-json --output helix-api-sbom.json
 
       - name: Check dependencies
         run: |
@@ -87,21 +94,139 @@ jobs:
         run: |
           python -m build
 
-      - name: Validate API container definition
+      - name: Verify disclosed simulated release profile
+        env:
+          HELIX_SIMULATION_EVIDENCE_DIR: docs/production_readiness/evidence/simulated-production-2026-11-04/signed-pack
         run: |
-          docker compose -f infra/docker/docker-compose.yml config --quiet
-          docker compose -f infra/docker/docker-compose.yml build helix-api
+          python scripts/release_gate.py --profile simulated_production --no-write-evidence
 
-      - name: Smoke test API container readiness
+      - name: Prepare CI-only synthetic simulation secrets
+        run: |
+          umask 077
+          mkdir -p infra/docker/secrets
+          python3 - <<'PY'
+          import secrets
+          from pathlib import Path
+
+          directory = Path("infra/docker/secrets")
+          values = {
+              "helix_api_token": secrets.token_urlsafe(48),
+              "helix_api_token_role": "sami",
+              "helix_api_token_tenant_id": "helix-ci-synthetic",
+              "helix_api_token_client_id": "helix-ci",
+          }
+          for name, value in values.items():
+              path = directory / name
+              path.write_text(value + "\n", encoding="utf-8")
+              path.chmod(0o600)
+          PY
+
+      - name: Validate simulated production topology
+        run: |
+          docker compose -f infra/docker/docker-compose.prod-sim.yml config --quiet
+          docker compose -f infra/docker/docker-compose.prod-sim.yml build helix-api
+          python - <<'PY'
+          import json
+          import subprocess
+
+          inspect = subprocess.run(
+              [
+                  "docker",
+                  "image",
+                  "inspect",
+                  "helix-prime-api:prod-sim",
+                  "--format",
+                  "{{.Size}}",
+              ],
+              check=True,
+              capture_output=True,
+              text=True,
+          )
+          size_bytes = int(inspect.stdout.strip())
+          report = {
+              "image": "helix-prime-api:prod-sim",
+              "size_bytes": size_bytes,
+              "size_gib": round(size_bytes / (1024**3), 3),
+              "note": "API-only runtime dependencies installed from the hash-verified API lock.",
+          }
+          with open("helix-image-size.json", "w", encoding="utf-8") as output:
+              json.dump(report, output, indent=2)
+              output.write("\n")
+          print(json.dumps(report, indent=2))
+          PY
+
+      - name: Upload image size report
+        uses: actions/upload-artifact@v4
+        with:
+          name: helix-simulated-api-image-size
+          path: helix-image-size.json
+          if-no-files-found: error
+
+      - name: Generate image SBOM with Trivy
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: helix-prime-api:prod-sim
+          format: cyclonedx
+          output: helix-api-image-sbom.cdx.json
+          scan-type: image
+          exit-code: '0'
+
+      - name: Upload API dependency SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: helix-api-cyclonedx-sboms
+          path: |
+            helix-api-sbom.json
+            helix-api-image-sbom.cdx.json
+          if-no-files-found: error
+
+      - name: Scan simulated API image with Trivy
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: helix-prime-api:prod-sim
+          format: json
+          output: trivy-image-results.json
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+
+      - name: Upload Trivy image scan report
+        if: always() && hashFiles('trivy-image-results.json') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: helix-simulated-api-trivy-report
+          path: trivy-image-results.json
+          if-no-files-found: error
+
+      - name: Deploy simulated stack and verify HTTPS readiness
+        env:
+          COMPOSE_PROJECT_NAME: helix-ci-${{ github.run_id }}-${{ github.run_attempt }}
+          HELIX_SIM_API_PORT: '18000'
+          HELIX_SIM_HTTPS_PORT: '18443'
+          HELIX_SIM_SITE_ADDRESS: https://127.0.0.1:18443
         run: |
           set -euo pipefail
-          trap 'docker compose -f infra/docker/docker-compose.yml down -v' EXIT
-          docker compose -f infra/docker/docker-compose.yml up -d --no-build helix-api
-          for attempt in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:8000/readyz >/dev/null; then
+          compose=(docker compose -f infra/docker/docker-compose.prod-sim.yml)
+          cleanup() { "${compose[@]}" down --volumes --remove-orphans; }
+          trap cleanup EXIT
+          "${compose[@]}" up -d --build
+
+          for attempt in $(seq 1 45); do
+            if curl --fail --silent --insecure \
+              https://127.0.0.1:18443/readyz >/tmp/helix-readyz.json; then
+              cat /tmp/helix-readyz.json
               exit 0
             fi
             sleep 2
           done
-          docker compose -f infra/docker/docker-compose.yml logs helix-api
+          "${compose[@]}" ps
+          "${compose[@]}" logs --no-color
           exit 1
+
+      - name: Remove synthetic simulation secret files
+        if: always()
+        run: |
+          docker compose -f infra/docker/docker-compose.prod-sim.yml \
+            -p "helix-ci-${{ github.run_id }}-${{ github.run_attempt }}" \
+            down --volumes --remove-orphans || true
+          rm -f infra/docker/secrets/helix_api_token infra/docker/secrets/helix_api_token_role infra/docker/secrets/helix_api_token_tenant_id infra/docker/secrets/helix_api_token_client_id infra/docker/secrets/caddy-root.crt
