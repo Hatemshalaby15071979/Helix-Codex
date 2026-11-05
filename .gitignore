@@ -70,6 +70,9 @@ observability/logs.jsonl
 security/audit.db
 security/audit.db-*
 *.jsonl
+# ...except signed simulation evidence packs, whose receipt chain is required
+# to verify the committed manifest offline (fresh clones must verify).
+!docs/production_readiness/evidence/*/signed-pack/audit_receipts.jsonl
 
 # Local demo media kept out of source. Rebuild it from DEMO_SCRIPT.md — do NOT
 # publish a copy found on disk as a release asset. The only render ever produced
