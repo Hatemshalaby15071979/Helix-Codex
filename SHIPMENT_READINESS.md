@@ -91,7 +91,7 @@ Environment: clean venv from `release/requirements.lock.txt` +
 | Image build | `docker build -f infra/docker/Dockerfile -t helix-prime-api:prod-sim .` | Built, 203,341,221 bytes (after OS-upgrade fix; 182,125,015 before) |
 | Image smoke | read-only, UID 10001, `GET /healthz` | 200 `{"status":"ok",...}` |
 | Trivy image scan | Trivy 0.58.0 HIGH/CRITICAL `--ignore-unfixed` | Before fix: 54 OS vulns. After fix: **0** |
-| Release gate (simulated) | `scripts/release_gate.py --profile simulated_production --no-write-evidence` with signed-pack evidence dir | 13/23 gates green; 10 red are the external/production-evidence gates (bundle hash mismatch against the pre-commit tree + intentionally unavailable external evidence). Regenerated after the final commit — see evidence commit. |
+| Release gate (simulated) | `scripts/release_gate.py --profile simulated_production` with the regenerated 2026-11-06 signed pack | **SIMULATED_PRODUCTION_READY, all gates green** (23/23). The pack was re-signed after the final source commit from freshly re-run machine evidence (`docs/production_readiness/evidence/simulated-production-2026-11-06/`): all 14 gate checks re-executed green, ML-DSA-65 signature verifies offline. Simulation only — production gates remain red by design. |
 | API lock hash install | `pip install --dry-run --require-hashes -r release/requirements-api.lock.txt` | Exit 0 (1,246 hash entries) |
 
 The prior 2026-11-05 Docker/Compose simulation evidence (image build at

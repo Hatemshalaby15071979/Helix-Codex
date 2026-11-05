@@ -1,0 +1,305 @@
+{
+  "certified_data_isolation": {
+    "checks": [
+      {
+        "command": [
+          "/tmp/opencode/helix-venv/bin/python",
+          "-m",
+          "pytest",
+          "tests/test_tenant_isolation_driver.py",
+          "-q"
+        ],
+        "exit_code": 0,
+        "name": "/tmp/opencode/helix-venv/bin/python -m pytest tests/test_tenant_isolation_driver.py -q",
+        "ok": true,
+        "output": "............                                                             [100%]\n============================= slowest 20 durations =============================\n0.01s teardown tests/test_tenant_isolation_driver.py::test_audit_events_scoped_through_workflow_tasks\n0.01s teardown tests/test_tenant_isolation_driver.py::test_node_get_is_tenant_scoped\n0.01s teardown tests/test_tenant_isolation_driver.py::test_empty_tenant_refused_everywhere\n0.01s teardown tests/test_tenant_isolation_driver.py::test_scoped_events_read_is_invisible_to_foreign_tenant\n0.01s teardown tests/test_tenant_isolation_driver.py::test_scoped_list_workflows_filters_foreign_rows\n0.01s teardown tests/test_tenant_isolation_driver.py::test_get_workflow_task_scoped\n0.01s teardown tests/test_tenant_isolation_driver.py::test_node_id_collision_same_tenant_refuses_overwrite\n0.01s teardown tests/test_tenant_isolation_driver.py::test_scoped_workflow_read_is_invisible_to_foreign_tenant\n0.01s teardown tests/test_tenant_isolation_driver.py::test_node_list_is_tenant_scoped\n0.01s teardown tests/test_tenant_isolation_driver.py::test_list_workflow_tasks_scoped\n0.01s teardown tests/test_tenant_isolation_driver.py::test_node_id_collision_across_tenants_refuses_overwrite\n0.01s teardown tests/test_tenant_isolation_driver.py::test_backfill_assigns_tenant_from_json\n\n(8 durations < 0.005s hidden.  Use -vv to show these durations.)\n12 passed in 0.25s\n",
+        "output_sha256": "ed0c4fc161b06afe3a6c72080ba5382ae83d6ec402a4cd162382c4d74de636a1",
+        "source": "tests/test_tenant_isolation_driver.py",
+        "source_sha256": "85295566e447d892e04019e813c4adfeab6b4ac5b662a5efca0f8e0f86677479"
+      }
+    ],
+    "disclosure": "SIMULATION ONLY: locally executed checks on synthetic fixtures; no human, legal, third-party, or production approval is claimed.",
+    "ok": true,
+    "simulation": true
+  },
+  "disaster_recovery_evidence": {
+    "checks": [
+      {
+        "command": [
+          "/tmp/opencode/helix-venv/bin/python",
+          "-m",
+          "pytest",
+          "tests/helix_codex_app/test_backup_procedure.py",
+          "tests/test_migration_drift.py",
+          "tests/helix_codex_app/test_app_migration_drift.py",
+          "-q"
+        ],
+        "exit_code": 0,
+        "name": "/tmp/opencode/helix-venv/bin/python -m pytest tests/helix_codex_app/test_backup_procedure.py tests/test_migration_drift.py tests/helix_codex_app/test_app_migration_drift.py -q",
+        "ok": true,
+        "output": ".....................                                                    [100%]\n============================= slowest 20 durations =============================\n0.31s call     tests/helix_codex_app/test_app_migration_drift.py::test_app_drift_check_can_fail\n0.31s call     tests/helix_codex_app/test_app_migration_drift.py::test_app_drift_check_passes_at_head\n0.30s call     tests/test_migration_drift.py::test_drift_check_fails_when_migration_diverges\n0.30s call     tests/test_migration_drift.py::test_alembic_bookkeeping_is_excluded\n0.30s call     tests/test_migration_drift.py::test_drift_check_passes_at_head\n0.07s setup    tests/helix_codex_app/test_backup_procedure.py::test_backup_captures_audit_and_metadata_and_round_trips\n0.04s setup    tests/helix_codex_app/test_backup_procedure.py::test_backup_fails_when_requested_core_database_is_missing\n0.03s setup    tests/helix_codex_app/test_backup_procedure.py::test_restore_into_non_empty_target_is_refused\n0.03s setup    tests/helix_codex_app/test_backup_procedure.py::test_backup_refuses_a_nonempty_target\n0.03s setup    tests/helix_codex_app/test_backup_procedure.py::test_tampered_backup_fails_restore\n0.03s setup    tests/helix_codex_app/test_backup_procedure.py::test_corrupted_memory_chain_fails_restore\n0.03s setup    tests/helix_codex_app/test_backup_procedure.py::test_verify_only_rehearsal_passes_and_fails\n0.03s setup    tests/helix_codex_app/test_backup_procedure.py::test_missing_audit_db_in_backup_fails_restore\n0.03s setup    tests/helix_codex_app/test_backup_procedure.py::test_incompatible_backup_version_is_refused\n0.02s call     tests/helix_codex_app/test_backup_procedure.py::test_verify_only_rehearsal_passes_and_fails\n0.02s teardown tests/helix_codex_app/test_backup_procedure.py::test_missing_audit_db_in_backup_fails_restore\n0.02s teardown tests/helix_codex_app/test_backup_procedure.py::test_tampered_backup_fails_restore\n0.02s teardown tests/helix_codex_app/test_backup_procedure.py::test_restore_into_non_empty_target_is_refused\n0.02s teardown tests/helix_codex_app/test_backup_procedure.py::test_backup_fails_when_requested_core_database_is_missing\n0.02s teardown tests/helix_codex_app/test_backup_procedure.py::test_corrupted_memory_chain_fails_restore\n21 passed in 2.37s\n",
+        "output_sha256": "5e62be75b527047be986dbb778c2293e5ccc247c7b14da6f2f360ffe45153d0b",
+        "source": "tests/helix_codex_app/test_backup_procedure.py",
+        "source_sha256": "3e6d40ea6004dc03f7715f1e9c94322d79567618e6779e3926e01e45b9957431"
+      }
+    ],
+    "disclosure": "SIMULATION ONLY: locally executed checks on synthetic fixtures; no human, legal, third-party, or production approval is claimed.",
+    "ok": true,
+    "simulation": true
+  },
+  "external_observer_audit": {
+    "checks": [
+      {
+        "command": [
+          "/tmp/opencode/helix-venv/bin/python",
+          "-m",
+          "pytest",
+          "tests/test_simulation_release_evidence.py",
+          "-k",
+          "release_gate_binds_the_nine_receipts_to_simulated_profile",
+          "-q"
+        ],
+        "exit_code": 0,
+        "name": "/tmp/opencode/helix-venv/bin/python -m pytest tests/test_simulation_release_evidence.py -k release_gate_binds_the_nine_receipts_to_simulated_profile -q",
+        "ok": true,
+        "output": ".                                                                        [100%]\n============================= slowest 20 durations =============================\n0.11s call     tests/test_simulation_release_evidence.py::test_release_gate_binds_the_nine_receipts_to_simulated_profile\n0.10s setup    tests/test_simulation_release_evidence.py::test_release_gate_binds_the_nine_receipts_to_simulated_profile\n0.01s teardown tests/test_simulation_release_evidence.py::test_release_gate_binds_the_nine_receipts_to_simulated_profile\n1 passed, 8 deselected in 0.27s\n",
+        "output_sha256": "cb54a7b2570b291ec5e786a1adbff148dd1719b171a2e65ec027f970d6fcb6ec",
+        "source": "tests/test_simulation_release_evidence.py",
+        "source_sha256": "6cedd7fd594add0ebe55257148571ec60fe79d45df40f7e7d86a2d3bd0fb41f6"
+      }
+    ],
+    "disclosure": "SIMULATION ONLY: locally executed checks on synthetic fixtures; no human, legal, third-party, or production approval is claimed.",
+    "ok": true,
+    "simulation": true
+  },
+  "incident_oncall_ownership": {
+    "checks": [
+      {
+        "command": [
+          "/tmp/opencode/helix-venv/bin/python",
+          "-m",
+          "pytest",
+          "tests/helix_codex_app/test_oncall.py",
+          "tests/helix_codex_app/test_ops.py",
+          "tests/helix_codex_app/test_ops_lifecycle.py",
+          "-q"
+        ],
+        "exit_code": 0,
+        "name": "/tmp/opencode/helix-venv/bin/python -m pytest tests/helix_codex_app/test_oncall.py tests/helix_codex_app/test_ops.py tests/helix_codex_app/test_ops_lifecycle.py -q",
+        "ok": true,
+        "output": "..........................................                               [100%]\n============================= slowest 20 durations =============================\n0.23s setup    tests/helix_codex_app/test_oncall.py::test_oncall_status_api_returns_coverage_and_wfm\n0.20s call     tests/helix_codex_app/test_ops_lifecycle.py::test_submit_approve_and_close_keeps_the_correlation_id_throughout\n0.18s setup    tests/helix_codex_app/test_oncall.py::test_home_screen_shows_current_oncall_person\n0.18s setup    tests/helix_codex_app/test_oncall.py::test_oncall_status_api_503_when_engine_unavailable\n0.18s setup    tests/helix_codex_app/test_oncall.py::test_oncall_route_requires_auth\n0.18s setup    tests/helix_codex_app/test_oncall.py::test_create_shift_api_rejects_foreign_account\n0.18s setup    tests/helix_codex_app/test_oncall.py::test_home_screen_foreign_tenant_shifts_invisible\n0.18s setup    tests/helix_codex_app/test_oncall.py::test_create_shift_api_requires_manager\n0.18s setup    tests/helix_codex_app/test_oncall.py::test_create_shift_api_requires_csrf\n0.18s setup    tests/helix_codex_app/test_oncall.py::test_create_shift_api_201_and_audits\n0.16s setup    tests/helix_codex_app/test_oncall.py::test_create_shift_writes_one_node\n0.16s setup    tests/helix_codex_app/test_oncall.py::test_create_shift_rejects_unknown_account\n0.15s setup    tests/helix_codex_app/test_oncall.py::test_create_shift_requires_distinct_accounts\n0.15s setup    tests/helix_codex_app/test_oncall.py::test_list_shifts_is_tenant_scoped\n0.15s setup    tests/helix_codex_app/test_oncall.py::test_create_shift_requires_manager\n0.15s setup    tests/helix_codex_app/test_oncall.py::test_wfm_coverage_reads_required_agents\n0.15s setup    tests/helix_codex_app/test_oncall.py::test_next_tenant_shift_none_when_no_future\n0.15s setup    tests/helix_codex_app/test_oncall.py::test_list_shifts_never_mixes_foreign_tenant\n0.15s setup    tests/helix_codex_app/test_oncall.py::test_gap_is_reported_as_gap_not_empty\n0.15s setup    tests/helix_codex_app/test_oncall.py::test_next_tenant_shift_returns_earliest_future\n42 passed in 9.41s\n",
+        "output_sha256": "63674076b3eaf1d9ad8ba5dc79da7cc9b66bf0d030af8f7aa122237fa0748f74",
+        "source": "tests/helix_codex_app/test_oncall.py",
+        "source_sha256": "2784b3957eb9401d73cee1a317beec667923df97b579cb631fd75e18f89b78cf"
+      }
+    ],
+    "disclosure": "SIMULATION ONLY: locally executed checks on synthetic fixtures; no human, legal, third-party, or production approval is claimed.",
+    "ok": true,
+    "simulation": true
+  },
+  "legal_privacy_review": {
+    "checks": [
+      {
+        "command": [
+          "/tmp/opencode/helix-venv/bin/python",
+          "-m",
+          "pytest",
+          "tests/test_production_data_boundary.py",
+          "tests/test_vocabulary.py",
+          "tests/test_simulation_review_artifacts.py",
+          "-q"
+        ],
+        "exit_code": 0,
+        "name": "/tmp/opencode/helix-venv/bin/python -m pytest tests/test_production_data_boundary.py tests/test_vocabulary.py tests/test_simulation_review_artifacts.py -q",
+        "ok": true,
+        "output": "...........................................................              [100%]\n============================= slowest 20 durations =============================\n0.07s call     tests/test_production_data_boundary.py::test_app_nodes_require_the_full_envelope\n0.04s call     tests/test_production_data_boundary.py::test_pack_runs_simulated_read_only_and_not_established\n0.03s call     tests/test_vocabulary.py::test_pack_loader_accepts_the_shared_pack_vocabulary\n0.03s call     tests/test_vocabulary.py::test_no_module_level_provenance_data_mode_literal_anywhere\n0.03s call     tests/test_vocabulary.py::test_no_module_level_data_mode_literal_outside_the_allow_list\n0.03s setup    tests/test_production_data_boundary.py::test_missing_provenance_is_rejected\n0.02s teardown tests/test_vocabulary.py::test_no_module_level_provenance_data_mode_literal_anywhere\n0.01s teardown tests/test_vocabulary.py::test_no_module_level_data_mode_literal_outside_the_allow_list\n0.01s teardown tests/test_vocabulary.py::test_app_modules_use_the_shared_app_runtime_constant[helix_codex_app.modules.calendar.service]\n0.01s teardown tests/test_vocabulary.py::test_app_modules_use_the_shared_app_runtime_constant[helix_codex_app.modules.docs.service]\n0.01s teardown tests/test_production_data_boundary.py::test_app_nodes_require_the_full_envelope\n0.01s teardown tests/test_vocabulary.py::test_app_modules_use_the_shared_app_runtime_constant[helix_codex_app.modules.memory.service]\n0.01s teardown tests/test_vocabulary.py::test_app_modules_use_the_shared_app_runtime_constant[helix_codex_app.modules.tasks.service]\n0.01s teardown tests/test_vocabulary.py::test_app_modules_use_the_shared_app_runtime_constant[helix_codex_app.modules.messaging.service]\n0.01s teardown tests/test_vocabulary.py::test_app_modules_use_the_shared_app_runtime_constant[helix_codex_app.modules.admin.service]\n0.01s teardown tests/test_vocabulary.py::test_classifications_equal_still_separates_genuinely_different_levels\n0.01s teardown tests/test_vocabulary.py::test_app_modules_use_the_shared_app_runtime_constant[helix_codex_app.modules.attendance.service]\n0.01s teardown tests/test_simulation_review_artifacts.py::test_ops_charter_is_machine_valid_and_has_no_real_responder\n0.01s teardown tests/test_production_data_boundary.py::test_pack_connector_rejects_live_data\n0.01s teardown tests/test_production_data_boundary.py::test_boundary_documentation_separates_app_from_pack\n59 passed in 1.04s\n",
+        "output_sha256": "38e0839e64031c546563149c0bed1676cfb9eff8200e981bf53f74527a9077b9",
+        "source": "tests/test_simulation_review_artifacts.py",
+        "source_sha256": "2e7778649bbe20aeb91f704740da1d2938c70caeccffa9cbbf8b7aebc5a3c122"
+      }
+    ],
+    "disclosure": "SIMULATION ONLY: locally executed checks on synthetic fixtures; no human, legal, third-party, or production approval is claimed.",
+    "ok": true,
+    "simulation": true
+  },
+  "operational_ownership": {
+    "checks": [
+      {
+        "command": [
+          "/tmp/opencode/helix-venv/bin/python",
+          "-m",
+          "pytest",
+          "tests/test_simulated_ops_e2e.py",
+          "tests/test_ingest_default_bind.py",
+          "tests/test_appliance_observability.py",
+          "-q"
+        ],
+        "exit_code": 0,
+        "name": "/tmp/opencode/helix-venv/bin/python -m pytest tests/test_simulated_ops_e2e.py tests/test_ingest_default_bind.py tests/test_appliance_observability.py -q",
+        "ok": true,
+        "output": "................                                                         [100%]\n============================= slowest 20 durations =============================\n1.13s call     tests/test_simulated_ops_e2e.py::test_local_ready_chain_and_supervised_telemetry\n0.21s call     tests/test_appliance_observability.py::test_auth_and_throttle_events_are_counted\n0.21s setup    tests/test_appliance_observability.py::test_app_request_log_redacts_secrets\n0.10s setup    tests/test_appliance_observability.py::test_secrets_never_appear_in_core_logs_or_metrics\n0.08s call     tests/test_appliance_observability.py::test_tenant_identifiers_are_not_metric_labels\n0.07s setup    tests/test_appliance_observability.py::test_auth_and_throttle_events_are_counted\n0.04s setup    tests/test_simulated_ops_e2e.py::test_local_ready_chain_and_supervised_telemetry\n0.04s call     tests/test_appliance_observability.py::test_app_request_log_redacts_secrets\n0.04s call     tests/test_appliance_observability.py::test_secrets_never_appear_in_core_logs_or_metrics\n0.04s teardown tests/test_appliance_observability.py::test_backup_manifest_carries_operator_readable_verdicts\n0.04s call     tests/test_appliance_observability.py::test_route_labels_are_normalized\n0.03s setup    tests/test_appliance_observability.py::test_disk_gauge_is_exported\n0.03s teardown tests/test_appliance_observability.py::test_app_request_log_redacts_secrets\n0.03s teardown tests/test_appliance_observability.py::test_route_labels_are_normalized\n0.03s call     tests/test_appliance_observability.py::test_disk_gauge_is_exported\n0.03s setup    tests/test_appliance_observability.py::test_readiness_signal_is_load_bearing\n0.03s setup    tests/test_appliance_observability.py::test_audit_failures_are_observable\n0.03s setup    tests/test_appliance_observability.py::test_route_labels_are_normalized\n0.03s setup    tests/test_appliance_observability.py::test_readiness_failures_are_counted\n0.03s setup    tests/test_appliance_observability.py::test_tenant_identifiers_are_not_metric_labels\n16 passed in 2.98s\n",
+        "output_sha256": "01e9a8247414077017213f2e3798b8cd4e67413117a8efe910a173493a89d2a2",
+        "source": "tests/test_simulated_ops_e2e.py",
+        "source_sha256": "e16e38bb8a9a87c67f1970310860f87a4c47c6ffb5c263be9c7c8e4b55e0714a"
+      },
+      {
+        "command": [
+          "/tmp/opencode/helix-venv/bin/python",
+          "scripts/validate_ops_charter.py"
+        ],
+        "exit_code": 0,
+        "name": "/tmp/opencode/helix-venv/bin/python scripts/validate_ops_charter.py",
+        "ok": true,
+        "output": "{\"disclosure\": \"SIMULATION ONLY; no human operator is assigned.\", \"errors\": [], \"ok\": true, \"simulation\": true}\n",
+        "output_sha256": "8f6d540f473a8b34601f6ab96a5cdc148ea941602ec00fef2b1a7cd6283b6144",
+        "source": "scripts/validate_ops_charter.py",
+        "source_sha256": "ab2343aa7cfc5213b630343d391e6335cc26a942a20d57c645fde67ba96fd5eb"
+      }
+    ],
+    "disclosure": "SIMULATION ONLY: locally executed checks on synthetic fixtures; no human, legal, third-party, or production approval is claimed.",
+    "ok": true,
+    "simulation": true
+  },
+  "production_deployment_architecture": {
+    "checks": [
+      {
+        "command": [
+          "docker",
+          "compose",
+          "-f",
+          "infra/docker/docker-compose.yml",
+          "config",
+          "--quiet"
+        ],
+        "exit_code": 0,
+        "name": "docker compose -f infra/docker/docker-compose.yml config --quiet",
+        "ok": true,
+        "output": "",
+        "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "tests/test_docker_compose_security.py",
+        "source_sha256": "9c1ed7d2af7c1fa144c95cc7180c2a9097e68f7f7ac7530eeb1bf7921c14b01a"
+      },
+      {
+        "command": [
+          "docker",
+          "compose",
+          "-f",
+          "infra/docker/docker-compose.app.yml",
+          "config",
+          "--quiet"
+        ],
+        "exit_code": 0,
+        "name": "docker compose -f infra/docker/docker-compose.app.yml config --quiet",
+        "ok": true,
+        "output": "",
+        "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "tests/test_docker_compose_security.py",
+        "source_sha256": "9c1ed7d2af7c1fa144c95cc7180c2a9097e68f7f7ac7530eeb1bf7921c14b01a"
+      },
+      {
+        "command": [
+          "/tmp/opencode/helix-venv/bin/python",
+          "-m",
+          "pytest",
+          "tests/test_docker_compose_security.py",
+          "-q"
+        ],
+        "exit_code": 0,
+        "name": "/tmp/opencode/helix-venv/bin/python -m pytest tests/test_docker_compose_security.py -q",
+        "ok": true,
+        "output": "....                                                                     [100%]\n============================= slowest 20 durations =============================\n0.04s setup    tests/test_docker_compose_security.py::test_api_compose_ports_are_bound_to_loopback\n0.01s teardown tests/test_docker_compose_security.py::test_compose_images_can_be_pinned_for_rollback\n0.01s teardown tests/test_docker_compose_security.py::test_api_compose_requires_a_secret_and_tenant_scope\n0.01s teardown tests/test_docker_compose_security.py::test_api_compose_ports_are_bound_to_loopback\n0.01s teardown tests/test_docker_compose_security.py::test_app_image_exposes_source_packages_to_console_entrypoint\n\n(7 durations < 0.005s hidden.  Use -vv to show these durations.)\n4 passed in 0.11s\n",
+        "output_sha256": "b6da1520f416b065885cd6575db24b308a61bb8cce938768b508dda4268541c7",
+        "source": "tests/test_docker_compose_security.py",
+        "source_sha256": "9c1ed7d2af7c1fa144c95cc7180c2a9097e68f7f7ac7530eeb1bf7921c14b01a"
+      },
+      {
+        "command": [
+          "docker",
+          "compose",
+          "-f",
+          "infra/docker/docker-compose.prod-sim.yml",
+          "config",
+          "--quiet"
+        ],
+        "exit_code": 0,
+        "name": "docker compose -f infra/docker/docker-compose.prod-sim.yml config --quiet",
+        "ok": true,
+        "output": "",
+        "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "infra/docker/docker-compose.prod-sim.yml",
+        "source_sha256": "ac608d5feccd6f68e3e3a94270fdd2d839766da1549fcbdfb70d52459e90347b"
+      }
+    ],
+    "disclosure": "SIMULATION ONLY: locally executed checks on synthetic fixtures; no human, legal, third-party, or production approval is claimed.",
+    "ok": true,
+    "simulation": true
+  },
+  "security_review": {
+    "checks": [
+      {
+        "command": [
+          "/tmp/opencode/helix-venv/bin/python",
+          "-m",
+          "pytest",
+          "tests/test_server_auth.py",
+          "tests/test_engine_authorization_failclosed.py",
+          "tests/helix_codex_app/test_auth_hardening.py",
+          "tests/test_cockpit_approve_auth.py",
+          "-q"
+        ],
+        "exit_code": 0,
+        "name": "/tmp/opencode/helix-venv/bin/python -m pytest tests/test_server_auth.py tests/test_engine_authorization_failclosed.py tests/helix_codex_app/test_auth_hardening.py tests/test_cockpit_approve_auth.py -q",
+        "ok": true,
+        "output": ".............................................                            [100%]\n============================= slowest 20 durations =============================\n0.75s call     tests/test_engine_authorization_failclosed.py::test_the_owning_role_still_succeeds[rta]\n0.15s call     tests/helix_codex_app/test_auth_hardening.py::test_successful_login_clears_throttle_counters\n0.13s call     tests/test_engine_authorization_failclosed.py::test_an_unknown_role_is_denied_by_every_adapter[b2b]\n0.12s call     tests/test_engine_authorization_failclosed.py::test_the_owning_role_still_succeeds[crm]\n0.11s call     tests/test_engine_authorization_failclosed.py::test_every_canonical_baseline_runs_for_its_owning_role[rta]\n0.11s setup    tests/helix_codex_app/test_auth_hardening.py::test_disabled_locked_and_revoked_accounts_fail_immediately\n0.11s setup    tests/helix_codex_app/test_auth_hardening.py::test_http_login_spray_answers_429\n0.10s call     tests/test_engine_authorization_failclosed.py::test_an_unknown_role_is_denied_by_every_adapter[crm]\n0.10s setup    tests/helix_codex_app/test_auth_hardening.py::test_employee_is_denied_admin_and_cockpit\n0.10s call     tests/test_engine_authorization_failclosed.py::test_an_unknown_role_is_denied_by_every_adapter[personnel]\n0.10s call     tests/test_engine_authorization_failclosed.py::test_an_unknown_role_is_denied_by_every_adapter[cx]\n0.10s call     tests/test_engine_authorization_failclosed.py::test_an_unknown_role_is_denied_by_every_adapter[rta]\n0.10s setup    tests/helix_codex_app/test_auth_hardening.py::test_password_change_revokes_every_session\n0.10s setup    tests/helix_codex_app/test_auth_hardening.py::test_logout_clears_the_cookie_with_matching_flags\n0.10s call     tests/test_engine_authorization_failclosed.py::test_an_unknown_role_is_denied_by_every_adapter[wfm]\n0.10s call     tests/helix_codex_app/test_auth_hardening.py::test_password_change_revokes_every_session\n0.10s call     tests/test_engine_authorization_failclosed.py::test_every_canonical_baseline_runs_for_its_owning_role[cx]\n0.10s call     tests/test_engine_authorization_failclosed.py::test_the_owning_role_still_succeeds[wfm]\n0.10s call     tests/test_engine_authorization_failclosed.py::test_every_canonical_baseline_runs_for_its_owning_role[personnel]\n0.10s call     tests/test_engine_authorization_failclosed.py::test_every_canonical_baseline_runs_for_its_owning_role[b2b]\n45 passed in 7.00s\n",
+        "output_sha256": "5d495883cb662f4641a096c46c5b66dbbabdbaa8cd5e5fa58b689fe243ffd951",
+        "source": "tests/test_server_auth.py",
+        "source_sha256": "1da64e827ab4213cba11b1b6c9ff3f4e644da7ef1e63fb0f180f2463ffdfbb22"
+      },
+      {
+        "command": [
+          "/tmp/opencode/helix-venv/bin/python",
+          "-m",
+          "ruff",
+          "check",
+          "release/simulation.py",
+          "release/profiles.py",
+          "release/gate.py",
+          "scripts/verify_simulation_signoff.py"
+        ],
+        "exit_code": 0,
+        "name": "/tmp/opencode/helix-venv/bin/python -m ruff check release/simulation.py release/profiles.py release/gate.py scripts/verify_simulation_signoff.py",
+        "ok": true,
+        "output": "",
+        "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "release/simulation.py",
+        "source_sha256": "80e735c4bfd2995c8bfb31b8e833fe165b94bb91179c40486c8d0500c7b768ab"
+      }
+    ],
+    "disclosure": "SIMULATION ONLY: locally executed checks on synthetic fixtures; no human, legal, third-party, or production approval is claimed.",
+    "ok": true,
+    "simulation": true
+  },
+  "signed_production_evidence": {
+    "checks": [
+      {
+        "command": [
+          "/tmp/opencode/helix-venv/bin/python",
+          "-m",
+          "pytest",
+          "tests/test_simulation_release_evidence.py",
+          "-q"
+        ],
+        "exit_code": 0,
+        "name": "/tmp/opencode/helix-venv/bin/python -m pytest tests/test_simulation_release_evidence.py -q",
+        "ok": true,
+        "output": ".........                                                                [100%]\n============================= slowest 20 durations =============================\n0.12s call     tests/test_simulation_release_evidence.py::test_release_gate_binds_the_nine_receipts_to_simulated_profile\n0.10s setup    tests/test_simulation_release_evidence.py::test_signed_pack_has_nine_receipts_and_no_private_key\n0.07s setup    tests/test_simulation_release_evidence.py::test_release_gate_binds_the_nine_receipts_to_simulated_profile\n0.06s setup    tests/test_simulation_release_evidence.py::test_verification_detects_tampered_receipt_file\n0.06s setup    tests/test_simulation_release_evidence.py::test_verification_detects_invalid_manifest_signature\n0.06s setup    tests/test_simulation_release_evidence.py::test_verification_detects_tampered_gate_evidence\n0.06s setup    tests/test_simulation_release_evidence.py::test_verification_fails_closed_for_wrong_bundle_hash\n0.03s call     tests/test_simulation_release_evidence.py::test_signed_pack_has_nine_receipts_and_no_private_key\n0.01s teardown tests/test_simulation_release_evidence.py::test_verification_detects_tampered_receipt_file\n0.01s teardown tests/test_simulation_release_evidence.py::test_verification_detects_tampered_gate_evidence\n0.01s teardown tests/test_simulation_release_evidence.py::test_verification_detects_invalid_manifest_signature\n0.01s teardown tests/test_simulation_release_evidence.py::test_verification_fails_closed_for_wrong_bundle_hash\n0.01s teardown tests/test_simulation_release_evidence.py::test_release_gate_binds_the_nine_receipts_to_simulated_profile\n0.01s teardown tests/test_simulation_release_evidence.py::test_release_gate_fails_closed_without_a_signed_pack\n0.01s teardown tests/test_simulation_release_evidence.py::test_signing_rejects_source_or_output_hash_mismatch\n0.01s teardown tests/test_simulation_release_evidence.py::test_signing_rejects_missing_or_undisclosed_gate_evidence\n0.01s teardown tests/test_simulation_release_evidence.py::test_signed_pack_has_nine_receipts_and_no_private_key\n0.01s call     tests/test_simulation_release_evidence.py::test_signing_rejects_missing_or_undisclosed_gate_evidence\n\n(2 durations < 0.005s hidden.  Use -vv to show these durations.)\n9 passed in 0.71s\n",
+        "output_sha256": "7aa8c086ce1e0a7411788e7341e813e73cbdf016872bcebe8dbf5d93d3392202",
+        "source": "tests/test_simulation_release_evidence.py",
+        "source_sha256": "6cedd7fd594add0ebe55257148571ec60fe79d45df40f7e7d86a2d3bd0fb41f6"
+      }
+    ],
+    "disclosure": "SIMULATION ONLY: locally executed checks on synthetic fixtures; no human, legal, third-party, or production approval is claimed.",
+    "ok": true,
+    "simulation": true
+  }
+}
