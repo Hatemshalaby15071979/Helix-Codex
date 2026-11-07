@@ -368,7 +368,7 @@ tomlkit==0.15.2
     # via hatchling
 trove-classifiers==2026.9.21.13
     # via hatchling
-types-pyyaml==6.0.12.20261030
+types-pyyaml==6.0.12.20261103
     # via -r requirements-dev.txt
 typing-extensions==4.16.0
     # via
