@@ -215,7 +215,7 @@ pip-audit==2.10.1
     # via -r requirements-dev.txt
 pip-requirements-parser==32.0.1
     # via pip-audit
-platformdirs==4.14.0
+platformdirs==4.14.3
     # via
     #   pip-audit
     #   virtualenv
