@@ -156,7 +156,7 @@ jobs:
           PY
 
       - name: Upload image size report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: helix-simulated-api-image-size
           path: helix-image-size.json
@@ -172,7 +172,7 @@ jobs:
           exit-code: '0'
 
       - name: Upload API dependency SBOM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: helix-api-cyclonedx-sboms
           path: |
@@ -192,7 +192,7 @@ jobs:
 
       - name: Upload Trivy image scan report
         if: always() && hashFiles('trivy-image-results.json') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: helix-simulated-api-trivy-report
           path: trivy-image-results.json
