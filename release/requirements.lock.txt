@@ -339,7 +339,7 @@ six==1.17.0
     # via python-dateutil
 sortedcontainers==2.4.0
     # via cyclonedx-python-lib
-sqlalchemy==2.1.6
+sqlalchemy==2.1.8
     # via alembic
 sse-starlette==3.6.0
     # via
