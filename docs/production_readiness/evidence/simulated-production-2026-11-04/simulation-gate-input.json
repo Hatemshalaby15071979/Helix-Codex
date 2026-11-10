@@ -227,7 +227,7 @@
         "output": "",
         "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "source": "infra/docker/docker-compose.prod-sim.yml",
-        "source_sha256": "ac608d5feccd6f68e3e3a94270fdd2d839766da1549fcbdfb70d52459e90347b"
+        "source_sha256": "169267719d9dac72fad3b5894837987b7bf5b9f8a58c9be29b569bf7ced4a8c0"
       }
     ],
     "disclosure": "SIMULATION ONLY: locally executed checks on synthetic fixtures; no human, legal, third-party, or production approval is claimed.",
