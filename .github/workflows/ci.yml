@@ -92,11 +92,34 @@ jobs:
         run: |
           python -m build
 
+      # The signature this gate verifies is ML-DSA-65, which needs OpenSSL >= 3.5.
+      # The ubuntu-24.04 runner ships 3.0, where `openssl pkeyutl -verify` cannot
+      # even parse the key — the gate then reports "simulation manifest signature
+      # invalid", which is a false accusation against a valid pack (the same pack
+      # verifies green on OpenSSL 3.5.5 outside CI). Verify where the toolchain
+      # exists: a minimal image with OpenSSL 3.5, reusing the Python environment
+      # and wheels the steps above already installed, with the evidence write
+      # disabled (--no-write-evidence).
       - name: Verify disclosed simulated release profile
         env:
           HELIX_SIMULATION_EVIDENCE_DIR: docs/production_readiness/evidence/simulated-production-2026-11-04/signed-pack
         run: |
-          python scripts/release_gate.py --profile simulated_production --no-write-evidence
+          docker run --rm \
+            -v "$PWD:/work" -w /work \
+            -v "$pythonLocation:$pythonLocation:ro" \
+            -e pythonLocation \
+            -e HELIX_SIMULATION_EVIDENCE_DIR \
+            -e DEBIAN_FRONTEND=noninteractive \
+            ubuntu:26.04 bash -lc '
+              set -euo pipefail
+              apt-get -qq update >/dev/null
+              apt-get -qq install -y git openssl >/dev/null
+              openssl version
+              git config --global --add safe.directory /work
+              export PATH="$pythonLocation/bin:$PATH"
+              python -c "import yaml" || { echo "mounted Python is missing dependencies"; exit 1; }
+              python scripts/release_gate.py --profile simulated_production --no-write-evidence
+            '
 
       - name: Prepare CI-only synthetic simulation secrets
         run: |
