@@ -1,8 +1,11 @@
 """Machine-verifiable, explicitly simulated release-gate receipts.
 
-The local simulation authority uses ML-DSA-65 via OpenSSL 3.5 or later. Its
-private key exists only in a temporary directory while a pack is signed; the
-pack retains the public key, detached manifest signature, and one signed
+The local simulation authority signs the pack with ML-DSA-65 (Dilithium mode 5)
+using the pure-Python `dilithium-py` library. A pure-Python implementation is
+used deliberately: signature verification is then identical on every machine
+and CI runner, instead of depending on a specific OpenSSL >= 3.5 build being
+present. Its private key exists only in memory while a pack is signed; the pack
+retains the public key, detached manifest signature, and one signed
 tamper-evident receipt for each substituted gate. This is simulation evidence,
 not human approval, independent certification, or legal advice.
 """
@@ -17,7 +20,6 @@ import json
 import os
 import pathlib
 import shutil
-import subprocess
 import tempfile
 from typing import Any, Mapping
 
@@ -82,106 +84,43 @@ def profile_bundle_sha256(repo_root: pathlib.Path) -> str:
     return digest.hexdigest()
 
 
-def _openssl_path() -> str:
-    path = shutil.which("openssl")
-    if path is None:
-        raise SimulationEvidenceError("OpenSSL with ML-DSA-65 support is required")
-    return path
+def _mldsa() -> Any:
+    """Lazily import the pure-Python ML-DSA-65 (Dilithium5) implementation.
 
-
-def _run_openssl(args: list[str], *, timeout: float = 30) -> subprocess.CompletedProcess[bytes]:
+    Imported lazily so ``import release`` does not hard-require the package;
+    only the signing/verification paths need it.
+    """
     try:
-        # The executable and argument names are controlled by this module.
-        return subprocess.run(
-            [_openssl_path(), *args],
-            check=False,
-            capture_output=True,
-            timeout=timeout,
-        )  # noqa: S603
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        raise SimulationEvidenceError(f"OpenSSL operation failed: {exc}") from exc
+        from dilithium_py.dilithium import Dilithium5
+    except ImportError as exc:  # pragma: no cover - environment issue
+        raise SimulationEvidenceError(
+            "ML-DSA-65 support requires the pure-Python 'dilithium-py' package "
+            "(declared in requirements.txt)."
+        ) from exc
+    return Dilithium5
 
 
 def _require_mldsa_support() -> None:
-    result = _run_openssl(["list", "-signature-algorithms"])
-    if result.returncode != 0 or b"ML-DSA-65" not in result.stdout:
-        raise SimulationEvidenceError("OpenSSL does not provide ML-DSA-65")
+    _mldsa()
 
 
-def _write_private_key(directory: pathlib.Path) -> pathlib.Path:
-    private_key = directory / "simulation-authority-private.pem"
-    result = _run_openssl(["genpkey", "-algorithm", SIGNATURE_ALGORITHM, "-out", str(private_key)])
-    if result.returncode != 0:
-        raise SimulationEvidenceError(
-            "ML-DSA-65 key generation failed: "
-            + result.stderr.decode("utf-8", errors="replace").strip()
-        )
-    os.chmod(private_key, 0o600)
-    return private_key
+def _generate_keypair() -> tuple[bytes, bytes]:
+    public_key, secret_key = _mldsa().keygen()
+    return public_key, secret_key
 
 
-def _public_key(private_key: pathlib.Path, output: pathlib.Path) -> bytes:
-    result = _run_openssl(["pkey", "-in", str(private_key), "-pubout", "-out", str(output)])
-    if result.returncode != 0:
-        raise SimulationEvidenceError(
-            "ML-DSA-65 public-key export failed: "
-            + result.stderr.decode("utf-8", errors="replace").strip()
-        )
-    return output.read_bytes()
+def _sign(secret_key: bytes, message: bytes) -> bytes:
+    try:
+        return _mldsa().sign(secret_key, message)
+    except Exception as exc:  # noqa: BLE001
+        raise SimulationEvidenceError(f"ML-DSA-65 signing failed: {exc}") from exc
 
 
-def _sign(private_key: pathlib.Path, message: bytes, directory: pathlib.Path, name: str) -> bytes:
-    input_path = directory / f"{name}.input"
-    signature_path = directory / f"{name}.signature"
-    input_path.write_bytes(message)
-    result = _run_openssl(
-        [
-            "pkeyutl",
-            "-sign",
-            "-inkey",
-            str(private_key),
-            "-rawin",
-            "-in",
-            str(input_path),
-            "-out",
-            str(signature_path),
-        ]
-    )
-    if result.returncode != 0:
-        raise SimulationEvidenceError(
-            "ML-DSA-65 signing failed: " + result.stderr.decode("utf-8", errors="replace").strip()
-        )
-    return signature_path.read_bytes()
-
-
-def _verify_signature(
-    public_key: bytes,
-    message: bytes,
-    signature: bytes,
-    directory: pathlib.Path,
-    name: str,
-) -> bool:
-    key_path = directory / f"{name}.public.pem"
-    input_path = directory / f"{name}.input"
-    signature_path = directory / f"{name}.signature"
-    key_path.write_bytes(public_key)
-    input_path.write_bytes(message)
-    signature_path.write_bytes(signature)
-    result = _run_openssl(
-        [
-            "pkeyutl",
-            "-verify",
-            "-pubin",
-            "-inkey",
-            str(key_path),
-            "-rawin",
-            "-in",
-            str(input_path),
-            "-sigfile",
-            str(signature_path),
-        ]
-    )
-    return result.returncode == 0
+def _verify_signature(public_key: bytes, message: bytes, signature: bytes) -> bool:
+    try:
+        return bool(_mldsa().verify(public_key, message, signature))
+    except Exception:  # noqa: BLE001
+        return False
 
 
 def _evidence_is_machine_generated(
@@ -269,10 +208,8 @@ def create_simulation_signoff(
     previous_hash = _GENESIS_HASH
 
     try:
-        with tempfile.TemporaryDirectory(prefix="helix-simulation-authority-") as temp_name:
-            signing_dir = pathlib.Path(temp_name)
-            private_key = _write_private_key(signing_dir)
-            public_key = _public_key(private_key, signing_dir / "simulation-authority-public.pem")
+        with tempfile.TemporaryDirectory(prefix="helix-simulation-authority-") as _signing_tmp:
+            public_key, secret_key = _generate_keypair()
             fingerprint = _sha256(public_key)
 
             for sequence, gate in enumerate(SIMULATION_GATE_NAMES, start=1):
@@ -290,7 +227,7 @@ def create_simulation_signoff(
                 }
                 receipt_hash = _sha256(_canonical_json(core))
                 signed_receipt = {**core, "receipt_sha256": receipt_hash}
-                signature = _sign(private_key, _canonical_json(signed_receipt), signing_dir, gate)
+                signature = _sign(secret_key, _canonical_json(signed_receipt))
                 receipt = {
                     **signed_receipt,
                     "signature_b64": base64.b64encode(signature).decode("ascii"),
@@ -324,7 +261,7 @@ def create_simulation_signoff(
                 ),
             }
             manifest_bytes = _canonical_json(manifest)
-            signature = _sign(private_key, manifest_bytes, signing_dir, "manifest")
+            signature = _sign(secret_key, manifest_bytes)
             (staging_dir / "simulation-manifest.json").write_bytes(manifest_bytes + b"\n")
             (staging_dir / "simulation-manifest.sig").write_text(
                 base64.b64encode(signature).decode("ascii") + "\n",
@@ -372,14 +309,7 @@ def verify_simulation_signoff(
         if not isinstance(disclosure, str) or not disclosure.startswith("SIMULATION ONLY:"):
             return False, "simulation disclosure is missing", None
 
-        with tempfile.TemporaryDirectory(prefix="helix-simulation-verify-") as temp_name:
-            verified = _verify_signature(
-                public_key,
-                _canonical_json(manifest),
-                signature,
-                pathlib.Path(temp_name),
-                "manifest",
-            )
+        verified = _verify_signature(public_key, _canonical_json(manifest), signature)
         if not verified:
             return False, "simulation manifest signature invalid", None
 
@@ -423,14 +353,11 @@ def verify_simulation_signoff(
                 receipt_signature = base64.b64decode(receipt["signature_b64"], validate=True)
             except (KeyError, binascii.Error, ValueError):
                 return False, f"{gate}: receipt signature is malformed", None
-            with tempfile.TemporaryDirectory(prefix="helix-simulation-receipt-") as temp_name:
-                valid_signature = _verify_signature(
-                    public_key,
-                    _canonical_json(signed_receipt),
-                    receipt_signature,
-                    pathlib.Path(temp_name),
-                    gate,
-                )
+            valid_signature = _verify_signature(
+                public_key,
+                _canonical_json(signed_receipt),
+                receipt_signature,
+            )
             if not valid_signature:
                 return False, f"{gate}: receipt signature invalid", None
             declared_gates = manifest.get("gates")
