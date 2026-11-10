@@ -34,7 +34,12 @@ services:
         condition: service_healthy
     ports:
       # Loopback only. Remote access terminates at an operator-managed tunnel.
-      - "127.0.0.1:${HELIX_SIM_HTTPS_PORT:-8443}:8443"
+      # The container-side port mirrors HELIX_SIM_HTTPS_PORT so it stays aligned
+      # with the address Caddy actually binds (HELIX_SIM_SITE_ADDRESS). When the
+      # host port is overridden (e.g. CI uses 18443), Caddy binds that same port
+      # inside the container; a hardcoded 8443 here would leave the published
+      # port forwarding to an empty container port and the HTTPS probe would fail.
+      - "127.0.0.1:${HELIX_SIM_HTTPS_PORT:-8443}:${HELIX_SIM_HTTPS_PORT:-8443}"
     environment:
       HELIX_SIM_SITE_ADDRESS: "${HELIX_SIM_SITE_ADDRESS:-https://127.0.0.1:8443}"
     volumes:
