@@ -122,7 +122,14 @@ jobs:
           for name, value in values.items():
               path = directory / name
               path.write_text(value + "\n", encoding="utf-8")
-              path.chmod(0o600)
+              # NOTE: Docker Compose (non-swarm) mounts `file:` secrets preserving
+              # the host file's mode/ownership, and it ignores per-secret uid/gid/
+              # mode overrides. The helix-api container runs as the non-root user
+              # `helix` (uid 10001), so a 0600 file is unreadable and the service
+              # fails to start. World-readable 0644 is required for the non-root
+              # container user to read the synthetic secret. The values are random
+              # and authorise nothing outside this local drill.
+              path.chmod(0o644)
           PY
 
       - name: Validate simulated production topology
