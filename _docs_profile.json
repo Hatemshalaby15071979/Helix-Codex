@@ -1,0 +1,13 @@
+{
+  "name": "Helix Prime (Helix Codex)",
+  "repo": "Hatemshalaby15071979/Helix-Codex",
+  "status_template": "**Simulation-validated — measured @DOCS_SYNC_DATE@.** @DOCS_SYNC_TESTS@ tests pass on local Python 3.12 (synthetic fixtures); production is NOT_READY with nine gates red by design. Hosted CI has not yet run on this GitHub repository.",
+  "status_template_html": "<p class=\"status\"><strong>Where it stands:</strong> <code>SIMULATED_PRODUCTION_READY</code> in the local simulated-production profile on synthetic fixtures (machine evidence only — no human, legal, or independent approval), measured @DOCS_SYNC_DATE@. This is not a third-party pilot. Production is <code>NOT_READY</code> with nine production-only gates red by design; @DOCS_SYNC_TESTS@ tests pass locally. Hosted CI has not yet run on this GitHub repository.</p>",
+  "facts": {
+    "version": "",
+    "release_date": "2026-11-05",
+    "tests_passed": 2107,
+    "coverage": null,
+    "ci_label": "local checks green; hosted CI not yet run here"
+  }
+}

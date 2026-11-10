@@ -9,7 +9,7 @@
 ![licence](https://img.shields.io/badge/licence-MIT-blue)
 ![candidate](https://img.shields.io/badge/candidate-local%20simulation-blue)
 
-*Local verification measured 2026-11-05 (simulation only, synthetic fixtures). The supplied GitHub destination is currently empty; no hosted CI result exists for this candidate.*
+*Local verification measured 2026-11-05 (simulation only, synthetic fixtures). This repository is now published on GitHub (branch `release/simulated-production-2026-11`); hosted CI has not yet run here, so the local checks below are the current evidence.*
 
 <!-- Hosted workflow status is unavailable until this local candidate is pushed. -->
 <!-- badges:end -->
@@ -25,7 +25,7 @@
 
 ## GitHub shipment status (2026-11-05)
 
-The intended public repository is [Hatemshalaby15071979/Helix-Codex](https://github.com/Hatemshalaby15071979/Helix-Codex), which is currently empty. This checkout has not been pushed, so no hosted Actions result exists for this candidate. Local CI-equivalent checks and the synthetic release gate are recorded in [SHIPMENT_READINESS.md](SHIPMENT_READINESS.md). Do not interpret `SIMULATED_PRODUCTION_READY` as production readiness; the production profile remains gated on external evidence and owner approval.
+The intended public repository is [Hatemshalaby15071979/Helix-Codex](https://github.com/Hatemshalaby15071979/Helix-Codex), which is now published (this branch). Hosted Actions have not yet run here, so local checks and the synthetic release gate are the current evidence; both are recorded in [SHIPMENT_READINESS.md](SHIPMENT_READINESS.md). Do not interpret `SIMULATED_PRODUCTION_READY` as production readiness; the production profile remains gated on external evidence and owner approval.
 
 The API uses a dedicated hash-verified runtime lock and its rebuilt simulated-production image was verified locally at 182,121,865 bytes (about 174 MiB). The API-only runtime omits the Streamlit cockpit. CI audits the API lock, uploads CycloneDX dependency and image SBOMs, and runs a SHA-pinned Trivy image scan. The configured image scan and hosted CI have not yet run for this candidate; see the [readiness report](SHIPMENT_READINESS.md).
 
