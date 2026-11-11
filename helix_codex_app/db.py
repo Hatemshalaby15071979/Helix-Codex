@@ -480,6 +480,12 @@ _SCHEMA_DDL: tuple[str, ...] = (
         registered_at TEXT
     )
     """,
+    # Calendar range reads filter by tenant and status, then order by starts_at.
+    # Measured with EXPLAIN QUERY PLAN: without this the planner SCANs events.
+    # The attendee EXISTS clause is already served by the event_attendees
+    # PRIMARY KEY (event_id, account_id) as a covering index, so no redundant
+    # second index is added there.
+    "CREATE INDEX IF NOT EXISTS idx_events_tenant_status_starts ON events(tenant_id, status, starts_at)",
 )
 
 

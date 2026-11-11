@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
+from helix_codex_app.cache import TTLCache
 from helix_codex_app.errors import NotFoundError
 
 CONFIRMED = "confirmed"
@@ -30,6 +31,10 @@ RECURRENCE_RULES: tuple[str, ...] = ("", "daily", "weekly")
 
 MAX_ATTENDEES = 64
 MAX_OCCURRENCES = 400
+
+# Shared by every repository instance in this process. The key carries the
+# database identity, so separate databases never collide.
+_EVENT_LIST_CACHE = TTLCache(maxsize=256, ttl_seconds=2.0)
 
 
 def _now() -> str:
@@ -158,6 +163,18 @@ class CalendarRepository:
 
     def __init__(self, conn: sqlite3.Connection) -> None:
         self.conn = conn
+        self._cache_namespace: str | None = None
+
+    def _namespace(self) -> str:
+        """Identify the database, so cache entries never cross databases."""
+        if self._cache_namespace is None:
+            row = self.conn.execute("PRAGMA database_list").fetchone()
+            path = row["file"] if row is not None else ""
+            self._cache_namespace = path or f"memory:{id(self.conn)}"
+        return self._cache_namespace
+
+    def _invalidate_tenant_cache(self, tenant_id: str) -> None:
+        _EVENT_LIST_CACHE.invalidate_prefix((self._namespace(), tenant_id))
 
     def create_event(
         self,
@@ -203,12 +220,16 @@ class CalendarRepository:
                 CONFIRMED,
             ),
         )
-        for account_id in attendee_account_ids:
-            self.conn.execute(
+        if attendee_account_ids:
+            # One executemany, not one round-trip per attendee: a full roster is
+            # up to MAX_ATTENDEES rows, and each execute() is a separate trip
+            # through the sqlite3 layer.
+            self.conn.executemany(
                 "INSERT INTO event_attendees (event_id, account_id, response) VALUES (?, ?, ?)",
-                (event_id, account_id, PENDING),
+                [(event_id, account_id, PENDING) for account_id in attendee_account_ids],
             )
         self.conn.commit()
+        self._invalidate_tenant_cache(tenant_id)
         return self.get_event(event_id, tenant_id, creator_account_id)
 
     def get_event(self, event_id: str, tenant_id: str, account_id: str) -> Event:
@@ -246,6 +267,12 @@ class CalendarRepository:
         """
         from_dt = _parse(from_at)
         to_dt = _parse(to_at)
+
+        cache_key = (self._namespace(), tenant_id, account_id, from_at, to_at)
+        cached = _EVENT_LIST_CACHE.get(cache_key)
+        if cached is not None:
+            return list(cached)
+
         rows = self.conn.execute(
             """
             SELECT event_id, tenant_id, domain_id, title, kind, starts_at, ends_at,
@@ -264,6 +291,7 @@ class CalendarRepository:
         for row in rows:
             occurrences.extend(self._expand(self._event_from_row(row), from_dt, to_dt))
         occurrences.sort(key=lambda event: event.starts_at)
+        _EVENT_LIST_CACHE.set(cache_key, tuple(occurrences))
         return occurrences
 
     def update_event(
@@ -286,55 +314,41 @@ class CalendarRepository:
         from caller data.
         """
         now = _now()
-        if title is not None:
-            self.conn.execute(
-                "UPDATE events SET title = ?, updated_at = ? "
-                "WHERE event_id = ? AND tenant_id = ?",
-                (title, now, event_id, tenant_id),
-            )
-        if kind is not None:
-            self.conn.execute(
-                "UPDATE events SET kind = ?, updated_at = ? "
-                "WHERE event_id = ? AND tenant_id = ?",
-                (kind, now, event_id, tenant_id),
-            )
-        if starts_at is not None:
-            self.conn.execute(
-                "UPDATE events SET starts_at = ?, updated_at = ? "
-                "WHERE event_id = ? AND tenant_id = ?",
-                (starts_at, now, event_id, tenant_id),
-            )
-        if ends_at is not None:
-            self.conn.execute(
-                "UPDATE events SET ends_at = ?, updated_at = ? "
-                "WHERE event_id = ? AND tenant_id = ?",
-                (ends_at, now, event_id, tenant_id),
-            )
-        if all_day is not None:
-            self.conn.execute(
-                "UPDATE events SET all_day = ?, updated_at = ? "
-                "WHERE event_id = ? AND tenant_id = ?",
-                (1 if all_day else 0, now, event_id, tenant_id),
-            )
-        if location is not None:
-            self.conn.execute(
-                "UPDATE events SET location = ?, updated_at = ? "
-                "WHERE event_id = ? AND tenant_id = ?",
-                (location, now, event_id, tenant_id),
-            )
-        if room_id is not None:
-            self.conn.execute(
-                "UPDATE events SET room_id = ?, updated_at = ? "
-                "WHERE event_id = ? AND tenant_id = ?",
-                (room_id, now, event_id, tenant_id),
-            )
-        if recurrence_rule is not None:
-            self.conn.execute(
-                "UPDATE events SET recurrence_rule = ?, updated_at = ? "
-                "WHERE event_id = ? AND tenant_id = ?",
-                (recurrence_rule, now, event_id, tenant_id),
-            )
+        # One statement, one round-trip, no SQL assembled from caller data.
+        # COALESCE(?, column) preserves the previous "None means unchanged"
+        # contract; these columns were already non-nullable through this API,
+        # so no behaviour is lost.
+        all_day_value = None if all_day is None else (1 if all_day else 0)
+        self.conn.execute(
+            """
+            UPDATE events SET
+                title = COALESCE(?, title),
+                kind = COALESCE(?, kind),
+                starts_at = COALESCE(?, starts_at),
+                ends_at = COALESCE(?, ends_at),
+                all_day = COALESCE(?, all_day),
+                location = COALESCE(?, location),
+                room_id = COALESCE(?, room_id),
+                recurrence_rule = COALESCE(?, recurrence_rule),
+                updated_at = ?
+            WHERE event_id = ? AND tenant_id = ?
+            """,
+            (
+                title,
+                kind,
+                starts_at,
+                ends_at,
+                all_day_value,
+                location,
+                room_id,
+                recurrence_rule,
+                now,
+                event_id,
+                tenant_id,
+            ),
+        )
         self.conn.commit()
+        self._invalidate_tenant_cache(tenant_id)
         return self._get_by_id(event_id, tenant_id)
 
     def set_attendees(
@@ -368,6 +382,7 @@ class CalendarRepository:
                     (event_id, account_id, PENDING),
                 )
         self.conn.commit()
+        self._invalidate_tenant_cache(tenant_id)
         return tuple(account_id for account_id in account_ids if account_id not in existing)
 
     def respond(self, event_id: str, tenant_id: str, account_id: str, response: str) -> Event:
@@ -398,6 +413,7 @@ class CalendarRepository:
         if not rowcount:
             raise NotFoundError("event not found")
         self.conn.commit()
+        self._invalidate_tenant_cache(tenant_id)
         return self._get_by_id(event_id, tenant_id)
 
     def resolve_attendees(self, tenant_id: str, account_ids: tuple[str, ...]) -> set[str]:
