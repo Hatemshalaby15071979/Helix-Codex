@@ -9,9 +9,11 @@
 ![licence](https://img.shields.io/badge/licence-MIT-blue)
 ![candidate](https://img.shields.io/badge/candidate-local%20simulation-blue)
 
-*Local verification measured 2026-11-05 (simulation only, synthetic fixtures). This repository is now published on GitHub (branch `release/simulated-production-2026-11`); hosted CI has not yet run here, so the local checks below are the current evidence.*
+![CI](https://github.com/Hatemshalaby15071979/Helix-Codex/actions/workflows/ci.yml/badge.svg)
 
-<!-- Hosted workflow status is unavailable until this local candidate is pushed. -->
+*Local verification measured 2026-11-05 (simulation only, synthetic fixtures). This repository is published on GitHub (branch `release/simulated-production-2026-11`), and hosted CI runs on it — the badge above is the live status, not a claim.*
+
+<!-- Status is rendered from the live badge; do not hand-write CI status here again. -->
 <!-- badges:end -->
 
 **The governed operations core of Helix Codex.**
@@ -25,9 +27,9 @@
 
 ## GitHub shipment status (2026-11-05)
 
-The intended public repository is [Hatemshalaby15071979/Helix-Codex](https://github.com/Hatemshalaby15071979/Helix-Codex), which is now published (this branch). Hosted Actions have not yet run here, so local checks and the synthetic release gate are the current evidence; both are recorded in [SHIPMENT_READINESS.md](SHIPMENT_READINESS.md). Do not interpret `SIMULATED_PRODUCTION_READY` as production readiness; the production profile remains gated on external evidence and owner approval.
+The public repository is [Hatemshalaby15071979/Helix-Codex](https://github.com/Hatemshalaby15071979/Helix-Codex). Hosted Actions run on it; the live badge at the top shows the status for the default branch, and the local checks plus the synthetic release gate are recorded in [SHIPMENT_READINESS.md](SHIPMENT_READINESS.md). Do not interpret `SIMULATED_PRODUCTION_READY` as production readiness; the production profile remains gated on external evidence and owner approval.
 
-The API uses a dedicated hash-verified runtime lock and its rebuilt simulated-production image was verified locally at 182,121,865 bytes (about 174 MiB). The API-only runtime omits the Streamlit cockpit. CI audits the API lock, uploads CycloneDX dependency and image SBOMs, and runs a SHA-pinned Trivy image scan. The configured image scan and hosted CI have not yet run for this candidate; see the [readiness report](SHIPMENT_READINESS.md).
+The API uses a dedicated hash-verified runtime lock and its rebuilt simulated-production image was verified locally at 182,121,865 bytes (about 174 MiB). The API-only runtime omits the Streamlit cockpit. CI audits the API lock, uploads CycloneDX dependency and image SBOMs, and runs a SHA-pinned Trivy image scan. Hosted CI has run on this repository (the badge above is live). The image scan has not been observed for this candidate; see the [readiness report](SHIPMENT_READINESS.md).
 
 ## One-line identity
 
