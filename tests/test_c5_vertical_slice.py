@@ -726,10 +726,14 @@ def test_existing_c0_c4_regression(fresh_state):
     """Quick check: C0 smoke still works (6/6 engines, 4/4 agents)."""
     import subprocess
 
-    smoke_path = _ROOT / "Helix-Prime" / "scripts" / "smoke.py"
+    # The smoke script lives in this repository; running it against a sibling
+    # checkout named Helix-Prime only works on the author's machine layout and
+    # made the test fail with FileNotFoundError on every other checkout.
+    repo_root = pathlib.Path(__file__).resolve().parent.parent
+    smoke_path = repo_root / "scripts" / "smoke.py"
     r = subprocess.run(
         [sys.executable, str(smoke_path)],
-        cwd=str(_ROOT / "Helix-Prime"),
+        cwd=str(repo_root),
         capture_output=True,
         text=True,
         timeout=60,
