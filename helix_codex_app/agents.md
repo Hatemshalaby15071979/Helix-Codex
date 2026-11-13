@@ -918,7 +918,7 @@ App-specific rules:
 > before the fix; `tests/helix_codex_app/test_memory_store.py` passes 15/15. Ruff check and format
 > are clean on every touched file.
 >
-> **Independent review found three real defects, all fixed in `d57053f`, each with a regression test
+> **Internal self-review found three real defects, all fixed in `d57053f`, each with a regression test
 > proven to fail beforehand.** Two of the three were mine. See the P5.1 and P5.2 entries below for
 > what each one was. One further issue was found and is left open deliberately — it is recorded under
 > "Open finding" at the end of this phase.
@@ -969,7 +969,7 @@ App-specific rules:
       record, an unknown kind rejected, the index counts and chain head tracking the ledger, the org
       store indexed separately, the chain verifying on a fresh store, a tampered line failing, and a
       record surviving a reopen. Commit `8e6b79d`.
-> **Independent review of P5.1/P5.2 — three defects found, all fixed in `d57053f`.**
+> **Internal self-review of P5.1/P5.2 — three defects found, all fixed in `d57053f`.**
 >
 > **R1 — a regression P5.1 itself introduced (the serious one).** `evaluate()` appended its evaluated
 > snapshot without advancing the version, and `_reindex()` kept the *first* record on a version tie.
@@ -1103,7 +1103,7 @@ App-specific rules:
       existing bridge, with selectors that default to the first server-provided option and refuse an
       unknown id. The control-plane panel is read-only: engines, the tenant halt state, audit-chain
       status and this tenant's audit rows. It has no POST route and no form.
-      **Independent review found three defects before commit, all fixed:** (1) the control-plane
+      **Internal self-review found three defects before commit, all fixed:** (1) the control-plane
       service was reading core state without the bridge's third policy gate; it now calls
       `engine_bridge.authorize_read(account)` before any core read; (2) the coach template expected
       `attended`/`expected`, but the pack returns `present`/`roster_size` — corrected to the real

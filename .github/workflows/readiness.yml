@@ -1,5 +1,10 @@
 name: Readiness (simulated)
 
+# Branch policy: default branch is `release/simulated-production-2026-11` (not `main`/
+# `master`). This job runs on push and pull_request to ALL branches. It is a verification
+# gate only — a green run is not a release or shipment decision. Note: git history is not
+# rewritten here; that requires the owner's explicit G2 authorization.
+#
 # The synthetic tenant fixtures are not committed (198 MB + 106 MB), so this job
 # detects them and skips the fixture-dependent gates with an explicit notice.
 # A fixture-absent run is not a pass for the readiness harness; it is a known
