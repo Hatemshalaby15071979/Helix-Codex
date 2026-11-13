@@ -1,9 +1,15 @@
 name: CI
 
+# Branch policy: this repository's default branch is `release/simulated-production-2026-11`
+# (a non-standard name, not `main` or `master`). CI runs on push and pull_request to ALL
+# branches. This is a verification gate only — a green run is not a release or shipment
+# decision. Note: git history is NOT rewritten here; changing history requires the
+# owner's explicit G2 authorization. Commit messages that assert "[gate: ... pass]" are
+# not evidence; only this workflow's output is.
 on:
   push:
     # Run the same required checks on the release/simulation branch and on
-    # contributor branches before they are merged to main.
+    # contributor branches before they are merged to the default branch.
     branches: ['**']
   pull_request:
     branches: ['**']
@@ -61,6 +67,11 @@ jobs:
       - name: Run test suite
         run: |
           python -m pytest tests/ -q -m "not smoke" --cov=server --cov=connectors --cov-fail-under=80
+
+      # ME-15: agent-directive files must carry the quarantine header so an
+      # automated agent does not treat their contents as commands.
+      - name: ME-15 agent-instruction guard
+        run: python scripts/verify_agent_instruction_files.py
 
       - name: Run security scans
         run: |

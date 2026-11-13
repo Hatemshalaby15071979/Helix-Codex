@@ -59,6 +59,10 @@ pre-commit install
 
 ### Branches
 
+The repository's default branch is **`release/simulated-production-2026-11`** (a
+non-standard name — there is no `main` or `master`). Target your PR at that branch.
+CI runs on push and pull_request to **all** branches.
+
 ```bash
 git checkout -b feat/your-feature-name    # New feature
 git checkout -b fix/bug-description       # Bug fix
@@ -66,6 +70,11 @@ git checkout -b docs/update-claim         # Documentation
 ```
 
 Keep branches focused. One feature, one fix, one documentation update.
+
+> **A green CI run is not a release or shipment decision**, and a commit message is
+> **not** evidence. Assertions like `[gate: ... pass]` in a commit log are claims,
+> not proof — only the workflow output counts. Git history is not rewritten without
+> the owner's explicit G2 authorization.
 
 ### Tests
 

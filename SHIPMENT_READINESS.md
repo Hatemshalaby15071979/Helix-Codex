@@ -130,7 +130,7 @@ image bytes, and the Compose stack was not re-run this session beyond
   audits, approvals, and production operations evidence are owner-supplied
   and absent.
 
-**Status: locally shipment-ready** for the owner's push decision (full suite,
+**Status: locally verified, not shipment-ready** for the owner's push decision (full suite,
 static gates, dependency audits, image build/smoke, and Trivy scan pass on
 the final tree), with hosted-only verification and the production gates
 still open. Nothing was pushed, published, released, or deployed.

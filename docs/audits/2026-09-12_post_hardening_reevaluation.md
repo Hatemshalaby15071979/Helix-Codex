@@ -1,7 +1,7 @@
 # Post-hardening re-evaluation — H0–H3
 
 **Date:** 2026-09-12 · **HEAD:** `6d68228` · **Branch:** `h02-server-bind`
-**Scope:** independent re-verification of every claim in `AGENTS.md §1`. Nothing below
+**Scope:** internal re-verification of every claim in `AGENTS.md §1`. Nothing below
 is taken from the ledger; every number was produced by re-running the command.
 
 ---
