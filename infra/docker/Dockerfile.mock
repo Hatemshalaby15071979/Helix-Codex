@@ -1,0 +1,57 @@
+# Helix Codex Mock Server — parallel-development image
+#
+# Slim, dependency-light image that runs mock_server/ (FastAPI mirroring the
+# real JSON API surface). It needs none of the governed engine, SQLite stores,
+# or auth pipeline, so it installs only the web stack.
+#
+# Multi-stage build keeps the runtime image small: compile in a builder venv,
+# run as the non-root `helix` user, single writable path /data.
+
+FROM python:3.12-slim AS builder
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /build
+
+# Web-only deps — the exact pins from the project's [web] extra.
+COPY release/requirements.lock.txt pyproject.toml ./
+RUN python -m venv /opt/venv \
+    && /opt/venv/bin/pip install --upgrade pip \
+    && /opt/venv/bin/pip install \
+        "fastapi>=0.115,<1.0" \
+        "uvicorn[standard]>=0.30" \
+        "httpx>=0.27,<1.0" \
+        "python-multipart>=0.0.9"
+
+COPY . .
+RUN /opt/venv/bin/pip install '.[web]' || true \
+    && /opt/venv/bin/python -m compileall -q -f mock_server || true
+
+FROM python:3.12-slim AS runtime
+
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONPATH=/app \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    MOCK_PORT=8001 \
+    MOCK_SCENARIO=default
+
+RUN useradd --create-home --uid 10001 helix \
+    && mkdir -p /app /data \
+    && chown -R helix:helix /app /data
+
+COPY --from=builder --chown=helix:helix /opt/venv /opt/venv
+WORKDIR /app
+COPY --from=builder --chown=helix:helix /build /app
+
+USER helix
+VOLUME ["/data"]
+EXPOSE 8001
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/healthz')"
+
+CMD ["python", "-m", "mock_server"]

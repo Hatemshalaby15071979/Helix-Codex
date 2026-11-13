@@ -1,0 +1,41 @@
+# Helix Codex Mock Server — parallel-development deployment
+#
+# Runs the FastAPI mock that mirrors the real JSON API surface so the frontend
+# can develop without the governed engine, SQLite stores, or auth pipeline.
+#
+# Start it:
+#   docker compose -f infra/docker/docker-compose.mock.yml up -d --build
+#
+# It binds loopback on http://127.0.0.1:8001 (network_mode: host, matching the
+# real app's compose). Run it alongside docker-compose.app.yml — they use
+# different ports (8001 vs 8100) and never collide.
+#
+# Switch scenario at runtime without rebuild:
+#   curl -X POST http://127.0.0.1:8001/__mock/scenario/degraded
+#
+# Or set MOCK_SCENARIO at start:
+#   MOCK_SCENARIO=errors docker compose -f infra/docker/docker-compose.mock.yml up -d --build
+
+services:
+  helix-mock:
+    image: helix-codex-mock:${HELIX_MOCK_IMAGE_TAG:-local}
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.mock
+    network_mode: host
+    environment:
+      MOCK_PORT: "8001"
+      MOCK_SCENARIO: ${MOCK_SCENARIO:-default}
+    volumes:
+      - helix_mock_data:/data
+    restart: unless-stopped
+    stop_grace_period: 10s
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/healthz')"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+volumes:
+  helix_mock_data:
