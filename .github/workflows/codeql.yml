@@ -1,0 +1,34 @@
+name: CodeQL
+
+on:
+  push:
+    branches: ["release/simulated-production-2026-11"]
+  pull_request:
+    branches: ["release/simulated-production-2026-11"]
+  schedule:
+    - cron: '27 4 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze (CodeQL)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@9418214df1f2c4b8128c770156c409013b07d6b9 # v3
+        # Languages are auto-detected from the repository contents.
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@9418214df1f2c4b8128c770156c409013b07d6b9 # v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@9418214df1f2c4b8128c770156c409013b07d6b9 # v3

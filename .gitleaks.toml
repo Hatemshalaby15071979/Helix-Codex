@@ -1,0 +1,26 @@
+# Helix-Codex gitleaks configuration (baseline)
+# Extends the built-in gitleaks rules; only clearly-synthetic placeholders are
+# allowlisted. Real-looking secrets are NEVER allowlisted.
+
+title = "Helix-Codex baseline gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Only clearly-synthetic fixtures and placeholders; real secrets stay detected"
+regexes = [
+  # example.com / example.org fixtures
+  '''example\.(com|org)''',
+  # CHANGEME placeholder
+  '''CHANGEME''',
+  # all-zeros UUID placeholder
+  '''[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-000000000000''',
+  # test/test123 placeholder
+  '''(?i)test123''',
+]
+paths = [
+  '''.*/tests?/.*''',
+  '''.*/test_.*''',
+  '''.*fixtures?/.*''',
+]
