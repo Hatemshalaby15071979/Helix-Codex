@@ -1,0 +1,42 @@
+# gitleaks configuration — Helix-Codex
+#
+# Owner-verified 2026-11-13: every finding in this repository is a synthetic
+# test fixture, a fixture hash, or a vendored-JavaScript false positive — not a
+# credential. See audit-11-13/SECRET_SCAN_RESULTS.md for the value-by-value
+# evidence.
+#
+# `useDefault = true` is required: supplying a config otherwise REPLACES the
+# built-in rule set, so no rules would run at all (a silent false negative).
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Placeholder API keys used by the secret-redaction and authorization unit tests (not live keys)"
+# Anchored: `sk-1234567890` is a prefix of `sk-1234567890abcdef`, so both
+# entries are needed and both must match the whole secret.
+regexes = [
+  '''^sk-1234567890abcdef$''',
+  '''^sk-1234567890$''',
+]
+
+[[allowlists]]
+description = "Source-code identifiers matched as if they were values (gitleaks generic-api-key keyword match)"
+regexes = [
+  '''^wf2\.idempotency_key$''',
+  '''^idempotency_key=$''',
+]
+
+[[allowlists]]
+description = "SHA-256 digests of test CSVs in docs/production_readiness/evidence/fixture-drift-baseline.json — one-way hashes, not credentials"
+regexes = [
+  '''^6fc686a66dd464a1086d40a924709f6000c6435fce190477978066f3c6a826f4$''',
+  '''^3cf42719c804c5b58b2509e7c2a266ab51ee9f5878e7a8037c459c933eb5a827$''',
+]
+
+[[allowlists]]
+description = "Vendored pydeck JavaScript inside the local virtualenv (build artifact, not source)"
+# The .venv is gitignored build output; it is scanned only when someone runs
+# gitleaks against a working copy that has it installed. Its minified bytes
+# trip the entropy rules by accident.
+paths = ['''\.venv/''']
