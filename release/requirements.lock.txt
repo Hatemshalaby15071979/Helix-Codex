@@ -353,7 +353,7 @@ starlette==1.10.0
     #   fastapi
     #   sse-starlette
     #   streamlit
-stevedore==5.9.1
+stevedore==5.10.0
     # via bandit
 streamlit==1.66.1
     # via
