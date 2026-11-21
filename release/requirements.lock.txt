@@ -405,7 +405,7 @@ uvicorn==0.54.0
     #   streamlit
 uvloop==0.23.0
     # via uvicorn
-virtualenv==21.15.2
+virtualenv==21.15.8
     # via pre-commit
 watchdog==6.0.0
     # via streamlit
