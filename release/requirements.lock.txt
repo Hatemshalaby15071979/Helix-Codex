@@ -344,7 +344,7 @@ sortedcontainers==2.4.0
     # via cyclonedx-python-lib
 sqlalchemy==2.1.6
     # via alembic
-sse-starlette==3.6.0
+sse-starlette==3.7.0
     # via
     #   -r requirements.txt
     #   -r requirements.txt
