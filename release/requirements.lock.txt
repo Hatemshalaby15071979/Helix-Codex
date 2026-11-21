@@ -280,7 +280,7 @@ pytest-cov==7.1.0
     # via -r requirements-dev.txt
 pytest-timeout==2.4.0
     # via -r requirements-dev.txt
-python-dateutil==3.0.0
+python-dateutil==4.0.0
     # via
     #   matplotlib
     #   pandas
