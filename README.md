@@ -13,7 +13,7 @@
 </div>
 
 <p float="left">
-  <strong>Helix Prime v0.9.0<br></strong><br>
+  <strong>Helix Prime v0.9.0</strong><br>
   <span style="font-size:0.9em;color:#93aaa0">by Helix Solutions</span>
 </p>
 
