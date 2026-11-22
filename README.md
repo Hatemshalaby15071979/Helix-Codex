@@ -12,6 +12,11 @@
 
 </div>
 
+<p float="left">
+  <strong>Helix Prime v0.9.0<br></strong><br>
+  <span style="font-size:0.9em;color:#93aaa0">by Helix Solutions</span>
+</p>
+
 **The governed, local-first operations core for contact-centre and back-office work — identity, role-based access, forecasting, CRM, a workflow engine, and a fail-closed gate, all on your own machine.**
 
 ## Status — read this first
