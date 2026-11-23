@@ -581,9 +581,19 @@ def crm_payload_from_families(tenant: Tenant) -> BuiltPayload:
     return BuiltPayload(engine="crm", payload=payload, provenance=provenance)
 
 
+def _client_account(tenant: Tenant) -> str:
+    """Resolve the single client account declared by the fixture, failing closed."""
+    queues = tenant.read_curated("queue_metrics_daily", columns=["account"], as_text=True)
+    accounts = sorted({str(value).strip() for value in queues["account"]} - {"global", ""})
+    if len(accounts) != 1:
+        raise ValueError(f"{tenant.name}: expected exactly one client account, found {accounts}")
+    return accounts[0]
+
+
 def build_all(tenant: Tenant) -> List[Tuple[str, BuiltPayload]]:
     """Build one payload per engine for the tenant, choosing its natural mapping."""
     if tenant.name == "callcenterclient":
+        account = _client_account(tenant)
         return [
             (
                 "wfm",
@@ -596,9 +606,9 @@ def build_all(tenant: Tenant) -> List[Tuple[str, BuiltPayload]]:
             ),
             ("rta", rta_payload_from_rosters(tenant, day="2026-10-27")),
             ("cx", cx_payload_from_tickets(tenant)),
-            ("b2b", b2b_payload_from_contact_centre(tenant, account="teleclient")),
-            ("personnel", personnel_payload_from_requisitions(tenant, account="teleclient")),
-            ("crm", crm_payload_from_accounts(tenant, account="teleclient")),
+            ("b2b", b2b_payload_from_contact_centre(tenant, account=account)),
+            ("personnel", personnel_payload_from_requisitions(tenant, account=account)),
+            ("crm", crm_payload_from_accounts(tenant, account=account)),
         ]
     return [
         (

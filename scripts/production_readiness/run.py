@@ -16,6 +16,7 @@ import argparse
 import datetime
 import hashlib
 import json
+import os
 import pathlib
 import platform
 import socket
@@ -32,13 +33,20 @@ from scripts.production_readiness.dataset import TENANTS, Tenant, load_tenants  
 READY = "SIMULATION_READINESS_EVIDENCED"
 NOT_READY = "NOT_READY"
 
-DISCLOSURE = (
+SYNTHETIC_DISCLOSURE = (
     "SYNTHETIC FIXTURE. callcenterclient and sportacademyclient are synthetic, "
     "client-shaped datasets built from documented generators. They contain no real "
     "client, customer, athlete or employee records. They are used here to exercise "
     "ingestion and the six engines against realistic operational shapes; no number "
     "in this pack is a claim about a real organisation."
 )
+REAL_DISCLOSURE = (
+    "REAL-ONLY VIEW. The curated input is `16_DATA/real_only/`: accepted owner-supplied "
+    "rows from the TelecomAcademy hub workbook, tracked per row in `REAL_DATA_REGISTER.csv`. "
+    "No synthetic baseline row is included. Coverage is partial (8 of 39 tables); "
+    "gates needing other tables must fail closed rather than fall back to synthetic data."
+)
+DISCLOSURE = REAL_DISCLOSURE if os.environ.get("HELIX_TENANT_CURATED_DIR") else SYNTHETIC_DISCLOSURE
 
 MAPPED_TABLES = {
     "callcenterclient": [
@@ -127,6 +135,8 @@ def _tenant_manifest(tenant: Tenant) -> Dict[str, Any]:
             tables[table] = _line_count(path)
     return {
         "root": str(tenant.root),
+        "curated_dir": str(tenant.curated_dir),
+        "curated_override": os.environ.get("HELIX_TENANT_CURATED_DIR", ""),
         "manifest_sha256": _file_digest(manifest_path) if manifest_path.exists() else "missing",
         "files_listed": len(tenant.manifest()),
         "curated_tables": len(tenant.available_tables()),

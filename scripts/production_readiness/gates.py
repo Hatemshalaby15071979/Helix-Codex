@@ -180,16 +180,26 @@ def call_engine(
 
 
 def gate_fixture_integrity(context: RunContext) -> GateResult:
-    """The fixture is what its manifest says it is, and it says it is synthetic."""
+    """The input is what its manifest says it is, in its declared data mode.
+
+    A synthetic fixture is complete only with >=30 curated tables. A declared
+    real view is necessarily partial (the client supplies a subset), so its
+    completeness rule is different: the view's own manifest must declare real,
+    every declared table must exist at its declared row count, and the named
+    provenance register must match its digest. Both modes still require the
+    estate hash manifest and the dataset-card disclosure to be intact.
+    """
     metrics: Dict[str, Any] = {}
     problems: List[str] = []
     for tenant in context.tenants:
         report = tenant.verify_manifest()
+        mode = getattr(tenant, "data_mode", "synthetic")
         metrics[tenant.name] = {
             "files_listed": report.listed,
             "missing": len(report.missing),
             "mismatched": len(report.mismatched),
             "tables": len(tenant.available_tables()),
+            "data_mode": mode,
             "disclosure_present": tenant.disclosure_ok(),
         }
         if not report.ok:
@@ -197,12 +207,20 @@ def gate_fixture_integrity(context: RunContext) -> GateResult:
                 f"{tenant.name}: {len(report.missing)} missing, {len(report.mismatched)} mismatched"
             )
         if not tenant.disclosure_ok():
-            problems.append(f"{tenant.name}: synthetic disclosure missing")
-        if len(tenant.available_tables()) < 30:
-            problems.append(f"{tenant.name}: only {len(tenant.available_tables())} curated tables")
+            problems.append(f"{tenant.name}: disclosure missing")
+
+        if mode == "real":
+            view = tenant.real_view_report()
+            metrics[tenant.name]["real_view"] = view
+            problems.extend(f"{tenant.name}: {issue}" for issue in view["problems"])
+        elif mode == "synthetic":
+            if len(tenant.available_tables()) < 30:
+                problems.append(f"{tenant.name}: only {len(tenant.available_tables())} curated tables")
+        else:
+            problems.append(f"{tenant.name}: invalid declared data_mode {mode!r}")
     ok = not problems
     detail = (
-        "both fixtures match their hash manifest and carry disclosure"
+        "inputs match their manifests and carry disclosure in their declared data mode"
         if ok
         else "; ".join(problems)
     )
@@ -426,7 +444,7 @@ def gate_wfm_staffing(context: RunContext) -> GateResult:
             "required_to_observed": ratio,
             "provenance": built.provenance,
         }
-        if tenant.name == "callcenterclient":
+        if tenant.name == "callcenterclient" and getattr(tenant, "data_mode", "synthetic") == "synthetic":
             chaos_dir = tenant.root / "16_DATA" / "raw_chaos"
             wfm_chaos = pd.read_csv(chaos_dir / "wfm_queue_derived.csv", low_memory=False)
             outages = pd.read_csv(chaos_dir / "telephony_outages.csv", low_memory=False)
@@ -446,6 +464,11 @@ def gate_wfm_staffing(context: RunContext) -> GateResult:
                 "outage_offered_contacts": int(offered.sum()),
                 "outage_handled_contacts": int(handled.sum()),
                 "outage_sla_zero_rows": int(pd.to_numeric(outages.sla_pct).eq(0).sum()),
+            }
+        elif tenant.name == "callcenterclient":
+            metrics["callcenterclient_wfm_chaos"] = {
+                "status": "NOT_APPLICABLE",
+                "reason": "declared real input has no synthetic chaos overlay to verify",
             }
     ok = not problems
     detail = "Erlang C staffing is plausible on both fixtures" if ok else "; ".join(problems)
@@ -494,7 +517,7 @@ def gate_rta_adherence(context: RunContext) -> GateResult:
             "agents_or_sessions": built.provenance.get("rows"),
             "provenance": built.provenance,
         }
-        if tenant.name == "callcenterclient":
+        if tenant.name == "callcenterclient" and getattr(tenant, "data_mode", "synthetic") == "synthetic":
             chaos_dir = tenant.root / "16_DATA" / "raw_chaos"
             split = pd.read_csv(chaos_dir / "split_shift_rosters.csv", low_memory=False)
             source = tenant.read_curated("rosters_daily")
@@ -514,6 +537,12 @@ def gate_rta_adherence(context: RunContext) -> GateResult:
                 "daily_hours_match_source": totals_match,
                 "split_shift_agents": int(split.loc[split.split_marker == 1, "agent_id"].nunique()),
                 "swap_marked_rows": int(pd.to_numeric(split.swap_marker).sum()),
+            }
+        elif tenant.name == "callcenterclient":
+            metrics["callcenterclient_split_shift"] = {
+                "status": "NOT_APPLICABLE",
+                "reason": "split_shift_rosters.csv is a synthetic overlay keyed to synthetic agent ids; "
+                          "it is not a valid comparator for a declared real input",
             }
     ok = not problems
     detail = "adherence reproduces the fixture within 2pp" if ok else "; ".join(problems)
