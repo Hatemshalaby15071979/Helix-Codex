@@ -1,5 +1,4 @@
 """Security invariants for the supported Docker Compose API deployment."""
-
 from __future__ import annotations
 
 from pathlib import Path

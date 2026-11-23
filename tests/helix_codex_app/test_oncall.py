@@ -9,7 +9,6 @@ tests drive the mounted router through TestClient for the oncall status API,
 the fail-closed 503 when the engine cannot be read, the manager-only create
 route with CSRF, and the home-screen on-call person.
 """
-
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
