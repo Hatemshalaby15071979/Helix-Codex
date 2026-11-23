@@ -21,6 +21,7 @@ the committed manifest, pass `--no-write-evidence`.
 
 Exit code 0 only when the emitted classification is a permitted C8 outcome.
 """
+
 from __future__ import annotations
 
 import pathlib

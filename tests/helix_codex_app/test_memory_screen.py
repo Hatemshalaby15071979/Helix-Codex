@@ -5,6 +5,7 @@ render the card partial directly and pin the three things that matter — the
 evidence numbers are on screen, the rollback control appears only once a proposal
 has been applied, and an approve button is never offered on your own proposal.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

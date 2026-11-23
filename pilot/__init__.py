@@ -4,6 +4,7 @@ Read-only-first orchestration of the verified connector, customer-success,
 governed-memory, and command-center building blocks. Does not activate live
 connectors, cloud services, or external writes, and never auto-improves.
 """
+
 from __future__ import annotations
 
 from .config import PilotConfig

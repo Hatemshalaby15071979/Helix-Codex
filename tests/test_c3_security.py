@@ -21,6 +21,7 @@ Covers:
 - C2 aggregate sequence regression
 - repeated submission/idempotency regression
 """
+
 import pathlib
 
 import pytest

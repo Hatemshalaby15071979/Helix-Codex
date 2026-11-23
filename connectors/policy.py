@@ -3,6 +3,7 @@
 This module implements the governance gate for connector writes. It maps
 capabilities to risk tiers and enforces the approval workflow.
 """
+
 from __future__ import annotations
 
 from typing import Any

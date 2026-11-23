@@ -16,6 +16,7 @@ Paths default to the service defaults (control_plane/workflow.db and
 security/audit.db); override with --db-path / --audit-db-path. Exit 0 on
 success; argparse usage errors exit 2; operational failures exit 1.
 """
+
 from __future__ import annotations
 
 import argparse

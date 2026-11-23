@@ -3,6 +3,7 @@
 The shape is pinned before any client exists, so it cannot drift without
 a schema-level error surfacing in tests.
 """
+
 from __future__ import annotations
 
 from pydantic import BaseModel

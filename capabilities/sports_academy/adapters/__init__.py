@@ -5,6 +5,7 @@ Each adapter maps pack-local data onto reused core engines where applicable:
 - athlete profiles → pack-local CRM records (+ engines/cx churn features in S3)
 - facility / payments → pack-local, read-only or manual-record-only
 """
+
 from __future__ import annotations
 
 from .athlete_profile_adapter import (  # noqa: F401

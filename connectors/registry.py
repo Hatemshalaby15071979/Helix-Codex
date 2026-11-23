@@ -7,6 +7,7 @@ activatable yet, so no live credentials can be loaded accidentally.
 
 Known providers: zendesk, salesforce, clay.
 """
+
 from __future__ import annotations
 
 from typing import Mapping

@@ -2,6 +2,7 @@
 CX Churn Sentinel — Adapter (C4)
 Invokes actual engines/cx/src/risk_scorer.py
 """
+
 from __future__ import annotations
 
 import time

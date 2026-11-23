@@ -8,6 +8,7 @@ ops. authorize_engine_action forces every request onto the account's own
 tenant and client, so no caller can name a foreign scope. Deny by default:
 any failure raises PermissionDenied, never allowing.
 """
+
 from __future__ import annotations
 
 import security.policy as _policy

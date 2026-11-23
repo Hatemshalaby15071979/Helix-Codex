@@ -5,6 +5,7 @@ covering the screens, the JSON contract, CSRF, and SSE header-level
 checks.  The SSE stream is driven directly so the infinite body does
 not hang the test client.
 """
+
 from __future__ import annotations
 
 import asyncio

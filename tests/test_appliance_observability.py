@@ -9,6 +9,7 @@ an exported metric. The readiness sensitivity test is the can-fail proof:
 with the recording call patched out, the failing probe leaves no signal,
 so the positive tests only pass while the wiring is in place.
 """
+
 from __future__ import annotations
 
 import json

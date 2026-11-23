@@ -5,6 +5,7 @@ The engine call itself is synchronous and is run in a worker thread; only this
 endpoint is async. That keeps 445 sync tests intact while still giving the UI a
 live view.
 """
+
 from __future__ import annotations
 
 import asyncio

@@ -16,6 +16,7 @@ These tests pin three properties:
 The script builds throwaway databases inside a temp directory and closes
 every SQLite handle before teardown (Windows file-lock safety).
 """
+
 from __future__ import annotations
 
 import pathlib

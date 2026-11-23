@@ -24,6 +24,7 @@ Controls (all enforced locally, no cloud, no paid vector DB):
 Determinism: no wall-clock, no RNG. Callers supply `timestamp` and `correlation_id`.
 Record IDs are `mem-{seq:06d}` derived from ledger position.
 """
+
 from __future__ import annotations
 
 import hashlib

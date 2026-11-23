@@ -3,6 +3,7 @@
 Pure compute + thin Streamlit render. KPI values render against the targets
 declared in declarations/coach_kpis.yaml.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, Optional
@@ -87,8 +88,7 @@ def render_coach_dashboard(
         for sid, row in board["today_attendance"].items():
             st.progress(
                 row["attendance_rate"],
-                text=f"{sid}: {row['present']}/{row['roster_size']} "
-                f"({row['attendance_rate']:.0%})",
+                text=f"{sid}: {row['present']}/{row['roster_size']} ({row['attendance_rate']:.0%})",
             )
     else:
         st.info("No sessions scheduled today.")

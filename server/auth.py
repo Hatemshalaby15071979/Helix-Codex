@@ -4,6 +4,7 @@ Server authentication layer for Helix Codex OS.
 Reads bearer tokens from the Authorization header, resolves them to
 Identity objects, and validates roles against the policy engine.
 """
+
 from __future__ import annotations
 
 import hmac

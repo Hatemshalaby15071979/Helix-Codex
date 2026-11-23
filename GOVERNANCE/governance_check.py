@@ -3,6 +3,7 @@
 This check is intentionally dependency-free and read-only. It blocks drift in
 agent sessions without treating narrative documents as proof of implementation.
 """
+
 from __future__ import annotations
 
 import argparse

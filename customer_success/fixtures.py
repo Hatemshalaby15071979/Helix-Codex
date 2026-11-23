@@ -5,6 +5,7 @@ Every fixture returns an :class:`AccountContextBundle` with explicit `as_of` and
 Four archetypes are provided: healthy, at-risk, unknown, contradictory. Each can
 be labelled historical (`historical_consented`) or simulated (`simulated_realistic`).
 """
+
 from __future__ import annotations
 
 import datetime as _dt

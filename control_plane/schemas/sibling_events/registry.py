@@ -13,6 +13,7 @@ Registry rules
   contract violation, because silently ignoring them is how two systems drift
   apart without either one failing.
 """
+
 from __future__ import annotations
 
 import json

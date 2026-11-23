@@ -16,6 +16,7 @@ accidental edit is caught without the pin crying wolf on a harmless move.
 All tests are deterministic and isolated (temp state); they never mutate the live
 shared control-plane/audit DBs or the committed release artefacts.
 """
+
 from __future__ import annotations
 
 import ast
@@ -380,9 +381,9 @@ def test_operator_readiness_refuses_a_present_but_empty_document(monkeypatch, tm
     _lay_operator_docs(tmp_path, "")
     monkeypatch.setattr(gate, "ROOT", tmp_path)
 
-    assert all(
-        (tmp_path / rel).exists() for rel in OPERATOR_DOCS
-    ), "the old existence-only predicate would have been green"
+    assert all((tmp_path / rel).exists() for rel in OPERATOR_DOCS), (
+        "the old existence-only predicate would have been green"
+    )
 
     ok, detail = gate.GATE_IMPL["operator_readiness"]()
     assert ok is False

@@ -7,6 +7,7 @@ one governed node through AttendanceService, with the timestamp decided by
 the server. The mutating route answers an HTMX fragment under HX-Request so
 the button label and the running total update in place.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone

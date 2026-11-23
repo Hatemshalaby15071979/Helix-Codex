@@ -47,7 +47,7 @@ def _require_plotly() -> None:
     """Raise a helpful error if Plotly is not installed."""
     if not _PLOTLY_AVAILABLE:
         raise RuntimeError(
-            "Plotly is required for RTA visualizations. " "Install it with: pip install plotly"
+            "Plotly is required for RTA visualizations. Install it with: pip install plotly"
         )
 
 

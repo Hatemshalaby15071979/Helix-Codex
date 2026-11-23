@@ -35,6 +35,7 @@ workflow manager has never forbidden same-role approval, so it passes
 pins its verdicts to these predicates instead. Every caller keeps its own
 exception type, message and scope — nothing is silently widened or narrowed.
 """
+
 from __future__ import annotations
 
 from typing import Any, Iterable, List, Mapping, Optional, Sequence

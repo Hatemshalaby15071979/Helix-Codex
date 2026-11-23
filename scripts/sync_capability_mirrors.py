@@ -31,6 +31,7 @@ Usage:
 Exit 0 = mirrors current (or written). Exit 1 = stale, missing, or the canonical
 could not be read — a control that cannot run fails closed.
 """
+
 from __future__ import annotations
 
 import argparse

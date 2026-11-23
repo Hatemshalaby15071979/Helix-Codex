@@ -5,6 +5,7 @@ message, or notification that belongs to tenant B.  The proof is at two
 levels: the service raises NotFoundError on every membership-gated read,
 and the HTTP surface returns an empty list or a 404.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

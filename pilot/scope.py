@@ -5,6 +5,7 @@ The pilot explicitly separates:
 * simulated_realistic  — synthetic data that mimics production shape
 * live_customer        — live production data; NOT activated by the pilot package
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

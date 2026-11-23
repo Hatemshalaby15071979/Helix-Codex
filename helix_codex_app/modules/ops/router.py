@@ -5,6 +5,7 @@ never reaches any of it. Submission and approval both answer an HTMX fragment
 when the request came from the browser, so a card updates in place rather than
 reloading the page.
 """
+
 from __future__ import annotations
 
 import asyncio

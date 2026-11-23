@@ -8,6 +8,7 @@ underlying cause for the audit row, but the router only ever prints the same
 user-facing sentence, so a caller cannot learn whether the domain, the
 username, or the password was the wrong part.
 """
+
 from __future__ import annotations
 
 import sqlite3

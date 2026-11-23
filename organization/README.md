@@ -15,7 +15,10 @@ from organization.role_catalog import load_role_catalog
 
 catalog = load_role_catalog("organization/role-catalog.yaml")
 sami = catalog["roles_by_id"]["sami"]
-assert "compliance_quality_gm" in catalog["roles_by_id"]["ops_gm"]["segregation_of_duties"]["must_be_reviewed_by"]
+assert (
+    "compliance_quality_gm"
+    in catalog["roles_by_id"]["ops_gm"]["segregation_of_duties"]["must_be_reviewed_by"]
+)
 ```
 
 CLI check:

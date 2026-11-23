@@ -9,6 +9,7 @@ and weekly recurrence expansion on read. HTTP tests drive the mounted
 calendar router through TestClient for the screens, the JSON contract, the
 HTMX fragment path, CSRF, and cross-tenant isolation.
 """
+
 from __future__ import annotations
 
 import json

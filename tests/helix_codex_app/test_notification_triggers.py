@@ -6,6 +6,7 @@ the shape.  The tests go through MessagingService.send_message —
 the only wired trigger path — so they pin the integration boundary
 without duplicating the service tests in test_notifications.py.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

@@ -7,6 +7,7 @@ governed memory; nothing here executes a write. Recommended actions carry
 their workflow category so the approval layer can enforce the pack's
 authority boundaries (owner/approver separation of duties).
 """
+
 from __future__ import annotations
 
 import pathlib

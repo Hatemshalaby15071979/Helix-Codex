@@ -16,6 +16,7 @@ The signing round trip needs openssl, which is part of the release toolchain
 (`release/manifest.py` already shells out to git the same way). Only those tests
 skip when it is absent.
 """
+
 from __future__ import annotations
 
 import importlib.util

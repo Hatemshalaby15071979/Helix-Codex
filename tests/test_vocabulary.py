@@ -11,6 +11,7 @@ Verifies that:
   divergence fails CI instead of landing silently
 - no module re-introduces a private copy of a vocabulary literal
 """
+
 from __future__ import annotations
 
 import pathlib

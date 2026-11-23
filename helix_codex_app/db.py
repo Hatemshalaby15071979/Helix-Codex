@@ -6,6 +6,7 @@ defines (sections 5.2 and 7) and record_node() is the only function that may
 insert into the nodes table. Raw sqlite3 and raw DDL, matching the parent
 style. There is no ORM.
 """
+
 from __future__ import annotations
 
 import json

@@ -24,6 +24,7 @@ Provides deterministic, fail-closed lookup for:
 Preserves legacy name-based routing via compatibility; does not break existing orchestrator.
 Preserves all C1a APIs: get_agent_for_capability, get_engine_for_capability, etc.
 """
+
 from __future__ import annotations
 
 import pathlib

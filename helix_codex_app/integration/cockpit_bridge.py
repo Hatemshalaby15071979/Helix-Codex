@@ -11,6 +11,7 @@ figure cannot be computed the bridge raises rather than returning a partial
 dashboard: a cockpit that quietly shows zeroes is worse than one that says it is
 unavailable.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone

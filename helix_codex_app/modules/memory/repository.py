@@ -5,6 +5,7 @@ list and filter proposals without replaying a ledger on every request. A
 projection write never precedes the ledger write, so when the two disagree the
 ledger wins and the projection is rebuilt from it.
 """
+
 from __future__ import annotations
 
 import sqlite3

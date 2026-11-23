@@ -6,6 +6,7 @@ on: the manifest parses and lists three icons, every icon file exists, the
 service worker references a versioned cache name, and the offline page
 exists so a failed navigation has something to show.
 """
+
 from __future__ import annotations
 
 import json

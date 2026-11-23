@@ -5,6 +5,7 @@ Probes engines (py_compile + importlib), agents (AgentRegistry), orchestrator ro
 and cognitive_log. Writes evidence/baseline/smoke.log (gitignored) and prints summary.
 Exit 0 = baseline green, non-zero = failure.
 """
+
 from __future__ import annotations
 
 import datetime

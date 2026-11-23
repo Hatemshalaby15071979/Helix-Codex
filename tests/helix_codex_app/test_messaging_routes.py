@@ -7,6 +7,7 @@ infinite response to completion, so conversation_event_stream is driven
 directly and the stream route is pinned with the fast, deterministic cases
 (open headers, non-member 403).
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

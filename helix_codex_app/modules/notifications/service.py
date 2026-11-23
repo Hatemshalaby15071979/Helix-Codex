@@ -9,6 +9,7 @@ The service owns two jobs:
    group messages produce a "mention" notification for each @username
    that resolves to an account in the same domain.
 """
+
 from __future__ import annotations
 
 import re

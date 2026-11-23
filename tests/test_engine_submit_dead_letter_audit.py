@@ -7,6 +7,7 @@ decision="denied". Four paths previously emitted workflow_dead_letter without
 auditing: unknown capability, owning-role mismatch, tool not allowed, and a
 tool-permission ValueError.
 """
+
 from __future__ import annotations
 
 from contracts.task import CorrelationContext, TaskRequest

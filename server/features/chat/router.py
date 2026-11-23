@@ -1,4 +1,5 @@
 """Chat feature — real-time messaging with SSE streaming."""
+
 from __future__ import annotations
 
 import asyncio

@@ -9,6 +9,7 @@ Gaps checked:
 - structured logs contain workflow/task/correlation identifiers
 - failed engine execution produces a visible typed error
 """
+
 import pathlib
 
 from contracts.task import CorrelationContext, TaskRequest

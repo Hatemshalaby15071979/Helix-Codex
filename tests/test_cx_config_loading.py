@@ -6,6 +6,7 @@ Gap closed: ``engines/cx/src/risk_scorer.py`` previously hardcoded ``kpi_thresho
 truth. These tests fail against the pre-fix module: overriding the config path changed
 nothing because the values were not loaded from the YAML.
 """
+
 from __future__ import annotations
 
 import textwrap

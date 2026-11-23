@@ -21,6 +21,7 @@ What it does:
 Exit 0 = pilot readiness summary produced; non-zero = a probe failed.
 This is NOT a human approval and NEVER a production approval.
 """
+
 from __future__ import annotations
 
 import datetime

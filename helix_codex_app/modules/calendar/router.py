@@ -5,6 +5,7 @@ routes write one governed node per action through CalendarService. The page
 shows an agenda list on phones and a month grid on wider screens. Every
 mutating route accepts a JSON body or an HTMX urlencoded form.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone

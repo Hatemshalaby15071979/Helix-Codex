@@ -8,6 +8,7 @@ or an HTMX urlencoded form through the same _payload() helper used by the
 messaging module. Restoring an old version appends a new version row and
 overwrites the live blocks; history is never rewritten.
 """
+
 from __future__ import annotations
 
 from typing import Any

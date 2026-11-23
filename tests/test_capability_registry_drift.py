@@ -5,6 +5,7 @@ Mirrors must be generated/validated, not hand-edited independently:
   - contracts/capabilities.yaml
   - organization/capabilities.json
 """
+
 import json
 import pathlib
 

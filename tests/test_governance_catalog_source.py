@@ -13,6 +13,7 @@ A2.3  contracts/capabilities.yaml and organization/capabilities.json are generat
 Every guard gets a can-fail proof, matching the house style used elsewhere in
 tests/ (see tests/test_production_data_boundary.py for the pattern).
 """
+
 from __future__ import annotations
 
 import dataclasses

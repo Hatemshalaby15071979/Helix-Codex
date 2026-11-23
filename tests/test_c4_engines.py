@@ -206,9 +206,9 @@ def test_all_six_adapters_invoke_real_engine_code(tmp_path):
             pytest.fail(f"adapter {cap} should not be dead_letter for valid input: {wf.error}")
         wf_exec = engine.execute(wf.workflow_id)
         # Should be closed with metrics, not dead_letter
-        assert (
-            wf_exec.state == "closed"
-        ), f"{cap} should be closed, got {wf_exec.state} error {wf_exec.error}"
+        assert wf_exec.state == "closed", (
+            f"{cap} should be closed, got {wf_exec.state} error {wf_exec.error}"
+        )
         assert wf_exec.output_payload is not None
         assert len(wf_exec.output_payload) > 0, f"{cap} metrics should not be empty"
 

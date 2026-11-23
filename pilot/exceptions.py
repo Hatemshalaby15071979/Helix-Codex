@@ -1,4 +1,5 @@
 """Pilot-specific errors (Prompt 10)."""
+
 from __future__ import annotations
 
 

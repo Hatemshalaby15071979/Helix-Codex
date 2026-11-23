@@ -11,6 +11,7 @@ identical sqlite_master contents modulo indentation, so an existing app
 database can be stamped to head as a no-op. CI enforces agreement in both
 directions via helix_codex_app/scripts/check_app_migration_drift.py.
 """
+
 from __future__ import annotations
 
 from alembic import op

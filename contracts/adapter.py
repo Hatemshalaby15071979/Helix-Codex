@@ -36,6 +36,7 @@ Usage example (C1, catalog present):
 
 No network, no secrets, no DB migration.
 """
+
 from __future__ import annotations
 
 import datetime

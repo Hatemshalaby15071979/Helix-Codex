@@ -18,6 +18,7 @@ Updating an event or cancelling it is gated by a steward check: only the
 creator or a manager may do it. Responding to an event requires being one
 of its attendees, which the repository enforces with a row-based update.
 """
+
 from __future__ import annotations
 
 import sqlite3

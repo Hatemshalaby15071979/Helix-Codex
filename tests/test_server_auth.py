@@ -4,6 +4,7 @@ Authentication middleware tests (H0.3).
 Verifies that all /api routes require a valid bearer token, while /healthz
 remains publicly reachable — a design boundary that must not regress.
 """
+
 from __future__ import annotations
 
 import secrets

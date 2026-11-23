@@ -2779,7 +2779,7 @@ two flatly contradicted its own declared purpose.
 ```python
 # before
 lines = [ln for ln in lock.splitlines() if ln.strip() and not ln.startswith("#")]
-ok = len(lines) > 0                       # reproducible_install
+ok = len(lines) > 0  # reproducible_install
 
 ok = p.exists() and p.stat().st_size > 0  # dependency_locking
 ```

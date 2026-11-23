@@ -26,6 +26,7 @@ Usage
     wire = env.to_json()          # this is the entire integration surface
     payload = receive(wire)       # validated on the far side
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, Mapping

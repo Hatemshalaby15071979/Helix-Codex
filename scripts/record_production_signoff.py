@@ -34,6 +34,7 @@ What this tool deliberately does NOT do:
 * `check` passing means the record is **well-formed**, not that the approval is
   legitimate. Legitimacy is the human's and their reviewer's to establish.
 """
+
 from __future__ import annotations
 
 import argparse

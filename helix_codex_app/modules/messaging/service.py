@@ -8,6 +8,7 @@ chat is in the audit trail like every other write in the app. Tenant and
 client ids come from the sender's account record; the request never supplies
 them.
 """
+
 from __future__ import annotations
 
 import sqlite3

@@ -9,6 +9,7 @@ consumed counts live on the account record, in memory, and reset when the
 account is reloaded or the process restarts; windowed persistence lands with
 the module that owns the quota windows.
 """
+
 from __future__ import annotations
 
 import sqlite3

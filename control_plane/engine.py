@@ -3,6 +3,7 @@ Execution engine for Helix Prime Codex C2.
 
 Local-first, deterministic, fail-closed. No cloud, no network.
 """
+
 from __future__ import annotations
 
 import datetime

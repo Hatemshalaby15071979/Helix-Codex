@@ -6,6 +6,7 @@ execute writes. They subclass :class:`connectors.base.BaseConnector` so they
 inherit the governed scope / rate-limit / retry / provenance / write-gating
 behavior.
 """
+
 from __future__ import annotations
 
 from typing import Any, Mapping, Sequence

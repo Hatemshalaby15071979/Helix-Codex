@@ -10,6 +10,7 @@ Covers the Prompt-4 gate list:
 * retry behavior (deterministic, retryable only);
 * failure behavior (typed envelope, malformed input).
 """
+
 from __future__ import annotations
 
 import types

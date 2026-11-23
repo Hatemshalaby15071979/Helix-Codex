@@ -6,6 +6,7 @@ on fire. The rule under test is that the bridge never invents an answer. A dead
 engine raises; it never returns an empty list that a screen would render as
 "nothing to see".
 """
+
 from __future__ import annotations
 
 import pytest

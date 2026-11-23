@@ -4,6 +4,7 @@ Structured JSON logs for Helix Prime Codex C3 — local-first, no cloud.
 Fields: correlation_id, causation_id, workflow_id, task_id, tenant/client, actor/role,
 capability/tool, duration, result status, error code, retry count, model/provider status.
 """
+
 from __future__ import annotations
 
 import datetime

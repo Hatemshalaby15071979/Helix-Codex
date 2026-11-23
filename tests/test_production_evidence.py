@@ -18,6 +18,7 @@ fail for exactly one cause.
 Fail-closed is the default this whole module exists to preserve: with nothing
 declared in the environment, every production-only gate still refuses.
 """
+
 from __future__ import annotations
 
 import datetime

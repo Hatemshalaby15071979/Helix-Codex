@@ -4,6 +4,7 @@ Every adapter is deterministic and offline: no sockets, no cloud SDKs, no
 wall-clock dependence. They are the default backing for local-first execution
 and for the synthetic cloud-demo profile (which is local underneath).
 """
+
 from __future__ import annotations
 
 from typing import Any, Callable, Optional

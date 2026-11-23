@@ -1,4 +1,5 @@
 """Deterministic, explainable customer-success account-health assessment."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

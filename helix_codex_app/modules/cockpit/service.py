@@ -8,6 +8,7 @@ gate, so all three are real.
 Nothing here writes. The cockpit shows state and changes none of it; a write
 belongs in the ops section, behind its approval rail.
 """
+
 from __future__ import annotations
 
 from typing import Any

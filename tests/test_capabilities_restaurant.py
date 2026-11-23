@@ -6,6 +6,7 @@ writes, no production claim, metacognitive proposals, governance checks, release
 and a joint demonstration that the SAME governed core supports both call-centre and
 restaurant workflows.
 """
+
 from __future__ import annotations
 
 import subprocess

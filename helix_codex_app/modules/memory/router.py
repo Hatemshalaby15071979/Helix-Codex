@@ -9,6 +9,7 @@ can never approve their own.
 Every route is scoped to the signed-in account's own ledger. There is no route
 that takes a proposal id belonging to somebody else and returns it.
 """
+
 from __future__ import annotations
 
 import json

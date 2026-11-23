@@ -5,6 +5,7 @@ across all five app roles and the nine catalog roles. The bridge tests prove
 an employee cannot reach the policy engine while a catalog role can, and that
 no caller can name a foreign scope through the bridge.
 """
+
 from __future__ import annotations
 
 import pytest

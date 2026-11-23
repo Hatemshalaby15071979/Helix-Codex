@@ -9,6 +9,7 @@ Checks:
 - Ollama availability (HTTP GET http://localhost:11434/api/tags, timeout 2s, no network required for tests — mockable)
 - required filesystem paths (evidence/, control_plane/, security/, observability/)
 """
+
 from __future__ import annotations
 
 import pathlib

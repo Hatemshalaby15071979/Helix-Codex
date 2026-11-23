@@ -10,6 +10,7 @@ capability-for-capability.
 Every record preserves: tenant/client identity, provenance, correlation ID,
 data mode, approval state, outcome, and the audit trail.
 """
+
 from __future__ import annotations
 
 import sys

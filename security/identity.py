@@ -4,6 +4,7 @@ Identity and authorization — local-first seam for Helix Prime Codex C3.
 Supports actor identity with type, tenant/client scope, role, capability, tool, action, approval authority.
 No external IdP; deterministic, deny-by-default.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

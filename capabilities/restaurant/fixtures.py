@@ -3,6 +3,7 @@
 Clearly synthetic, deterministic data for one location. Used only for demonstration;
 no live customer data and no network access.
 """
+
 from __future__ import annotations
 
 from connectors.contracts import SourceRef

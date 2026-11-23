@@ -14,7 +14,15 @@ Local-first, no cloud.
 from observability.logging import log_structured
 from observability.health import check_health, is_healthy
 
-log_structured(event_type="workflow_succeeded", correlation_id="corr1", workflow_id="wf1", actor="sami", capability="wfm_forecast", result_status="succeeded", duration_ms=123)
+log_structured(
+    event_type="workflow_succeeded",
+    correlation_id="corr1",
+    workflow_id="wf1",
+    actor="sami",
+    capability="wfm_forecast",
+    result_status="succeeded",
+    duration_ms=123,
+)
 health = check_health()
 assert is_healthy(health)  # ollama optional
 assert health["control_plane_store"].ok

@@ -1214,8 +1214,9 @@ This document is written in Markdown. To produce a PDF:
    ```python
    import markdown
    from weasyprint import HTML
+
    md = open("docs/PROJECT_ARCHITECTURE.md").read()
-   html = markdown.markdown(md, extensions=['tables', 'fenced_code'])
+   html = markdown.markdown(md, extensions=["tables", "fenced_code"])
    HTML(string=f"<pre>{html}</pre>").write_pdf("docs/PROJECT_ARCHITECTURE.pdf")
    ```
 4. **GitHub**: View on GitHub → Print → Save as PDF (limited formatting)

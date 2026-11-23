@@ -44,7 +44,9 @@ Legacy text bridge (compatibility, will be replaced in C2):
 
 ```python
 for agent, msg in parse_legacy_calls('call_agent("PHILI", "headcount?")'):
-    req = to_task_request(corr, "sami", "sami", "hr_personnel_gm", "workforce_planning", {"question": msg})
+    req = to_task_request(
+        corr, "sami", "sami", "hr_personnel_gm", "workforce_planning", {"question": msg}
+    )
 ```
 
 ## Guarantees (C1)

@@ -19,6 +19,7 @@ These tests do four things:
 4. They stop the duplication from growing back, with an AST guard rather than a
    text search, so prose in a docstring cannot trip it.
 """
+
 from __future__ import annotations
 
 import ast
@@ -889,7 +890,7 @@ class TestSingleDeclaration:
         module = tmp_path / "contracts"
         module.mkdir()
         (module / "offender.py").write_text(
-            "def check(approver_actor, actor):\n" "    return approver_actor == actor\n",
+            "def check(approver_actor, actor):\n    return approver_actor == actor\n",
             encoding="utf-8",
         )
         assert set(_sod_shaped_comparisons(tmp_path, ("contracts",))) == {"contracts/offender.py"}

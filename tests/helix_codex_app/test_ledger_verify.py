@@ -5,6 +5,7 @@ tests prove an intact chain verifies and a tampered one does not — on both, an
 at both ends of the chain, because a chain that only catches edits to the first
 line is not a chain.
 """
+
 from __future__ import annotations
 
 import json

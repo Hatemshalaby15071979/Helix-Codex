@@ -5,6 +5,7 @@ The audit trail must never fail silently. A *consequential* audit (one that
 commits a forward state change) must move the workflow to DEAD_LETTER when the
 write fails; a non-consequential audit stays best-effort and must not raise.
 """
+
 from __future__ import annotations
 
 import pytest

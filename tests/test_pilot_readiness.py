@@ -9,6 +9,7 @@ regression (release gate still passes for the controlled-pilot profile).
 All tests are deterministic and isolated; they never mutate live shared DBs and
 never write to the repo's evidence/ directory.
 """
+
 from __future__ import annotations
 
 import pathlib

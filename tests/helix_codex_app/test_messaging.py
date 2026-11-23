@@ -6,6 +6,7 @@ creates exactly one nodes row, and list_messages pages correctly. The
 fixtures build two tenants so the tenant rules are exercised with real
 data, not stubs.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace
@@ -110,8 +111,7 @@ def test_direct_conversation_is_one_pair_not_one_channel(ctx) -> None:
     other_pair = ctx.service.create_direct(ctx.amira, ctx.layla)
     assert first_pair.conversation_id != other_pair.conversation_id
     counts = ctx.conn.execute(
-        "SELECT conversation_id, COUNT(*) AS n FROM conversation_members"
-        " GROUP BY conversation_id"
+        "SELECT conversation_id, COUNT(*) AS n FROM conversation_members GROUP BY conversation_id"
     ).fetchall()
     by_id = {row["conversation_id"]: row["n"] for row in counts}
     assert by_id[first_pair.conversation_id] == 2

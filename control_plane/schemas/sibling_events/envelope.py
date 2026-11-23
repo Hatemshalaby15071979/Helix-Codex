@@ -17,6 +17,7 @@ Design constraints
 * ``data_mode`` travels with the event so a learning plan built on sample data
   can never be mistaken for one built on measured operational data.
 """
+
 from __future__ import annotations
 
 import datetime

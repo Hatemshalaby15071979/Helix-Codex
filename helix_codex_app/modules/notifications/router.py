@@ -7,6 +7,7 @@ any subsequent publish arrives.  Mutating routes carry require_csrf.
 The stream lives under /app/api/notifications/stream so the service
 worker's existing stream exclusion applies (see sw.js).
 """
+
 from __future__ import annotations
 
 import asyncio

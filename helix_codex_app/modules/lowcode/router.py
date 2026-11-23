@@ -5,6 +5,7 @@ Writes are owner-only (packs.manage) and always carry the CSRF check. The
 loader validates a manifest before anything is registered, so an invalid
 manifest is a typed 400, never a partial registration.
 """
+
 from __future__ import annotations
 
 import sqlite3

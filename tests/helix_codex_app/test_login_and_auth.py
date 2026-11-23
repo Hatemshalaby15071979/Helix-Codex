@@ -5,6 +5,7 @@ HTTP tests drive the real router through TestClient, so the public login
 form, the guarded logout/password routes, the CSRF header requirement, and
 the cookie round-trip are exercised exactly as the app wiring uses them.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone

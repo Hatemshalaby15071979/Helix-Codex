@@ -5,6 +5,7 @@ broken, via a temporary fixture (monkeypatch). Verifies the app_pilot
 profile wires correctly and classifies to CONTROLLED_PILOT_READY when all
 its gates are green.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

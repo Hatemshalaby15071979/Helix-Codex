@@ -9,6 +9,7 @@ real app_router, exactly as the P1.3 guard tests do, so the dependency is
 exercised as production wiring will use it. This module is re-pointed at
 the live cockpit routes in P6 (master plan 5.6).
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

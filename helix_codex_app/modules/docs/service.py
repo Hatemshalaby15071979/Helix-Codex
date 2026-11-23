@@ -15,6 +15,7 @@ A note is like a working paper: only its owner and managers may read it. A
 published document (sop, kb, policy) is readable by everyone in the tenant.
 Only a manager or owner may publish sop or policy.
 """
+
 from __future__ import annotations
 
 import json

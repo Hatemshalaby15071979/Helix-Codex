@@ -8,6 +8,7 @@ either wired (call_agent -> the agent registry; side-effecting tools -> the
 bound Engine / document reader) or fail closed with a typed error. The legacy
 regex parser exists only behind HELIX_LEGACY_CALL_PARSING=1 and is logged.
 """
+
 from __future__ import annotations
 
 import asyncio

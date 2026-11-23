@@ -7,6 +7,7 @@ Every /app route except the health route and the static mount runs the
 account guard; every mutating /app route also runs the CSRF check. Both are
 wired once, at the router boundary, not per handler.
 """
+
 from __future__ import annotations
 
 import json

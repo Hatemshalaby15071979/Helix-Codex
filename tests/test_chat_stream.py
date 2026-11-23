@@ -10,6 +10,7 @@ The foreign-frame test is the can-fail proof for the per-frame filter: it
 publishes a foreign-tenant payload to the caller key directly, so removing
 the filter lets it through and the test fails.
 """
+
 from __future__ import annotations
 
 import asyncio

@@ -7,6 +7,7 @@ drive the mounted docs router through TestClient for the screens, the JSON
 contract, the HTMX fragment path, CSRF, and cross-tenant isolation (a
 foreign document is a plain 404 everywhere, never a clue).
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

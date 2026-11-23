@@ -16,6 +16,7 @@ Tests cover:
 - Ollama-unavailable behavior
 - Catalog-only GMs not claiming unavailable execution tools
 """
+
 from __future__ import annotations
 
 import pathlib
@@ -76,9 +77,9 @@ def test_role_catalog_has_agent_name_field():
     for role in catalog["roles"]:
         rid = role["id"]
         assert "agent_name" in role, f"Role {rid} missing agent_name field"
-        assert (
-            role["agent_name"] == expected_names[rid]
-        ), f"Role {rid} agent_name {role['agent_name']!r} != expected {expected_names[rid]!r}"
+        assert role["agent_name"] == expected_names[rid], (
+            f"Role {rid} agent_name {role['agent_name']!r} != expected {expected_names[rid]!r}"
+        )
 
 
 def test_canonical_gms_are_functional():
@@ -86,16 +87,16 @@ def test_canonical_gms_are_functional():
     catalog = load_role_catalog("organization/role-catalog.yaml")
     for role in catalog["roles"]:
         # All 9 GMs should be functional_agent
-        assert (
-            role["implementation_status"] == "functional_agent"
-        ), f"{role['id']} should be functional_agent, got {role['implementation_status']}"
+        assert role["implementation_status"] == "functional_agent", (
+            f"{role['id']} should be functional_agent, got {role['implementation_status']}"
+        )
         assert role["maps_to_agent"] is not None, f"{role['id']} missing maps_to_agent"
         assert role["agent_class"] is not None, f"{role['id']} missing agent_class"
         # Verify agent_name field exists and matches canonical crew
         assert "agent_name" in role, f"{role['id']} missing agent_name field"
-        assert (
-            role["agent_name"] == role["maps_to_agent"]
-        ), f"{role['id']} agent_name ({role['agent_name']}) != maps_to_agent ({role['maps_to_agent']})"
+        assert role["agent_name"] == role["maps_to_agent"], (
+            f"{role['id']} agent_name ({role['agent_name']}) != maps_to_agent ({role['maps_to_agent']})"
+        )
 
 
 def test_new_gm_capabilities_registered():
@@ -192,9 +193,9 @@ def test_new_gm_tools_allowed():
             assert is_tool_allowed(role_id, tool), f"Tool {tool!r} not allowed for {role_id}"
         # Test denied tool
         denied_tool = "wfm_engine"
-        assert not is_tool_allowed(
-            role_id, denied_tool
-        ), f"Tool {denied_tool!r} should be denied for {role_id}"
+        assert not is_tool_allowed(role_id, denied_tool), (
+            f"Tool {denied_tool!r} should be denied for {role_id}"
+        )
 
 
 def test_new_gm_peer_calls():
@@ -328,9 +329,9 @@ def test_canonical_crew_names_exact():
         agent = AgentRegistry.get_agent(name)
         assert agent is not None, f"Canonical agent {name} not registered"
         assert agent.name == name, f"Agent name mismatch: {agent.name!r} != {name!r}"
-        assert (
-            agent.role == expected_role
-        ), f"{name} role mismatch: {agent.role!r} != {expected_role!r}"
+        assert agent.role == expected_role, (
+            f"{name} role mismatch: {agent.role!r} != {expected_role!r}"
+        )
 
 
 def test_legacy_aliases_resolve_to_same_instances():
@@ -365,9 +366,9 @@ def test_new_agents_have_system_prompts():
         assert agent.system_prompt, f"Agent {name} missing system_prompt"
         assert len(agent.system_prompt) > 100, f"Agent {name} system_prompt too short"
         # System prompt should reference the canonical name
-        assert (
-            name in agent.system_prompt
-        ), f"System prompt for {name} should reference canonical name"
+        assert name in agent.system_prompt, (
+            f"System prompt for {name} should reference canonical name"
+        )
 
 
 # ── Authorization/SOD Regression Tests ──
@@ -476,9 +477,9 @@ def test_audit_log_identity_fields_use_canonical_names():
         rid = role["id"]
         agent_name = role["agent_name"]
         # The agent_name is the canonical identity
-        assert (
-            agent_name in CANONICAL_CREW
-        ), f"Role {rid} agent_name {agent_name!r} not in canonical crew"
+        assert agent_name in CANONICAL_CREW, (
+            f"Role {rid} agent_name {agent_name!r} not in canonical crew"
+        )
         # Verify it matches maps_to_agent
         assert agent_name == role["maps_to_agent"], f"Role {rid} agent_name != maps_to_agent"
 

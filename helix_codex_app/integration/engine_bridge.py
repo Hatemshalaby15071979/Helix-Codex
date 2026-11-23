@@ -9,6 +9,7 @@ worse than an error, and an empty result would be a silent lie.
 This module is the only place in the app that imports control_plane/ and
 engines/.
 """
+
 from __future__ import annotations
 
 import hashlib

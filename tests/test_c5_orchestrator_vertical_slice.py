@@ -1,4 +1,5 @@
 """Exercise the governed contact-centre slice through the request router."""
+
 from __future__ import annotations
 
 import json
@@ -63,9 +64,9 @@ def routed_slice(tmp_path, monkeypatch):
     monkeypatch.setattr(
         vertical_slice,
         "get_adapter_for_capability",
-        lambda capability: fake_rta_adapter
-        if capability == "rta_adherence"
-        else get_adapter(capability),
+        lambda capability: (
+            fake_rta_adapter if capability == "rta_adherence" else get_adapter(capability)
+        ),
     )
     request = VerticalSliceRequest(
         tenant_id=TENANT_ID,

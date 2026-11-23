@@ -6,6 +6,7 @@ supports drag-and-drop (Alpine.js) on desktop and a status select on
 mobile. Every mutating route accepts a JSON body or an HTMX urlencoded
 form through the same _payload() helper used by the other modules.
 """
+
 from __future__ import annotations
 
 from typing import Any

@@ -10,6 +10,7 @@ the flag carries engine evidence rather than pack-local arithmetic alone.
 Profiles and churn flags are recorded in governed memory by callers that
 hold a runtime. Nothing here writes to any external system.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, Sequence

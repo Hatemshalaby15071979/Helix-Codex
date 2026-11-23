@@ -5,6 +5,7 @@ Every committal action produces a `recommendation` record (with evidence) and an
 versioned `approval` record (never mutates the original ledger line), enforcing
 separation of duties and a full audit trail.
 """
+
 from __future__ import annotations
 
 from memory.governed_memory import GovernedMemory

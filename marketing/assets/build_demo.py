@@ -429,7 +429,7 @@ def mux_audio(chapter: Chapter, silent_mp4: Path, audio_mp3: Path) -> Path:
         "-i",
         str(audio_mp3),
         "-filter_complex",
-        f"[0:v]tpad=stop_mode=clone:stop_duration={target}[v];" f"[1:a]apad=whole_dur={target}[a]",
+        f"[0:v]tpad=stop_mode=clone:stop_duration={target}[v];[1:a]apad=whole_dur={target}[a]",
         "-map",
         "[v]",
         "-map",

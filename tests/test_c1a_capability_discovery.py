@@ -11,6 +11,7 @@ Tests per C1a ticket:
 - deterministic routing
 - no regression in current orchestrator behavior
 """
+
 from __future__ import annotations
 
 import pytest

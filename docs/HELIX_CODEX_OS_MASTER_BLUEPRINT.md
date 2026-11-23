@@ -112,22 +112,29 @@ Model everything as a **`Node`** with an invariant envelope. This is what makes 
 @dataclass(frozen=True)
 class NodeEnvelope:
     node_id: str
-    tenant_id: str              # never optional
+    tenant_id: str  # never optional
     client_id: str | None
-    correlation_id: str         # survives every boundary (constitution)
+    correlation_id: str  # survives every boundary (constitution)
     causation_id: str | None
-    classification: Literal["public","internal","client_confidential","restricted"]
-    provenance: Provenance      # source, data_mode, retrieved_at
-    nature: Literal["verified_fact","user_claim","model_inference",
-                    "simulated_event","historical_event","verified_outcome"]
-    created_by: str             # human user_id OR agent role_id — same field
+    classification: Literal["public", "internal", "client_confidential", "restricted"]
+    provenance: Provenance  # source, data_mode, retrieved_at
+    nature: Literal[
+        "verified_fact",
+        "user_claim",
+        "model_inference",
+        "simulated_event",
+        "historical_event",
+        "verified_outcome",
+    ]
+    created_by: str  # human user_id OR agent role_id — same field
     created_at: str
+
 
 @dataclass
 class Node:
     envelope: NodeEnvelope
-    kind: Literal["message","document","block","task","workflow","decision","proposal"]
-    body: dict                  # kind-specific payload
+    kind: Literal["message", "document", "block", "task", "workflow", "decision", "proposal"]
+    body: dict  # kind-specific payload
 ```
 
 `created_by` accepting **either** a human or an agent role is the keystone: agents and humans write through the same store, through the same gate, producing the same audit trail. No separate "AI side-channel."
@@ -218,15 +225,17 @@ failure_modes: [stale_inventory_feed, shift_overlap]
 ```python
 class CapabilityPack(Protocol):
     manifest: CapabilityManifest
+
     def ontology(self) -> dict[str, type]: ...
     def roles(self) -> list[RoleSpec]: ...
     def workflows(self) -> list[WorkflowDef]: ...
     def metrics(self) -> dict[str, MetricFn]: ...
     def runtime(self, memory: GovernedMemory, *, phase: Phase) -> CapabilityRuntime: ...
 
-def load_pack(path: Path) -> CapabilityPack: ...        # validates manifest
-def register_pack(pack: CapabilityPack) -> None: ...    # role/ontology/workflow merge
-def validate_pack(pack: CapabilityPack) -> list[Violation]: ...   # fails closed
+
+def load_pack(path: Path) -> CapabilityPack: ...  # validates manifest
+def register_pack(pack: CapabilityPack) -> None: ...  # role/ontology/workflow merge
+def validate_pack(pack: CapabilityPack) -> list[Violation]: ...  # fails closed
 ```
 
 **Invariants the loader must enforce** (each is a test):
@@ -263,11 +272,26 @@ def validate_pack(pack: CapabilityPack) -> list[Violation]: ...   # fails closed
 `GovernedMemory` is already well-designed. Extend, don't rebuild.
 
 ```python
-CLASSIFICATION_LEVELS = ("public","internal","client_confidential","restricted")
-NATURES = ("verified_fact","user_claim","model_inference",
-           "simulated_event","historical_event","verified_outcome")
-KINDS   = ("decision","recommendation","approval","outcome","failure",
-           "correction","policy","customer_context","workflow_history")
+CLASSIFICATION_LEVELS = ("public", "internal", "client_confidential", "restricted")
+NATURES = (
+    "verified_fact",
+    "user_claim",
+    "model_inference",
+    "simulated_event",
+    "historical_event",
+    "verified_outcome",
+)
+KINDS = (
+    "decision",
+    "recommendation",
+    "approval",
+    "outcome",
+    "failure",
+    "correction",
+    "policy",
+    "customer_context",
+    "workflow_history",
+)
 ```
 
 **Write-path ownership** — every super-app action must emit a record:
@@ -288,10 +312,11 @@ KINDS   = ("decision","recommendation","approval","outcome","failure",
 
 ```python
 memory.retrieve(
-    tenant_id=..., client_id=...,
-    kinds=("decision","outcome","policy"),
-    max_classification="client_confidential",   # ceiling, not equality
-    verified_only=True,                          # only verified_fact / verified_outcome
+    tenant_id=...,
+    client_id=...,
+    kinds=("decision", "outcome", "policy"),
+    max_classification="client_confidential",  # ceiling, not equality
+    verified_only=True,  # only verified_fact / verified_outcome
 )
 ```
 

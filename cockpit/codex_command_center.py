@@ -8,6 +8,7 @@ shell only; all decision logic lives in :mod:`cockpit.command_center_integration
 The cockpit never performs external writes. It previews actions, enforces
 cross-role approval (separation of duties), and records outcomes in memory.
 """
+
 from __future__ import annotations
 
 import streamlit as st

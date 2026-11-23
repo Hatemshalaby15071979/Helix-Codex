@@ -9,6 +9,7 @@ The gateway enforces the governed write path:
 
 All writes return AWAITING_APPROVAL, never a silent boolean.
 """
+
 from __future__ import annotations
 
 from typing import Any, Mapping

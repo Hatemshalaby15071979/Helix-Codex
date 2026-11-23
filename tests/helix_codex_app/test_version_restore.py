@@ -6,6 +6,7 @@ one. These tests prove that invariant at the row level: every original
 snapshot keeps its exact bytes through restores, edits, further snapshots, and
 chained restores, and each restore records its own governed version node.
 """
+
 from __future__ import annotations
 
 import json

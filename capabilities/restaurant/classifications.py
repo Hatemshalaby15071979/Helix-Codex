@@ -4,6 +4,7 @@ Maps fields to the canonical classification vocabulary used by the security core
 (public / internal / client_confidential / personnel_sensitive / financial /
 regulated_high_risk). The pack collects only the minimum necessary data.
 """
+
 from __future__ import annotations
 
 # Field -> classification. Personnel-sensitive and financial fields are flagged so

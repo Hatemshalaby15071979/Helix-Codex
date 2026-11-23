@@ -29,6 +29,7 @@ suppressed. Everything else fails:
 Exit 0 = drift is exactly the accepted set. Exit 1 = anything else (including a
 check that could not run — a control that cannot run fails closed).
 """
+
 from __future__ import annotations
 
 import argparse

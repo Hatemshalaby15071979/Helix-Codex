@@ -11,6 +11,7 @@ Seeded patterns (deterministic, used by tests downstream):
 - Facility: 14 booked slots (one per session) + 7 unbooked = 14/21 ≈ 66.7%.
 - 3 manual fee records (2 paid, 1 outstanding).
 """
+
 from __future__ import annotations
 
 import random

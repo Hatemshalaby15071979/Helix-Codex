@@ -14,6 +14,7 @@ which was explicitly out of scope for this step; a behaviour-preserving refactor
 a working security control is not worth doing as a side effect of adding a new one.
 Unifying the two is a reasonable follow-up in its own right.
 """
+
 from __future__ import annotations
 
 import sqlite3

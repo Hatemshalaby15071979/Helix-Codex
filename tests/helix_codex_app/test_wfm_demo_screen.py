@@ -21,6 +21,7 @@ way it breaks:
    `closed` workflow green — because `closed` is where a cancelled or
    dead-lettered run lands as well as a successful one.
 """
+
 from __future__ import annotations
 
 import re

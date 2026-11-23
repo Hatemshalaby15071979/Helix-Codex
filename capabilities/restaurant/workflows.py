@@ -5,6 +5,7 @@ returns a :class:`RestaurantDiagnosis` (risk findings + recommended actions) wit
 evidence refs that support it. The runtime records each diagnosis and its recommended
 actions in governed memory; nothing here executes a write.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

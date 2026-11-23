@@ -6,6 +6,7 @@ wiring uses it. The fixture builds a throwaway app database under tmp_path
 and points both the app and the parent engine at temp files, keeping the
 suite hermetic.
 """
+
 from __future__ import annotations
 
 import hashlib

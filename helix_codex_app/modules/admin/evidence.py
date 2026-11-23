@@ -10,6 +10,7 @@ Read-only: the source database is never modified. The zip never includes
 password hashes, session tokens, or raw secrets — the nodes table does
 not carry these by construction.
 """
+
 from __future__ import annotations
 
 import io
@@ -54,8 +55,7 @@ def _app_audit_trail(conn: sqlite3.Connection, tenant_id: str) -> list[dict[str,
 
 def _node_counts_by_kind(conn: sqlite3.Connection, tenant_id: str) -> dict[str, int]:
     rows = conn.execute(
-        "SELECT kind, COUNT(*) AS cnt "
-        "FROM nodes WHERE tenant_id = ? GROUP BY kind ORDER BY kind",
+        "SELECT kind, COUNT(*) AS cnt FROM nodes WHERE tenant_id = ? GROUP BY kind ORDER BY kind",
         (tenant_id,),
     ).fetchall()
     return {row["kind"]: row["cnt"] for row in rows}

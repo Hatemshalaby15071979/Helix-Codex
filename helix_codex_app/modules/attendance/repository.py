@@ -8,6 +8,7 @@ An account has at most one open punch: the open one is simply the most recent
 row of type "in", read with (punched_at, rowid) ordering so two punches at the
 same microsecond still resolve deterministically.
 """
+
 from __future__ import annotations
 
 import sqlite3

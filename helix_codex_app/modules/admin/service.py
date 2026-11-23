@@ -9,6 +9,7 @@ account can never change its own role or grant itself a capability. Every
 mutating call lands in the audit trail through record_node() with the full
 envelope, before the caller sees the result.
 """
+
 from __future__ import annotations
 
 import sqlite3

@@ -13,6 +13,7 @@ They also pin two behaviours that are easy to regress:
 * every response carries ``X-Request-ID``, so a screenshot from an operator is
   enough to find the run in the logs.
 """
+
 from __future__ import annotations
 
 import json

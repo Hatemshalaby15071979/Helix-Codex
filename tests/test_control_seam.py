@@ -16,6 +16,7 @@ The seam is driven with the real C4 adapters through
 :func:`engines.registry.build_port`, so these tests fail if the C4 bridge and
 the C4 engine contract stop agreeing.
 """
+
 from __future__ import annotations
 
 import pytest

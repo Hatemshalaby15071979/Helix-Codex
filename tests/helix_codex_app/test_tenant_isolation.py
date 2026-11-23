@@ -7,6 +7,7 @@ probe the reads the app actually uses: accounts, domains, org units, and
 sessions. A foreign tenant's row is not merely hidden from a caller — it is
 outside every query the app runs.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

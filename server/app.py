@@ -15,6 +15,7 @@ Every request is also counted in the process metrics registry
 route template — a fixed label vocabulary, so the exposition carries no
 request payload data.
 """
+
 from __future__ import annotations
 
 import logging

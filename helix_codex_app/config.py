@@ -5,6 +5,7 @@ secrets follow the parent rule: no default for a secret, and the app refuses
 to boot on an unsafe bind address. The host must be a loopback address unless
 the operator explicitly accepts the risk.
 """
+
 from __future__ import annotations
 
 import ipaddress

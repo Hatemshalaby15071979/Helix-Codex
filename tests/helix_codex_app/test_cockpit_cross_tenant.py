@@ -7,6 +7,7 @@ the wrong reason. What is genuinely per-tenant is the workspace state the
 cockpit reads alongside the numbers: the approval queue, the audit rows, and the
 context the numbers are computed under. These tests pin all three.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

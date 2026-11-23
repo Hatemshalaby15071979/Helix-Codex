@@ -11,6 +11,7 @@ package. The JSONL ledger stays the source of truth; the memory_stores table is
 a projection, refreshed on every write, so the index can never drift ahead of
 the ledger.
 """
+
 from __future__ import annotations
 
 import pathlib

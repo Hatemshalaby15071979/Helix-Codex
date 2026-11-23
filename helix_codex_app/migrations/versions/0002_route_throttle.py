@@ -13,6 +13,7 @@ route name, so the two can never collide.
 CI enforces agreement between this migration and ``db.py::_init_schema`` in both
 directions via helix_codex_app/scripts/check_app_migration_drift.py.
 """
+
 from __future__ import annotations
 
 from alembic import op

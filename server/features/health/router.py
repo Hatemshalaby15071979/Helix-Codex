@@ -13,6 +13,7 @@ fresh-install bootstrap (``server.deps.EngineProvider.startup``) initializes
 it explicitly, so a missing file at probe time means runtime loss, not first
 boot. Failure details name the failed check only, never paths or internals.
 """
+
 from __future__ import annotations
 
 import pathlib

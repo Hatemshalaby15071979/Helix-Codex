@@ -15,6 +15,7 @@ policy for the retention schedule.
 Exit 0 = backup written and integrity checks passed. Exit 1 = required state
 is missing, backup integrity failed, or an error occurred.
 """
+
 from __future__ import annotations
 
 import argparse

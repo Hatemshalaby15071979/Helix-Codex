@@ -5,6 +5,7 @@ database, real sessions. The point is the rail, not the screen — a request mus
 land at the gate, an approval must move it, a refusal must say why, and the
 correlation id must survive the whole trip.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

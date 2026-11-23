@@ -15,6 +15,7 @@ The service owns the punch rules and the governed envelope:
    punch that has not been closed yet contributes zero to the summary; the
    punch clock's running total separately accrues the open segment.
 """
+
 from __future__ import annotations
 
 import sqlite3

@@ -23,6 +23,7 @@ satisfy it through ``C4AdapterBridge`` in ``engines/registry.py``.
 The port is deliberately small. A port that grows a helper method per engine
 eventually becomes a second engine.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -82,5 +83,6 @@ class EnginePort(Protocol):
 
     engine_id: str
 
-    def execute(self, request: TaskRequest, *, sample_data_mode: bool = False) -> EngineInvocation:
-        ...  # pragma: no cover - protocol
+    def execute(
+        self, request: TaskRequest, *, sample_data_mode: bool = False
+    ) -> EngineInvocation: ...  # pragma: no cover - protocol

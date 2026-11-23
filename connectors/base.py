@@ -11,6 +11,7 @@ encodes the governed behaviors that every connector MUST share:
 * write gating: writes require an explicit cross-role approval and an
   *activated* live adapter. The read-only first version never executes writes.
 """
+
 from __future__ import annotations
 
 from typing import Any, Callable, Mapping, Sequence

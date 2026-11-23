@@ -8,6 +8,7 @@ It writes icon-192.png, icon-512.png and maskable-512.png into
 helix_codex_app/static/icons/. The manifest pins those three filenames, so the
 output names must not drift.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

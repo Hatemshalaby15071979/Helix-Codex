@@ -36,6 +36,7 @@ What to use
 It checkpoints WAL, closes what it can, and retries the unlink a few times
 so a still-releasing handle does not fail the run.
 """
+
 from __future__ import annotations
 
 import gc

@@ -9,6 +9,7 @@ generation in here: the immutable request payload (:class:`FrozenMapping`),
 :class:`ComputationEvidence`, per-engine baselines declared as data
 (:data:`ENGINE_BASELINE_PAYLOADS`) and :meth:`EngineResult.refusal`.
 """
+
 from __future__ import annotations
 
 import copy

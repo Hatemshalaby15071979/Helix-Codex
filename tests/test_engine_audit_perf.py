@@ -10,6 +10,7 @@ the chain is short in tests and the failure mode is "slow", not "wrong".
 This test pins the property, not the implementation: the number of statements
 ``_audit`` issues must not depend on how many records are already in the trail.
 """
+
 from __future__ import annotations
 
 import pytest

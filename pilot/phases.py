@@ -5,6 +5,7 @@ recommendations but is not permitted to approve/commit any committal action unti
 the period is explicitly exited (an audited, human decision). Connector
 permissions are read-only by construction.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

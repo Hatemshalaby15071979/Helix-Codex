@@ -3,6 +3,7 @@ CRM Engine — Adapter (C4)
 Invokes actual engines/crm/src/sales_pipeline.py and customer_support.py
 Client-confidential and financial classification handling.
 """
+
 from __future__ import annotations
 
 import time

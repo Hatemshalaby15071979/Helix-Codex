@@ -8,6 +8,7 @@ are invisible.
 The conversation stream is driven directly because a test client cannot
 drain an infinite body.  The pattern is identical to P2.2 and P2.3.
 """
+
 from __future__ import annotations
 
 import asyncio

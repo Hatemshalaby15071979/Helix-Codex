@@ -6,6 +6,7 @@ that make the promise worth anything: a proposal cannot be approved before it ha
 been evaluated, and nobody can approve their own. They also pin the guard that
 stops a rejected proposal being quietly revived.
 """
+
 from __future__ import annotations
 
 import json

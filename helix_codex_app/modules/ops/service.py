@@ -11,6 +11,7 @@ core's audit trail is the authoritative record for a workflow, and writing a
 second copy would create two truths that could drift apart. The correlation id
 is what ties a screen row to that trail, which is why it is on every card.
 """
+
 from __future__ import annotations
 
 from typing import Any

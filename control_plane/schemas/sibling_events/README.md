@@ -97,7 +97,9 @@ repairing a malformed event.
 
 ```python
 from control_plane.schemas.sibling_events import (
-    CompetencyGapDetected, dispatch, receive,
+    CompetencyGapDetected,
+    dispatch,
+    receive,
 )
 
 gap = CompetencyGapDetected(

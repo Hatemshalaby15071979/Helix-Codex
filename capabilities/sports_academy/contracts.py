@@ -7,6 +7,7 @@ correlation_id on every read, and write gating. It is read-only by construction:
 ``request_write`` returns ``executed=False`` (inherited from the base). No live
 adapter is activated.
 """
+
 from __future__ import annotations
 
 from typing import Any, Mapping, Sequence

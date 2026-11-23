@@ -11,6 +11,7 @@ Design constraints:
   *previewed* and require an explicit, cross-role approval executed by the control plane.
 * Both historical and simulated data are supported and labelled visibly via `data_mode`.
 """
+
 from __future__ import annotations
 
 import datetime as _dt

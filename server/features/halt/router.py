@@ -7,6 +7,7 @@ organization/role-catalog.yaml at request time) rather than a hardcoded role
 list, and it fails closed — an unreadable catalog denies the operation.
 Status is read-only and available to any authenticated identity.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, Optional

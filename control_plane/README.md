@@ -63,8 +63,25 @@ store = Store(db_path=":memory:")
 engine = Engine(store=store)
 engine.register_handler("wfm_forecast", lambda w: {"optimal_agents": 42})
 
-corr = CorrelationContext(correlation_id="c1", idempotency_key="k1", tenant_id="t", client_id="c", created_at="2026-08-27T18:00:00Z")
-req = TaskRequest(request_id="r1", correlation=corr, requesting_actor="sami", owning_role_id="ops_gm", capability="wfm_forecast", input_payload={}, requires_approval=False, status="proposed", created_at="2026-08-27T18:00:00Z", client_id="c")
+corr = CorrelationContext(
+    correlation_id="c1",
+    idempotency_key="k1",
+    tenant_id="t",
+    client_id="c",
+    created_at="2026-08-27T18:00:00Z",
+)
+req = TaskRequest(
+    request_id="r1",
+    correlation=corr,
+    requesting_actor="sami",
+    owning_role_id="ops_gm",
+    capability="wfm_forecast",
+    input_payload={},
+    requires_approval=False,
+    status="proposed",
+    created_at="2026-08-27T18:00:00Z",
+    client_id="c",
+)
 wf = engine.submit(req)
 wf = engine.execute(wf.workflow_id)
 print(wf.state)  # closed

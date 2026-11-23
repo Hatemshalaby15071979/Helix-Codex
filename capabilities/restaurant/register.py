@@ -5,6 +5,7 @@ workflows, policies, metrics, connector contracts, data classifications, approva
 requirements, failure modes, and fixtures. The registry is the single place the
 rest of the system discovers what a pack provides.
 """
+
 from __future__ import annotations
 
 from .classifications import DATA_CLASSIFICATIONS

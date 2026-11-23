@@ -7,6 +7,7 @@ write. Pages render the admin templates; forms post back with the CSRF
 header and answer with a redirect, so a phone browser and an HTMX request
 both behave the same way.
 """
+
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Request

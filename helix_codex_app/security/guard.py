@@ -9,6 +9,7 @@ session's stored CSRF token using compare_digest. require_capability and
 require_permission (checked against the app permission catalog) gate the
 finer actions; an unknown permission key is denied, never allows.
 """
+
 from __future__ import annotations
 
 import hmac

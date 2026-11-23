@@ -1,4 +1,5 @@
 """TDD coverage for Helix Prime Codex C7 — sibling-project integration contracts."""
+
 from __future__ import annotations
 
 import tempfile

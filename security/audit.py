@@ -9,6 +9,7 @@ input/output references, decision, approval/denial, timestamp, previous hash, cu
 
 Uses deterministic SHA-256 hash chain.
 """
+
 from __future__ import annotations
 
 import datetime

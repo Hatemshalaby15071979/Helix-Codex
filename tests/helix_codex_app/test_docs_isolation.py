@@ -6,6 +6,7 @@ note is invisible to a peer employee but visible to its owner and to a manager.
 HTTP tests drive the mounted docs router through TestClient so the same rules
 hold at the wire, where a foreign read is a plain 404 with no row leakage.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

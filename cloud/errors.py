@@ -1,4 +1,5 @@
 """Safe-failure errors for the cloud-ready, local-first boundary (Prompt 9)."""
+
 from __future__ import annotations
 
 

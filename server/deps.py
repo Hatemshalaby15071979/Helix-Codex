@@ -12,6 +12,7 @@ Note that :class:`Engine` is **synchronous** and stays that way: 445 sync tests
 are the safety net for the control plane. Anything that must not block the event
 loop (engine calls driven from SSE) is pushed to a worker thread.
 """
+
 from __future__ import annotations
 
 import contextlib

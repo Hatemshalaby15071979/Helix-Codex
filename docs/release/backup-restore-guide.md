@@ -76,6 +76,7 @@ machine identity and records a rollback marker:
 
 ```python
 from release.backup import rollback_manifest
+
 rollback_manifest(previous_manifest, active_manifest, target_path=...)
 ```
 

@@ -5,6 +5,7 @@ that the caller does not belong to is not filtered out of a list; it is
 absent from every query, because the membership join is part of the SQL.
 Tenant scope comes from the account record, never from a request parameter.
 """
+
 from __future__ import annotations
 
 import sqlite3

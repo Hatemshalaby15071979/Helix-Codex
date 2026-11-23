@@ -8,6 +8,7 @@ sees only themselves). The one-open rule is per account: one account's open
 punch never blocks another account. Service-level tests pass through
 AttendanceService; HTTP tests drive the records API through TestClient.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

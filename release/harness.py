@@ -485,7 +485,7 @@ def run_bounded_soak(
         "ok": ok,
         "detail": (
             f"soak: workflows={wf_count} (cap {MAX_SOAK_WORKFLOWS}), failures={failures}, "
-            f"idempotent_no_growth={no_growth}, duration_ms={round(duration*1000,1)}"
+            f"idempotent_no_growth={no_growth}, duration_ms={round(duration * 1000, 1)}"
         ),
         "workflow_count": wf_count,
         "failures": failures,

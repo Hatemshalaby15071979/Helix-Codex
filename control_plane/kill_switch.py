@@ -25,6 +25,7 @@ Engine.cancel is deliberately NOT gated: cancelling stops work, it never
 starts it, and an operator must always be able to stop in-flight work,
 especially while halted.
 """
+
 from __future__ import annotations
 
 import contextlib

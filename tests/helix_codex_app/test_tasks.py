@@ -6,6 +6,7 @@ ordered oldest-first, and the board excludes archived tasks by default. HTTP
 tests drive the mounted tasks router through TestClient for the screens, the
 JSON contract, the HTMX fragment path, CSRF, and cross-tenant isolation.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

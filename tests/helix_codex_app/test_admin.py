@@ -6,6 +6,7 @@ HTTP tests drive the mounted admin router through TestClient, so the
 router-boundary permission check, the CSRF requirement, and the employee
 403 on every admin route are exercised exactly as the app wiring uses them.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

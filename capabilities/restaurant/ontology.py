@@ -4,6 +4,7 @@ Frozen, source-attributed records. Each carries tenant/client scope and a
 :class:`connectors.contracts.SourceRef` so synthetic data is never mistaken for
 live external data. The ontology is intentionally small (one location).
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -19,6 +19,7 @@ Strict boundaries:
 - Does NOT modify BaseAgent, legacy orchestrator, or cockpit pages.
 - Does NOT implement C6/C7.
 """
+
 from __future__ import annotations
 
 import datetime

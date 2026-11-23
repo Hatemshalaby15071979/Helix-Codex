@@ -4,6 +4,7 @@ Verifies: offline/local execution, safe failure on missing/unavailable cloud
 services, demo reset, shutdown, restricted API, and cost-control settings.
 No network; all adapters are in-memory and deterministic.
 """
+
 from __future__ import annotations
 
 import sys

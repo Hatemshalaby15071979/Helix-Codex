@@ -10,6 +10,7 @@ The states below were observed against the real engine, not read off a diagram:
 submit lands at awaiting_approval, approval releases the gate straight to
 executing, execution closes the workflow, and a refusal sends it to dead_letter.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

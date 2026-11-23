@@ -5,6 +5,7 @@ that decorates a template context with the caller's CSRF token and the app
 settings. Keeping it here instead of in app.py lets a feature router render
 pages without importing the application factory, which would be circular.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

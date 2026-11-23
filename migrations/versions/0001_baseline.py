@@ -11,6 +11,7 @@ order — so a database created by Store and a database created by
 indentation, and an existing Store database can be stamped to head as a no-op.
 CI enforces agreement in both directions via scripts/check_migration_drift.py.
 """
+
 from __future__ import annotations
 
 from alembic import op

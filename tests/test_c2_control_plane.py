@@ -24,6 +24,7 @@ Covers 21 required cases:
 - correlation and causation ID preservation;
 - capability-registry drift detection.
 """
+
 from __future__ import annotations
 
 import pytest

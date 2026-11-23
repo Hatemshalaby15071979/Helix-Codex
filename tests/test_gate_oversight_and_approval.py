@@ -13,6 +13,7 @@ gate's ``approval_requested`` branch was unreachable from that path while
 Each test reproduces the exact case its issue records and pins the fixed behaviour.
 No production code outside the two fixes is exercised here.
 """
+
 from __future__ import annotations
 
 import uuid

@@ -32,6 +32,7 @@ sets ``HELIX_BEHIND_WORKER=true``. Without the flag the caller address is the
 socket peer, and the headers are ignored entirely — a deployment that is not
 behind the Worker cannot have its rate limits spoofed by inventing one.
 """
+
 from __future__ import annotations
 
 import os

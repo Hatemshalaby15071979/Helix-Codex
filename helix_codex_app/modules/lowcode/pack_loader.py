@@ -20,6 +20,7 @@ Each invariant raises a typed PackValidationError carrying an HTTP status of
 reports the same violations as a list of messages for callers that want a
 catalog of problems instead of a first-failure raise.
 """
+
 from __future__ import annotations
 
 import pathlib
@@ -153,20 +154,15 @@ class CapabilityPack(Protocol):
 
     manifest: CapabilityManifest
 
-    def ontology(self) -> dict[str, type]:
-        ...
+    def ontology(self) -> dict[str, type]: ...
 
-    def roles(self) -> list[dict[str, Any]]:
-        ...
+    def roles(self) -> list[dict[str, Any]]: ...
 
-    def workflows(self) -> list[dict[str, Any]]:
-        ...
+    def workflows(self) -> list[dict[str, Any]]: ...
 
-    def metrics(self) -> dict[str, Callable[..., Any]]:
-        ...
+    def metrics(self) -> dict[str, Callable[..., Any]]: ...
 
-    def runtime(self, memory: Any, *, phase: Any) -> Any:
-        ...
+    def runtime(self, memory: Any, *, phase: Any) -> Any: ...
 
 
 class DeclaredEntity:
@@ -428,8 +424,7 @@ def _check_owned_capabilities(pack: CapabilityPack) -> None:
 def _check_data_mode(pack: CapabilityPack) -> None:
     if pack.manifest.production_readiness != _ESTABLISHED and pack.manifest.data_mode == "live":
         raise LiveDataBelowEstablishedError(
-            f"pack {pack.manifest.id!r} claims live data before production_readiness "
-            "is ESTABLISHED"
+            f"pack {pack.manifest.id!r} claims live data before production_readiness is ESTABLISHED"
         )
 
 

@@ -5,6 +5,7 @@ internals. This module proves the rule mechanically by parsing every other
 app file: a new direct parent import anywhere else fails the sweep. The
 metacognition re-export test pins the one past violation staying fixed.
 """
+
 from __future__ import annotations
 
 import ast

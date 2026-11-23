@@ -6,6 +6,7 @@ recorded into the shared process registry with a fixed label vocabulary,
 so the app surface is observable through the same exposition without any
 caller-controlled label text ever reaching it.
 """
+
 from __future__ import annotations
 
 from observability.metrics import REGISTRY

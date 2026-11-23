@@ -3,6 +3,7 @@
 Every deliberate failure is an AppError subclass carrying a stable machine code
 and an HTTP status. Callers match on code, never on message text.
 """
+
 from __future__ import annotations
 
 from typing import Any

@@ -5,6 +5,7 @@ a pure function over slot tuples; utilization feeds the owner dashboard's
 facility KPI. No booking writes exist in v1 (facility_booking committal
 actions require approval through the pack runtime).
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, List, Sequence

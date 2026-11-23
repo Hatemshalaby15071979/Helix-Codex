@@ -8,6 +8,7 @@ here too. A sweep at the end proves every node the P3 paths produce in one
 session passes the envelope — there is no un-enveloped write hiding in a side
 branch.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

@@ -4,6 +4,7 @@ Web-only (no mobile app — explicit v1 non-goal). The parent role holds no
 approval authority; this view exposes exactly what a parent may see: their
 own family's athletes' schedule, attendance, and fee status. Nothing else.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict

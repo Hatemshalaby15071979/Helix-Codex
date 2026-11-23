@@ -7,6 +7,7 @@ output so dashboards render value + target + direction together.
 Pattern: capabilities/restaurant/metrics.py — deterministic, reproducible,
 computed from records, no I/O, no live timing claims.
 """
+
 from __future__ import annotations
 
 import pathlib

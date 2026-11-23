@@ -17,6 +17,7 @@ Tests that want this explicitly should still use
 ``tests.support.sqlite_harness.sqlite_store`` — it documents the intent at the
 call site instead of relying on global behaviour.
 """
+
 from __future__ import annotations
 
 import gc

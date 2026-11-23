@@ -3,6 +3,7 @@ Personnel Engine — Adapter (C4)
 Invokes actual engines/personnel/src/main.py etc.
 Personnel-sensitive classification.
 """
+
 from __future__ import annotations
 
 import time

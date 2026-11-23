@@ -3,6 +3,7 @@
 One test walks the whole path a person and their reviewer actually take, and the
 rest pin the refusals that make the path worth trusting.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

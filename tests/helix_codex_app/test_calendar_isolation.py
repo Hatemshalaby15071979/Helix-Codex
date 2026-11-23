@@ -7,6 +7,7 @@ tenant B coverage is a gap, not a leaked roster; and a shift cannot be
 created naming a foreign account. Service-level tests pass through
 CalendarService; HTTP tests drive the mounted router through TestClient.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

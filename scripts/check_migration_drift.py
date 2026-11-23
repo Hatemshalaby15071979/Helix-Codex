@@ -16,6 +16,7 @@ it exists only in the migrated database and carries no schema meaning.
 
 Exit 0 = no drift. Exit 1 = drift found (or the check could not run).
 """
+
 from __future__ import annotations
 
 import argparse

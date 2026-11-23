@@ -1,4 +1,5 @@
 """Roles, responsibilities, and authority boundaries (Prompt 11)."""
+
 from __future__ import annotations
 
 # Roles present at a small restaurant location.

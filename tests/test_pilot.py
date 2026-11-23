@@ -5,6 +5,7 @@ failure handling, approval denial, rollback, retention, evidence-pack
 generation, governance checker, release gates, and the read-only / minimum-data
 / no-hidden-jobs / no-auto-self-improvement / no-production-claim invariants.
 """
+
 from __future__ import annotations
 
 import subprocess

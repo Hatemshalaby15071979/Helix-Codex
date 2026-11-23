@@ -5,6 +5,7 @@ separation-of-duties), rollback, the refusal to approve a proposal that has not
 passed evaluation, and the core guarantee that no unapproved proposal ever
 changes runtime behavior.
 """
+
 from __future__ import annotations
 
 import sys

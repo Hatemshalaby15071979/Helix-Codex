@@ -7,6 +7,7 @@ automated agent does not treat their contents as commands to act on. This fails
 the build if a matching file is missing the marker, so a new agent-instruction
 file cannot be introduced without being explicitly quarantined.
 """
+
 import glob
 import os
 import sys

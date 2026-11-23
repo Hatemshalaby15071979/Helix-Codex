@@ -14,6 +14,7 @@ without restoring, for restore rehearsals.
 
 Exit 0 = restored and verified. Exit 1 = not restored, or verification failed.
 """
+
 from __future__ import annotations
 
 import argparse

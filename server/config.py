@@ -12,6 +12,7 @@ Two rules shape this module:
 * **`production` refuses to start unsatisfied.** The release gate deliberately
   fails closed on production; the service must not quietly contradict it.
 """
+
 from __future__ import annotations
 
 from functools import lru_cache

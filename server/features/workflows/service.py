@@ -7,6 +7,7 @@ audit and structured logging. Re-implementing any of it at the service layer
 would create a second, weaker gate. The service translates and publishes, and
 nothing more.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict

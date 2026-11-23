@@ -23,6 +23,7 @@ A GM that fails any of these is reported as ``blocked`` with the reason. It is
 never silently activated with reduced powers — a half-activated GM is worse
 than an absent one, because it looks like it is enforcing something.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -85,8 +86,7 @@ ACTIVATIONS: Dict[str, GMActivation] = {
         role_id="compliance_quality_gm",
         agent_name="ANDY",
         mission=(
-            "Runs QA batch tests, generates evidence archives, and controls "
-            "transaction overrides."
+            "Runs QA batch tests, generates evidence archives, and controls transaction overrides."
         ),
         owned_capabilities=("policy_enforcement", "qa_sampling", "evidence_pack"),
         engines_used=(),  # oversight only

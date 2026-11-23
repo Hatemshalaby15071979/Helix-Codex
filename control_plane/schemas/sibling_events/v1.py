@@ -14,6 +14,7 @@ through ``to_dict``/``from_dict``. They are deliberately dependency-free: a
 sibling repo can copy the JSON Schema from ``schemas/`` and implement these in
 any language without importing Helix Prime.
 """
+
 from __future__ import annotations
 
 import datetime

@@ -7,6 +7,7 @@ Secrets safety for Helix Prime Codex C3 — local-first, no real secrets.
 - Redaction for API keys, bearer tokens, passwords, cookies, PII
 - Clear failure when required secret unavailable
 """
+
 from __future__ import annotations
 
 import os

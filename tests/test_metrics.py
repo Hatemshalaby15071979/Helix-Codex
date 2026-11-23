@@ -3,6 +3,7 @@ Observability tests (H2.2, G22): /metrics endpoint, request middleware metrics,
 governance-decision counters, audit-chain verification metrics, queue depth,
 secret redaction in request logs, and alert-rule drift against the exposition.
 """
+
 from __future__ import annotations
 
 import secrets

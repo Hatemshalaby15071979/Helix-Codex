@@ -8,6 +8,7 @@ terminated account invalidates its sessions on the very next request.
 Timeouts come from AppSettings: the idle window from session_idle_minutes and
 the hard ceiling from session_absolute_days.
 """
+
 from __future__ import annotations
 
 import hashlib

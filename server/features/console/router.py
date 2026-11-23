@@ -3,6 +3,7 @@ Operator console — server-rendered HTMX pages.
 
 Phase 2 surfaces: Chat, Docs, Tasks, Flows + agent rail on HTMX/SSE.
 """
+
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Request

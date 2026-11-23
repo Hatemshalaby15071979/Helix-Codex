@@ -12,6 +12,7 @@ Canonical classifications (one source of truth):
 Unknown classifications must fail closed (ValueError).
 Validation is typed and deterministic for task payloads, evidence, logs, workflow outputs.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -11,6 +11,7 @@ the properties that make the recorder safe:
 * the rules are `signoff.validate_signoff`, so `check` and the gate cannot
   disagree.
 """
+
 from __future__ import annotations
 
 import importlib.util

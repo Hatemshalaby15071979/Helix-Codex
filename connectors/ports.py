@@ -4,6 +4,7 @@ This module defines the `ConnectorPort` protocol that all connectors must
 implement. The protocol separates reads from writes and enforces that
 writes always go through a governance gate.
 """
+
 from __future__ import annotations
 
 from typing import Any, Mapping, Protocol

@@ -22,6 +22,7 @@ Usage
     python scripts/check_dependencies.py
     python scripts/check_dependencies.py --json
 """
+
 from __future__ import annotations
 
 import argparse

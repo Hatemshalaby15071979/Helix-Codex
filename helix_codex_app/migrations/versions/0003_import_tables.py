@@ -10,6 +10,7 @@ identical to the ones db.py applies in ``_init_schema`` so a db.py-created
 database and an alembic-upgraded database agree; an existing app database
 converges on ``alembic upgrade 0003_import_tables``.
 """
+
 from __future__ import annotations
 
 from alembic import op

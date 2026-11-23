@@ -8,6 +8,7 @@ permission markers for admin and cockpit, and redaction of unhandled
 errors. The throttling tests are the can-fail proof for the LoginThrottle
 wiring: without it the spray below answers bad_password, never throttled.
 """
+
 from __future__ import annotations
 
 import secrets

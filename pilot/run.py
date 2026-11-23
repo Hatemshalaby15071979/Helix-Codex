@@ -6,6 +6,7 @@ It does NOT activate live connectors, cloud services, or external writes; it nev
 auto-improves. Every recommendation carries evidence; every committal action has
 an owner + approval state; every outcome is recorded in governed memory.
 """
+
 from __future__ import annotations
 
 import sys

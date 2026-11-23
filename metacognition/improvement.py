@@ -24,6 +24,7 @@ which are never invoked by the engine.
 Deterministic and local-first: no RNG, no wall-clock (callers supply timestamps),
 no cloud.
 """
+
 from __future__ import annotations
 
 import hashlib

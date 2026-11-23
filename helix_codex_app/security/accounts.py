@@ -7,6 +7,7 @@ a duplicate username within one domain while the same username in another
 domain stays legal. Every read resolves the domain first; a caller never
 passes its own tenant_id into an account query.
 """
+
 from __future__ import annotations
 
 import sqlite3
@@ -507,8 +508,7 @@ def ensure_demo_account(
     if existing is not None:
         if existing.role_id != DEMO_ROLE_ID:
             raise DemoScopeConflict(
-                f"account {DEMO_USERNAME!r} already exists in the demo domain "
-                "with a different role"
+                f"account {DEMO_USERNAME!r} already exists in the demo domain with a different role"
             )
         return existing
     return repo.create_account(

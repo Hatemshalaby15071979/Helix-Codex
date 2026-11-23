@@ -16,6 +16,7 @@ One test here is not about the view at all: it pins the reader defect this work
 surfaced, where `AuditTrail.list_records` is `ORDER BY rowid ASC LIMIT n` so a
 "most recent" reader built on its tail returns the OLDEST rows.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

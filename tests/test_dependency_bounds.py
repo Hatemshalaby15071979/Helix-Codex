@@ -23,9 +23,9 @@ def test_pyarrow_imports_with_installed_numpy() -> None:
     pyarrow = importlib.import_module("pyarrow")
     numpy = importlib.import_module("numpy")
     major = int(numpy.__version__.split(".")[0])
-    assert (
-        major < 2
-    ), "numpy>=2 is outside the project's hard bound; re-baseline every numeric engine first"
+    assert major < 2, (
+        "numpy>=2 is outside the project's hard bound; re-baseline every numeric engine first"
+    )
     assert int(pyarrow.__version__.split(".")[0]) >= 25
 
 

@@ -17,6 +17,7 @@ confidence as the case score. That is a real comparison over real evidence, but 
 modest one — a richer case source is a later step, and this docstring says so
 rather than letting the screen imply otherwise.
 """
+
 from __future__ import annotations
 
 import sqlite3
@@ -211,8 +212,7 @@ class MemoryService:
         current = self.engines.get(owner, proposal_id)
         if current.approval_state not in ROLLBACK_STATES:
             raise InvalidStateError(
-                f"{proposal_id}: cannot roll back a proposal in state "
-                f"{current.approval_state!r}",
+                f"{proposal_id}: cannot roll back a proposal in state {current.approval_state!r}",
                 payload={"proposal_id": proposal_id},
             )
         proposal = self.engines.rollback(

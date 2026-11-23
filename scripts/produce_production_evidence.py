@@ -43,6 +43,7 @@ What this tool deliberately does NOT do:
 * It does not make the terminal ``production_approved`` sign-off, which is a
   human act recorded elsewhere. This script can only help satisfy nine gates.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -274,7 +275,7 @@ def cmd_check(args: argparse.Namespace) -> int:
         return 1
     if signature_state != "verifies":
         print("The claims conform, but the gate also requires a verified signature.")
-        print(f"  python3 {_self()} sign --document {document_path} " "--key <private-key>")
+        print(f"  python3 {_self()} sign --document {document_path} --key <private-key>")
         return 1
 
     print("The gate would read this document.")

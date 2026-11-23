@@ -7,6 +7,7 @@ across documents or tenants. A snapshot writes the whole block list into
 document_versions as one JSON row; a restore re-reads that snapshot and
 appends a NEW version row, so history is never rewritten.
 """
+
 from __future__ import annotations
 
 import sqlite3

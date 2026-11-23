@@ -4,6 +4,7 @@ Reuses the governed Helix Codex core. Starts read-only with synthetic data and
 never activates live connectors or external writes, and never auto-improves.
 Built for the first design partner (private sports academy, one location).
 """
+
 from __future__ import annotations
 
 from contracts.vocabulary import CONNECTOR_SIMULATED_REALISTIC

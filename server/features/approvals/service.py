@@ -7,6 +7,7 @@ side effect only happens on a subsequent ``Engine.execute``. That separation is
 why a denial can be proven to have prevented the action rather than merely
 having been logged alongside it.
 """
+
 from __future__ import annotations
 
 import datetime

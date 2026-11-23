@@ -11,6 +11,7 @@ statements at startup in control_plane/store.py (_migrate_tenant_columns), so a
 Store-created database and an alembic-upgraded database agree. Existing
 databases stamped at 0001 converge on upgrade head.
 """
+
 from __future__ import annotations
 
 from alembic import op

@@ -6,6 +6,7 @@ label, route, and position instead of stacking rows. Reading filters by the
 caller's permission keys; a section whose required_capability the caller lacks
 is absent, never rendered disabled, so the nav cannot leak a link to a gate.
 """
+
 from __future__ import annotations
 
 import sqlite3

@@ -6,6 +6,7 @@ due date, optional paid-at, method note) stored in governed memory so it
 carries provenance and the audit chain. Unpaid fees feed the renewal-flow
 reminders and the MRR-adjacent outstanding view.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, Sequence

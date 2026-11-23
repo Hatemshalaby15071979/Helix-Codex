@@ -4,6 +4,7 @@ Tests for fail-closed governance controls in control_plane/engine.py.
 Verifies that when governance controls (audit, secrets, injection) are unavailable,
 the engine fails with GovernanceControlUnavailable rather than silently skipping.
 """
+
 from __future__ import annotations
 
 

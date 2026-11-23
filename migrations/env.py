@@ -13,6 +13,7 @@ must fail loudly rather than silently operate on the wrong database: it prints
 the resolved target at run starts and raises if the resolved directory cannot
 be created.
 """
+
 from __future__ import annotations
 
 import os

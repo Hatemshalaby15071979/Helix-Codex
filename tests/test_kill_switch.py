@@ -8,6 +8,7 @@ cancellation, the safe direction) keep working; release restores committal;
 tenant-scoped halts do not touch other tenants; the halt engagement itself is
 auditable; an unreadable flag is treated as engaged.
 """
+
 from __future__ import annotations
 
 import secrets

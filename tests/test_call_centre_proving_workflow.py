@@ -15,6 +15,7 @@ functionality:
  10. retry and dead-letter behaviour
  11. audit-chain verification
 """
+
 import sys
 from pathlib import Path
 

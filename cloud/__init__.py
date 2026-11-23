@@ -4,6 +4,7 @@ Provider-neutral interfaces + local adapters + a synthetic cloud-demo profile.
 Local execution is primary; cloud adapters are intentionally absent so any
 non-local request fails safe.
 """
+
 from __future__ import annotations
 
 from .config import CloudConfig, UsageLimits, demo_profile

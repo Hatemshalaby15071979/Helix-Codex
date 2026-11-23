@@ -13,6 +13,7 @@ Design goals (C1 additive, local-first, no network/secrets):
 
 No dependency on organization catalog (avoid circular import); role-id format validated as non-empty string.
 """
+
 from __future__ import annotations
 
 import datetime

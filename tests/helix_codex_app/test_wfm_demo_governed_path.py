@@ -21,6 +21,7 @@ the defect it is about:
    that raises if called — a test that only checked the returned state would
    pass just as well if the call had been made and swallowed.
 """
+
 from __future__ import annotations
 
 import inspect

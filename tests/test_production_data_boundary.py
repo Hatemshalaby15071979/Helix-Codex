@@ -9,6 +9,7 @@ the absence of real network connectors. The live-mode tests are the can-fail
 proof: with the funnel guard patched out, live-stamped fixtures flow
 through and the tests fail.
 """
+
 from __future__ import annotations
 
 import dataclasses

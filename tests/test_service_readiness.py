@@ -9,6 +9,7 @@ The missing-store test doubles as the can-fail proof for this file: it
 asserts the probe leaves the store absent. A probe that recreated the store
 would mask runtime loss and this test would fail.
 """
+
 from __future__ import annotations
 
 import json

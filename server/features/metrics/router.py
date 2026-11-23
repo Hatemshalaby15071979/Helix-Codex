@@ -15,6 +15,7 @@ The approval-queue depth is refreshed on scrape from the workflow store: a
 gauge that only updates when its inputs change would go stale between
 submissions, and a stale queue depth is worse than none.
 """
+
 from __future__ import annotations
 
 from fastapi import APIRouter, Response

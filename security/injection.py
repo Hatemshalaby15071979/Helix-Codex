@@ -4,6 +4,7 @@ Prompt/tool injection detection seam for Helix Prime Codex C3.
 Local-first, deterministic, no network.
 Detects suspicious prompt/tool requests that could be injection attempts.
 """
+
 from __future__ import annotations
 
 import re

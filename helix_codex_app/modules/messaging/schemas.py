@@ -4,6 +4,7 @@ The schemas mirror the dataclasses in repository.py. The UI lands in P2.2;
 these models are the contract the JSON endpoints will serve, written now so
 the wire shape is pinned before a client exists to drift against.
 """
+
 from __future__ import annotations
 
 from pydantic import BaseModel, Field

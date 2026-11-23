@@ -5,6 +5,7 @@ synthetic walkthrough, evidence + provenance, approval gating (added in S4),
 memory recording, failure handling, no external writes, no production claim.
 Attendance (S1) tests come first — attendance is the client's #1 pain.
 """
+
 from __future__ import annotations
 
 import sys

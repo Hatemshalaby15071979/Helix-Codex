@@ -5,6 +5,7 @@ Each adapter is a handler for the Engine's capability. The registry preserves
 tenant/client context, enforces C3 policy, and returns typed EngineResult
 which the Engine then maps to TaskResult.
 """
+
 from __future__ import annotations
 
 import time

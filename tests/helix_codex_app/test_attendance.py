@@ -10,6 +10,7 @@ midnight sums correctly. HTTP tests drive the mounted attendance router
 through TestClient for the screen, the punch toggle with CSRF, the record and
 summary APIs, the HTMX fragment path, and cross-tenant isolation.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone

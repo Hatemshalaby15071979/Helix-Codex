@@ -4,6 +4,7 @@ Durable local store for Helix Prime Codex C2.
 SQLite-backed, local-first. Supports append/read/replay, idempotency,
 duplicate/out-of-order detection, and persistence across process restart.
 """
+
 from __future__ import annotations
 
 import json

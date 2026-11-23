@@ -5,6 +5,7 @@ way. The control plane is the interesting one: it shows the halt state and the
 audit trail, so the tests are about what it refuses to do and about the audit
 rows being this workspace's and nobody else's.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

@@ -27,6 +27,7 @@ Metric families:
 * helix_kill_switch_events_total{event}              — halt engagements
 * helix_data_disk_free_bytes                          — free bytes on the data volume
 """
+
 from __future__ import annotations
 
 import threading
@@ -254,7 +255,7 @@ class MetricsRegistry:
     def record_auth_event(self, event: str) -> None:
         if event not in _AUTH_EVENTS:
             raise ValueError(
-                f"metrics: unknown auth event {event!r} " f"(expected one of {list(_AUTH_EVENTS)})"
+                f"metrics: unknown auth event {event!r} (expected one of {list(_AUTH_EVENTS)})"
             )
         self.auth_events.inc(event=event)
 

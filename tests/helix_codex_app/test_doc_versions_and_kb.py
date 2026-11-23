@@ -7,6 +7,7 @@ immutable once written. HTTP tests drive the mounted docs router through
 TestClient for the versions API, the restore flow, the KB screen and its
 type filter, CSRF, and cross-tenant isolation.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

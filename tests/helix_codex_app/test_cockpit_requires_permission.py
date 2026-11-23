@@ -6,6 +6,7 @@ employee never sees it" is about HTTP, not about a function somebody remembered
 to call. The contractor and external roles matter as much as the employee: they
 are real accounts a tenant can create, and each one must get the same refusal.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace
@@ -85,9 +86,9 @@ def test_every_refused_role_gets_403_on_every_cockpit_route(client, ctx):
         cookies = _cookies(ctx, ctx.accounts[role])
         for route in COCKPIT_ROUTES:
             response = client.get(route, cookies=cookies)
-            assert (
-                response.status_code == 403
-            ), f"{role} on {route} returned {response.status_code}, expected 403"
+            assert response.status_code == 403, (
+                f"{role} on {route} returned {response.status_code}, expected 403"
+            )
 
 
 def test_every_allowed_role_gets_200_on_every_cockpit_route(client, ctx):
@@ -95,9 +96,9 @@ def test_every_allowed_role_gets_200_on_every_cockpit_route(client, ctx):
         cookies = _cookies(ctx, ctx.accounts[role])
         for route in COCKPIT_ROUTES:
             response = client.get(route, cookies=cookies)
-            assert (
-                response.status_code == 200
-            ), f"{role} on {route} returned {response.status_code}, expected 200"
+            assert response.status_code == 200, (
+                f"{role} on {route} returned {response.status_code}, expected 200"
+            )
 
 
 def test_a_refused_role_cannot_reach_the_cockpit_even_with_a_guessable_id(client, ctx):

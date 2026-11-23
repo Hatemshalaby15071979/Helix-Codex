@@ -3,6 +3,7 @@ Event envelope for Helix Prime Codex C2.
 
 Local-first, durable, replayable. Every state change is an event.
 """
+
 from __future__ import annotations
 
 import datetime

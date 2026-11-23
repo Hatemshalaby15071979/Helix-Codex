@@ -7,6 +7,7 @@ reports whether the stored cost is below today's policy, so a login can
 upgrade an old hash in place. There is no third-party crypto and no hand-rolled
 algorithm here.
 """
+
 from __future__ import annotations
 
 import base64

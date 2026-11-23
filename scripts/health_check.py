@@ -8,6 +8,7 @@ Usage:
 Prints local component readiness (control-plane, audit, registries, filesystem,
 Ollama optional) and exits 0 when the required components are ready.
 """
+
 from __future__ import annotations
 
 import json

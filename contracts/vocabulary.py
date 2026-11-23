@@ -52,6 +52,7 @@ on meaning rather than on spelling.
 Every classification mapping collapses *outward-in* levels onto the strictest
 member of the target vocabulary. A mapping never lowers sensitivity.
 """
+
 from __future__ import annotations
 
 from typing import Dict, FrozenSet

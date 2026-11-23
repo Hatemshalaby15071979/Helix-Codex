@@ -10,6 +10,7 @@ The matrix below mirrors master plan section 5.5. Values are True (granted),
 "scoped" (granted only within the caller's own scope), or False (denied).
 Unknown permission keys and unknown roles are denied — never allowed.
 """
+
 from __future__ import annotations
 
 import sqlite3
@@ -176,7 +177,7 @@ def permissions_for(account: Account, conn: sqlite3.Connection | None = None) ->
 def capabilities_for(conn: sqlite3.Connection, account: Account) -> frozenset[str]:
     """The enabled capability keys granted to the account by an admin."""
     rows = conn.execute(
-        "SELECT capability_key FROM account_capabilities" " WHERE account_id = ? AND enabled = 1",
+        "SELECT capability_key FROM account_capabilities WHERE account_id = ? AND enabled = 1",
         (account.account_id,),
     ).fetchall()
     return frozenset(row["capability_key"] for row in rows)

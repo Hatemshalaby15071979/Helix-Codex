@@ -183,7 +183,7 @@ class TelemetryGenerator:
         if start_time.tzinfo is None:
             raise ValueError("start_time must be timezone-aware")
         self.tick_seconds = tick_seconds
-        self._rng = random.Random(seed)
+        self._rng = random.Random(seed)  # noqa: S311 # simulation RNG, not cryptographic
         self._clock = start_time
         self._tick_index = 0
         self._backlog = 0.0

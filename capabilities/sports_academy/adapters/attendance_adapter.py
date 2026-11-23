@@ -9,6 +9,7 @@ provenance, and the sample-data boundary.
 Nothing here executes a write. Outcomes are recorded in governed memory by the
 caller via :func:`record_attendance_outcome` when a runtime is provided.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone

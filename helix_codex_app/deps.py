@@ -4,6 +4,7 @@ Each provider takes the account the request guard resolved, never anything from
 the request body, so a caller cannot widen its own scope by asking. The store
 keeps the memory_stores index current through the request's connection.
 """
+
 from __future__ import annotations
 
 import sqlite3

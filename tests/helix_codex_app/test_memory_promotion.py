@@ -6,6 +6,7 @@ enough, only a manager or owner may decide, exactly one org rule appears when a
 promotion is approved, and rolling back retires that rule and says so in both
 ledgers.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

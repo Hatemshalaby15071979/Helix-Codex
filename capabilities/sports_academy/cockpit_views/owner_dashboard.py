@@ -4,6 +4,7 @@ Pure compute + thin Streamlit render. The 5 numbers: active athletes, MRR,
 7-day attendance rate, at-risk athletes (churn flags), facility utilization.
 Plus the awaiting-approval count for the governance rail.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict

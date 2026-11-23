@@ -4,6 +4,7 @@ Reuses the role/authority model from :mod:`roles` and lists the standing policie
 the pack enforces. Approvals are manual and gated by separation of duties; the
 read-only first version never executes a committal write.
 """
+
 from __future__ import annotations
 
 from .roles import AUTHORITY_BOUNDARIES, required_approver_role

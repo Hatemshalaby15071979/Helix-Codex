@@ -7,6 +7,7 @@ see each other's memory, while the org store is deliberately shared. They also
 prove the memory_stores index tracks the ledger, and that a tampered line fails
 verification.
 """
+
 from __future__ import annotations
 
 import json

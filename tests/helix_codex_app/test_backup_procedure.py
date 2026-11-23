@@ -7,6 +7,7 @@ check. The tampered-backup test is the can-fail proof for the hash
 inventory: it keeps the node count identical, so a count-only verification
 would still pass and only the hash check fails it.
 """
+
 from __future__ import annotations
 
 import hashlib

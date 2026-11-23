@@ -6,6 +6,7 @@ visible statuses appear on the board; archived tasks are excluded from the
 default listing but can be retrieved with a filter. Comments are ordered
 oldest-first so the conversation reads naturally.
 """
+
 from __future__ import annotations
 
 import sqlite3

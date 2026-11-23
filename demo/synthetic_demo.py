@@ -5,6 +5,7 @@ No network, no live connectors, no cloud, no external writes. Demonstrates the s
 governed core supporting a call-centre pilot tenant and a restaurant capability-pack
 tenant in one governed memory. Claims only what this script shows.
 """
+
 from __future__ import annotations
 
 import sys

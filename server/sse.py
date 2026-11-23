@@ -17,6 +17,7 @@ loop's single-threaded execution.
 Multi-user presence uses the same bus keyed by ``tenant_id`` — enough for a
 self-hosted box, and far cheaper than standing up a broker.
 """
+
 from __future__ import annotations
 
 import asyncio

@@ -19,6 +19,7 @@ Enforces:
 
 No external IdP; deterministic.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass

@@ -15,6 +15,7 @@ APP_ROLE_ENGINE_CATALOG_ROLE would satisfy every happy-path test and hand ops_gm
 authority to a demo-role account in a real tenant, so the negative direction is
 asserted explicitly and the table is pinned as not containing the role.
 """
+
 from __future__ import annotations
 
 import sqlite3

@@ -8,6 +8,7 @@ internals. There is exactly one bus per process; a broker becomes necessary
 only when the app grows past one process, and that is a documented later
 problem (see repomap.md), not something to build today.
 """
+
 from __future__ import annotations
 
 import asyncio

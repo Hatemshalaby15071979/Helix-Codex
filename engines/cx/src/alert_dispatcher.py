@@ -150,8 +150,7 @@ class AlertDispatcher:
 
         msg = EmailMessage()
         subject_line = (
-            f"[Helix CX] {alert.get('severity', '').upper()} "
-            f"churn risk: {alert.get('customer_id')}"
+            f"[Helix CX] {alert.get('severity', '').upper()} churn risk: {alert.get('customer_id')}"
         )
         msg["Subject"] = subject_line
         msg["From"] = cfg.get("from", "helix-cx@local")

@@ -14,6 +14,7 @@ first two are useful:
    using the demo must not be able to feel them. A limit that fires on ordinary
    use is a worse defect than no limit, because it is visible to the customer.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

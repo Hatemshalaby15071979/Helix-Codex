@@ -5,6 +5,7 @@ real app.db. Connections are opened and closed by the helpers here, because
 Windows keeps a file lock on an open SQLite handle and leaked handles break
 teardown.
 """
+
 from __future__ import annotations
 
 import pytest

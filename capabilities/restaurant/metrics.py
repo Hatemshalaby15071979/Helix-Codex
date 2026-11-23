@@ -6,6 +6,7 @@ unresolved-risk age, customer-health visibility, missed follow-ups, recommendati
 acceptance, and correction rate. Dry-run (no live timing) yields a 0.0 baseline for
 response-time reduction.
 """
+
 from __future__ import annotations
 
 from typing import Optional, Sequence

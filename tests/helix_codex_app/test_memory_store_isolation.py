@@ -5,6 +5,7 @@ from every direction the app exposes: the records, the proposals, the chain
 verification, and the rollback path. If any one of them leaked, the promise would
 be decoration.
 """
+
 from __future__ import annotations
 
 import json

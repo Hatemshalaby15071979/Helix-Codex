@@ -14,6 +14,7 @@ never executes an external write without explicit, cross-role approval.
 Every displayed item is wrapped with a :class:`GovernanceTag` carrying tenant_id,
 client_id, role, classification, correlation_id, and data mode.
 """
+
 from __future__ import annotations
 
 import json

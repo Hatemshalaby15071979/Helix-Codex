@@ -8,6 +8,7 @@ Usage:
     python desktop.py              # start with embedded server
     python desktop.py --port 8080  # use existing server
 """
+
 from __future__ import annotations
 
 import argparse

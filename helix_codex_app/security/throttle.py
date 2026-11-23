@@ -8,6 +8,7 @@ known account from an unknown one: the login-name bucket is keyed on the
 supplied domain and username, so throttling cannot be used to enumerate
 accounts.
 """
+
 from __future__ import annotations
 
 import sqlite3

@@ -1,4 +1,5 @@
 """Smoke tests for the app packaging: compose file and Dockerfile."""
+
 from __future__ import annotations
 
 import pathlib

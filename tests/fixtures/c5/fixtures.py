@@ -3,6 +3,7 @@
 Every fixture is clearly labeled as SAMPLE / SYNTHETIC data.
 Do not use these for production claims; this is C5 Codex milestone proof only.
 """
+
 from __future__ import annotations
 
 import datetime

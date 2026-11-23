@@ -36,6 +36,7 @@ outcome; a breach that cannot be confirmed, a recommendation that cannot be
 justified, a gate that denies, or a recalculation that fails all produce a run
 whose ``final_state`` says so.
 """
+
 from __future__ import annotations
 
 import datetime

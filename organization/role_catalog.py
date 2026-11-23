@@ -4,6 +4,7 @@ Role catalog loader/validator for Helix Prime Codex C1.
 One source of truth: organization/role-catalog.yaml
 Must fail clearly for malformed YAML, duplicate IDs, missing required fields, or invalid references.
 """
+
 from __future__ import annotations
 
 import pathlib
@@ -335,8 +336,7 @@ def validate_role_catalog(
             )
         if _ua_id.strip() not in all_ids:
             raise ValueError(
-                f"{source_path}.universal_approvers: {_ua_id!r} not in role ids "
-                f"{sorted(all_ids)}"
+                f"{source_path}.universal_approvers: {_ua_id!r} not in role ids {sorted(all_ids)}"
             )
         universal_approvers.append(_ua_id.strip())
 

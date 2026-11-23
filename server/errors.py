@@ -5,6 +5,7 @@ The HTTP boundary maps these to status codes. Nothing at this boundary matches
 on message substrings: the previous generation did (`if "unauthorized" in
 str(e).lower()`), which made every error message part of the API.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, Optional

@@ -1,4 +1,5 @@
 """Customer consent record + validation (Prompt 10)."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

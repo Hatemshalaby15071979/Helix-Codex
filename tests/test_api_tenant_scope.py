@@ -14,6 +14,7 @@ only while the route-level require_tenant / require_client calls are in
 place. test_scope_enforcement_is_load_bearing demonstrates the sensitivity
 directly by disabling the enforcement point and observing the leak.
 """
+
 from __future__ import annotations
 
 import secrets

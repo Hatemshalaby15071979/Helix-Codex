@@ -33,6 +33,7 @@ cross-checks the verifier against `openssl` so the choice is not taken on faith.
 Fail-closed throughout: every path returns ``(False, reason)`` rather than
 raising, and the reason names the exact step that refused.
 """
+
 from __future__ import annotations
 
 import base64

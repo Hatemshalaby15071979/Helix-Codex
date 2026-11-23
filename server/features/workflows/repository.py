@@ -5,6 +5,7 @@ Routers never touch ``Engine.store`` directly. Keeping this seam means the
 storage engine can be replaced (or a real repository added per Phase 2) without
 any handler changing.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional

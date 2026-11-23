@@ -16,6 +16,7 @@ Covers every required verification scenario against the PURE builder in
 * no simulated data presented as live
 * governance checker + release gates (reproduced in-session)
 """
+
 from __future__ import annotations
 
 import subprocess

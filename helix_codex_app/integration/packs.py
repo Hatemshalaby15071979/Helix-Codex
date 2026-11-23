@@ -6,6 +6,7 @@ up without an app change. Discovery never invents a pack: metadata that cannot b
 read raises, because a silently missing pack looks the same as a pack with
 nothing in it.
 """
+
 from __future__ import annotations
 
 import importlib

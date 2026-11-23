@@ -3,6 +3,7 @@
 Chat, docs, tasks, and workflows are the same object viewed through four
 lenses. Every user action is already a governance event.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

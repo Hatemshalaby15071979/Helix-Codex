@@ -14,6 +14,7 @@ Isolation itself is still enforced by the single policy seam
 derives the effective scope from the authenticated identity so that no route
 treats a caller-supplied tenant id as the authorization boundary.
 """
+
 from __future__ import annotations
 
 from typing import Optional

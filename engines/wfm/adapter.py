@@ -4,6 +4,7 @@ WFM Forecasting / Erlang C — Adapter (C4)
 Invokes actual engines/wfm/src/erlang_c.py without rewriting engine logic.
 Validates inputs, returns shared EngineResult, emits audit/observability, enforces C3 policy.
 """
+
 from __future__ import annotations
 
 import time

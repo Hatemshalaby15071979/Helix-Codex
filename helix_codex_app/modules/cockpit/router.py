@@ -5,6 +5,7 @@ reaches any of them. The screens are read-only, and the service re-checks the
 permission before it computes anything, so a route added later without the
 dependency still fails closed.
 """
+
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Request

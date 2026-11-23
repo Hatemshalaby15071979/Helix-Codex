@@ -6,6 +6,7 @@ sports_academy manifest is the proof that a shipped pack loads and registers
 its declared sections, and the administration routes are exercised through the
 real app with real sessions, so "owner-only" is an HTTP answer, not a comment.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

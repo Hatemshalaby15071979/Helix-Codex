@@ -4,6 +4,7 @@ The point of promotion is that a good idea can travel without anybody being able
 to push their own rule onto the whole company. These three tests are the whole
 argument: self-approval denied, a manager accepted, an ordinary employee denied.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

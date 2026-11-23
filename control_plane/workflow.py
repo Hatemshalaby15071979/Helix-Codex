@@ -4,6 +4,7 @@ Workflow/task execution model and typed state machine for Helix Prime Codex C2.
 States: proposed, validated, awaiting_approval, approved, executing, succeeded, failed, compensated, cancelled, dead_letter, closed
 Invalid transitions fail deterministically (ValueError).
 """
+
 from __future__ import annotations
 
 import datetime

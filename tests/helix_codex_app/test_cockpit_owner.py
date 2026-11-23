@@ -5,6 +5,7 @@ a re-implementation that could drift. So one test proves the bridge returns
 exactly what a direct call to the pack's compute function returns, and the others
 prove the gate holds and the tenant scoping is real.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

@@ -3,6 +3,7 @@
 This module defines the tool call envelope and validation for inter-agent
 communication. It replaces the regex-based parsing in base_agent.py.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

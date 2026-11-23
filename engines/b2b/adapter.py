@@ -2,6 +2,7 @@
 B2B Onboarding — Adapter (C4)
 Invokes actual engines/b2b/src/automator.py
 """
+
 from __future__ import annotations
 
 import time

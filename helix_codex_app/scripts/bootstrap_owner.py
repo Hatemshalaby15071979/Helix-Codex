@@ -18,6 +18,7 @@ it explicitly (the cockpit pack scopes its data by tenant and client).
 
 Exit 0 = owner created. Exit 1 = bootstrap failed.
 """
+
 from __future__ import annotations
 
 import argparse

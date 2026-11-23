@@ -7,6 +7,7 @@ endpoint. Credential failures re-render the login page with the service's one
 shared message; the machine-readable code stays in login_events, never in the
 page, so a caller cannot distinguish a bad domain from a bad password.
 """
+
 from __future__ import annotations
 
 import base64

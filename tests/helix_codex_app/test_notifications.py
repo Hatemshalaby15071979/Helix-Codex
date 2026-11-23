@@ -9,6 +9,7 @@ key properties the prompt names are pinned here:
    (and none for the sender).
 3. unread_count matches the number of unread notification rows.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

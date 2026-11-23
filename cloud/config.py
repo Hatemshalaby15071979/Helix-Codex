@@ -3,6 +3,7 @@
 The configuration fails safe: missing cloud services fall back to local
 execution; a demo profile forbids live credentials and non-synthetic data.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -70,7 +71,7 @@ class CloudConfig:
         for svc, aid in self.cloud_services.items():
             if aid != "local":
                 raise SafeFailure(
-                    f"cloud service {svc}={aid!r} is not available; " f"this build is local-first"
+                    f"cloud service {svc}={aid!r} is not available; this build is local-first"
                 )
         if not self.synthetic_data_only:
             raise SafeFailure(

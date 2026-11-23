@@ -3,6 +3,7 @@
 All metrics are derived deterministically from the governed-memory records the
 pilot writes, so they are fully reproducible from the audit ledger.
 """
+
 from __future__ import annotations
 
 from typing import Iterable, Optional

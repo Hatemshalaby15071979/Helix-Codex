@@ -6,6 +6,7 @@ whether it has been read. The service layer adds the governed envelope
 pure storage.  Membership or cross-account access is not scoped here —
 that is a router-level gate that passes an account_id from the session.
 """
+
 from __future__ import annotations
 
 import sqlite3
@@ -110,7 +111,7 @@ class NotificationRepository:
     def unread_count(self, account_id: str) -> int:
         """How many notifications have not yet been read."""
         row = self.conn.execute(
-            "SELECT COUNT(*) AS n FROM notifications" " WHERE account_id = ? AND read_at IS NULL",
+            "SELECT COUNT(*) AS n FROM notifications WHERE account_id = ? AND read_at IS NULL",
             (account_id,),
         ).fetchone()
         return row["n"] or 0

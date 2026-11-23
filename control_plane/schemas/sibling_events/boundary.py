@@ -17,6 +17,7 @@ This module is the executable form of that rule. It answers two questions:
 Run it in CI. A violation here is not a style problem — it is the exact
 coupling that makes the three codebases impossible to release independently.
 """
+
 from __future__ import annotations
 
 import ast

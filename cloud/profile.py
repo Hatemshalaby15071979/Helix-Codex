@@ -6,6 +6,7 @@ controls, and (c) safe failure. `DemoController` adds reset and shutdown
 procedures for the synthetic cloud-demo profile. Local execution is the default;
 cloud adapters are intentionally absent so any non-local request fails safe.
 """
+
 from __future__ import annotations
 
 from typing import Any, Callable, Optional
@@ -109,8 +110,7 @@ class SpendControl:
         self.spent += float(cost)
         if self.spent > self.budget:
             raise SafeFailure(
-                f"spend budget ${self.budget:.4f} exceeded (${self.spent:.4f}); "
-                f"operation blocked"
+                f"spend budget ${self.budget:.4f} exceeded (${self.spent:.4f}); operation blocked"
             )
         return self.budget - self.spent
 

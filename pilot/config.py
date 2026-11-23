@@ -1,4 +1,5 @@
 """Pilot configuration: read-only-first, minimum-data, tenant isolation (Prompt 10)."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass

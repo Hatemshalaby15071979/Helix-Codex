@@ -6,6 +6,7 @@ The three previously hardcoded ("sami", "suby", "phili", "wili", "system")
 tuples are replaced by one helper. These tests pin the behaviour that helper
 must preserve.
 """
+
 from __future__ import annotations
 
 from control_plane.engine import _actor_type_enum, _actor_type_for

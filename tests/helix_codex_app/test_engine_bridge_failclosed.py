@@ -8,6 +8,7 @@ EngineUnavailableError. A healthy run must still return a full figure.
 Failures are asserted with pytest.raises so a returned dict, including an
 empty one, fails the test.
 """
+
 from __future__ import annotations
 
 from types import SimpleNamespace

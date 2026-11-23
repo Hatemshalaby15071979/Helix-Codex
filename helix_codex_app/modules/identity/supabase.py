@@ -1,4 +1,5 @@
 """Small Supabase Auth PKCE client for the public pilot bridge."""
+
 from __future__ import annotations
 
 from urllib.parse import urlencode

@@ -1,4 +1,5 @@
 """Data classifications for the sports-academy pack (v1)."""
+
 from __future__ import annotations
 
 DATA_CLASSIFICATIONS = {

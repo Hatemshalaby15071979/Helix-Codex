@@ -1,4 +1,5 @@
 """Password hashing tests for helix_codex_app/security/passwords.py."""
+
 from __future__ import annotations
 
 import pytest

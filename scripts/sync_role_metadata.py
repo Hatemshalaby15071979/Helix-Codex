@@ -13,6 +13,7 @@ references. ``--check`` exits non-zero when a document contains a retired role
 alias or a forbidden assertion. ``--write`` updates only the generated block
 between the markers below.
 """
+
 from __future__ import annotations
 
 import argparse

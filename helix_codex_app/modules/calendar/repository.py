@@ -9,6 +9,7 @@ materialised as rows. On-call shifts are tenant-scoped rosters with a primary
 and a backup account; the roster text column stores the JSON list of assigned
 account ids, and reads treat a missing window as a gap rather than empty.
 """
+
 from __future__ import annotations
 
 import json
@@ -288,14 +289,12 @@ class CalendarRepository:
         now = _now()
         if title is not None:
             self.conn.execute(
-                "UPDATE events SET title = ?, updated_at = ? "
-                "WHERE event_id = ? AND tenant_id = ?",
+                "UPDATE events SET title = ?, updated_at = ? WHERE event_id = ? AND tenant_id = ?",
                 (title, now, event_id, tenant_id),
             )
         if kind is not None:
             self.conn.execute(
-                "UPDATE events SET kind = ?, updated_at = ? "
-                "WHERE event_id = ? AND tenant_id = ?",
+                "UPDATE events SET kind = ?, updated_at = ? WHERE event_id = ? AND tenant_id = ?",
                 (kind, now, event_id, tenant_id),
             )
         if starts_at is not None:
@@ -363,8 +362,7 @@ class CalendarRepository:
         for account_id in account_ids:
             if account_id not in existing:
                 self.conn.execute(
-                    "INSERT INTO event_attendees (event_id, account_id, response) "
-                    "VALUES (?, ?, ?)",
+                    "INSERT INTO event_attendees (event_id, account_id, response) VALUES (?, ?, ?)",
                     (event_id, account_id, PENDING),
                 )
         self.conn.commit()

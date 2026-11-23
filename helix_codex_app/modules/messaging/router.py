@@ -9,6 +9,7 @@ the stream the refusal is a 403 rather than a 404 so it carries no content.
 Mutating routes read a JSON body or an HTMX urlencoded form, so the same
 endpoint serves a pure client and the shell's own composer.
 """
+
 from __future__ import annotations
 
 import asyncio

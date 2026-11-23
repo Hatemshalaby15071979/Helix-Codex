@@ -3,6 +3,7 @@
 Tests the zip dossier's contents, the owner-only gate, the backup copy, and
 the restore round-trip (identical node count + verifying memory chain).
 """
+
 from __future__ import annotations
 
 import io

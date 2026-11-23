@@ -12,6 +12,7 @@ A status change is gated by a steward check: only the creator, the
 current assignee, or a manager may change it. Comments are open to any
 tenant member who holds tasks.use.
 """
+
 from __future__ import annotations
 
 import sqlite3

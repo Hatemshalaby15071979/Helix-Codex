@@ -9,6 +9,7 @@ This module is the only place in the app that imports the parent metacognition
 package. Feature modules use the engine through AccountMetacognition and the
 re-exported proposal types below, never by importing the parent directly.
 """
+
 from __future__ import annotations
 
 import pathlib

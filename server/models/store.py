@@ -2,6 +2,7 @@
 
 Provides CRUD operations on Nodes with tenant isolation.
 """
+
 from __future__ import annotations
 
 import json

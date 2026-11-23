@@ -5,6 +5,7 @@ Pack-local only — these roles are NOT merged into the core role catalog
 loader exists (blueprint §2.3). Core GM mapping is recorded as metadata for
 that future merge, never enforced from here.
 """
+
 from __future__ import annotations
 
 # Roles present at one sports-academy location.

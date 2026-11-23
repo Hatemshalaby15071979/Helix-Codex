@@ -7,6 +7,7 @@ Tests cover:
 4. Replay idempotency key returns first receipt
 5. Every read carries non-null Provenance with correlation_id
 """
+
 from __future__ import annotations
 
 from connectors.contracts import ConnectorContext

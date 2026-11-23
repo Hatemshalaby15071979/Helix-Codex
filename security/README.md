@@ -25,13 +25,23 @@ from security.secrets import redact, validate_no_secrets, get_secret
 from security.audit import AuditRecord, AuditTrail
 
 validate_payload_classification({"data_classification": "financial"}, "financial")
-identity = Identity(actor="sami", actor_type=ActorType.AGENT, tenant_id="t", client_id="c", role_id="ops_gm")
-decision = authorize(AuthorizationRequest(identity=identity, capability="wfm_forecast", tool="wfm_engine"))
+identity = Identity(
+    actor="sami", actor_type=ActorType.AGENT, tenant_id="t", client_id="c", role_id="ops_gm"
+)
+decision = authorize(
+    AuthorizationRequest(identity=identity, capability="wfm_forecast", tool="wfm_engine")
+)
 assert decision.allowed  # or fail-closed
 
 # Audit
 trail = AuditTrail(db_path="security/audit.db")
-rec = AuditRecord.new(event_type="workflow_created", actor="sami", actor_type="agent", decision="allowed", correlation_id="corr1")
+rec = AuditRecord.new(
+    event_type="workflow_created",
+    actor="sami",
+    actor_type="agent",
+    decision="allowed",
+    correlation_id="corr1",
+)
 trail.append(rec)
 assert trail.verify_chain()[0] is True
 ```
