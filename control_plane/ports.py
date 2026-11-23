@@ -83,6 +83,5 @@ class EnginePort(Protocol):
 
     engine_id: str
 
-    def execute(
-        self, request: TaskRequest, *, sample_data_mode: bool = False
-    ) -> EngineInvocation: ...  # pragma: no cover - protocol
+    def execute(self, request: TaskRequest, *, sample_data_mode: bool = False) -> EngineInvocation:
+        ...  # pragma: no cover - protocol

@@ -1100,9 +1100,9 @@ def test_organization_catalog_has_nine_seats():
 def test_organization_catalog_matches_spec_financial_limits():
     for role_id, limit in SPEC_FINANCIAL_LIMITS.items():
         spec = get_role(role_id)
-        assert spec.financial_approval_limit_usd == limit, (
-            f"{role_id}: expected limit {limit}, got {spec.financial_approval_limit_usd}"
-        )
+        assert (
+            spec.financial_approval_limit_usd == limit
+        ), f"{role_id}: expected limit {limit}, got {spec.financial_approval_limit_usd}"
 
 
 def test_organization_catalog_matches_spec_engine_ownership():

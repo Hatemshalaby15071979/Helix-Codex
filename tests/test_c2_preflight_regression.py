@@ -229,9 +229,9 @@ def test_runtime_artifacts_not_tracked():
             capture_output=True,
             text=True,
         )
-        assert result.returncode != 0, (
-            f"{pattern} should not be tracked by git (exit {result.returncode})"
-        )
+        assert (
+            result.returncode != 0
+        ), f"{pattern} should not be tracked by git (exit {result.returncode})"
 
     # Verify .venv and __pycache__ are not tracked
     result_venv = subprocess.run(
@@ -248,9 +248,9 @@ def test_runtime_artifacts_not_tracked():
         text=True,
     )
     tracked_evidence = [f for f in result_ev.stdout.strip().split("\n") if f]
-    assert tracked_evidence == ["evidence/README.md"], (
-        f"Only evidence/README.md should be tracked, found: {tracked_evidence}"
-    )
+    assert tracked_evidence == [
+        "evidence/README.md"
+    ], f"Only evidence/README.md should be tracked, found: {tracked_evidence}"
 
 
 def test_store_preserves_across_restart(tmp_path):

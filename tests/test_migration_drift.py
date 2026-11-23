@@ -63,9 +63,9 @@ def test_drift_check_fails_when_migration_diverges(tmp_path):
     divergent_schema = _dump_schema(divergent_db)
 
     missing_from_migrations = sorted(set(divergent_schema) - set(migrated_schema))
-    assert "table:drift_probe" in missing_from_migrations, (
-        f"divergent object not detected: {missing_from_migrations}"
-    )
+    assert (
+        "table:drift_probe" in missing_from_migrations
+    ), f"divergent object not detected: {missing_from_migrations}"
     assert all(
         name == "table:drift_probe" or "drift_probe" in name for name in missing_from_migrations
     )

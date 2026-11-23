@@ -381,9 +381,9 @@ def test_operator_readiness_refuses_a_present_but_empty_document(monkeypatch, tm
     _lay_operator_docs(tmp_path, "")
     monkeypatch.setattr(gate, "ROOT", tmp_path)
 
-    assert all((tmp_path / rel).exists() for rel in OPERATOR_DOCS), (
-        "the old existence-only predicate would have been green"
-    )
+    assert all(
+        (tmp_path / rel).exists() for rel in OPERATOR_DOCS
+    ), "the old existence-only predicate would have been green"
 
     ok, detail = gate.GATE_IMPL["operator_readiness"]()
     assert ok is False

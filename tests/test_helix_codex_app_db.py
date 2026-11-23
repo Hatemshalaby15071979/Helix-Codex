@@ -262,9 +262,9 @@ def test_the_declared_vocabulary_covers_every_kind_and_nature_the_app_writes():
     assert kinds, "expected to find record_node call sites"
     assert natures, "expected to find record_node call sites"
     assert kinds <= db.NODE_KINDS, f"undeclared kinds written: {sorted(kinds - db.NODE_KINDS)}"
-    assert natures <= db.NODE_NATURES, (
-        f"undeclared natures written: {sorted(natures - db.NODE_NATURES)}"
-    )
+    assert (
+        natures <= db.NODE_NATURES
+    ), f"undeclared natures written: {sorted(natures - db.NODE_NATURES)}"
 
 
 def test_the_vocabulary_guard_can_fail(tmp_path, monkeypatch):

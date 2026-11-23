@@ -216,9 +216,9 @@ def test_preserved_correlation_and_causation_ids(fresh_state):
     # Each step has its own workflow_id (separate C2 workflow per capability execution)
     # But they are linked via causation_id chain
     for i in range(1, len(ev.steps)):
-        assert ev.steps[i].causation_id == ev.steps[i - 1].workflow_id, (
-            f"Step {i} causation_id should link to previous step workflow_id"
-        )
+        assert (
+            ev.steps[i].causation_id == ev.steps[i - 1].workflow_id
+        ), f"Step {i} causation_id should link to previous step workflow_id"
 
 
 # ── persisted events for every step ─────────────────────────────────────
@@ -235,9 +235,9 @@ def test_persisted_events_for_every_step(fresh_state):
     # Each step should have at least one event in the store
     for step in ev.steps:
         events = engine.store.get_events(step.workflow_id)
-        assert len(events) > 0, (
-            f"Step {step.name} ({step.workflow_id}) should have persisted events"
-        )
+        assert (
+            len(events) > 0
+        ), f"Step {step.name} ({step.workflow_id}) should have persisted events"
 
 
 # ── audit records for every step ───────────────────────────────────────
@@ -282,9 +282,9 @@ def test_structured_log_identifiers(fresh_state):
     found = [log for log in logs if log.get("workflow_id") == wf_id]
     assert len(found) > 0, "structured logs should contain workflow_id"
     sample = found[0]
-    assert "correlation_id" in sample, (
-        f"Log should contain correlation_id, got: {list(sample.keys())}"
-    )
+    assert (
+        "correlation_id" in sample
+    ), f"Log should contain correlation_id, got: {list(sample.keys())}"
     assert "tenant_id" in sample
     assert "client_id" in sample
 

@@ -101,9 +101,9 @@ class TestSodIntegrity:
         src = inspect.getsource(Engine.approve)
         assert '"sami"' not in src, "Found hardcoded 'sami' literal in Engine.approve"
         assert "'sami'" not in src, "Found hardcoded 'sami' literal in Engine.approve"
-        assert "compliance_quality_gm" not in src, (
-            "Found hardcoded compliance_quality_gm in Engine.approve"
-        )
+        assert (
+            "compliance_quality_gm" not in src
+        ), "Found hardcoded compliance_quality_gm in Engine.approve"
 
     def test_sami_approves_ops_gm_workflow(self, tmp_path):
         """With the default catalog, sami (a universal approver) can approve ops_gm workflows."""
