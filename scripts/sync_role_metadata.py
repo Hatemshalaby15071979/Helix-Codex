@@ -29,8 +29,8 @@ MARKER_START = "<!-- HELIX_ROLE_MATRIX:START -->"
 MARKER_END = "<!-- HELIX_ROLE_MATRIX:END -->"
 TARGETS = (
     ROOT / "README.md",
-    ROOT / "MASTER_STORY.md",
-    ROOT / "ROADMAP.md",
+    ROOT / "docs" / "MASTER_STORY.md",
+    ROOT / "docs" / "archive" / "ROADMAP.md",
     ROOT / "GOVERNANCE" / "IMPLEMENTATION_MATRIX.md",
 )
 

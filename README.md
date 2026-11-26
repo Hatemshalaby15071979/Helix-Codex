@@ -17,35 +17,46 @@
   <span style="font-size:0.9em;color:#93aaa0">by Helix Solutions</span>
 </p>
 
-**The governed, local-first operations core for contact-centre and back-office work — identity, role-based access, forecasting, CRM, a workflow engine, and a fail-closed gate, all on your own machine.**
+The governed, local-first operations core for contact-centre and back-office work —
+identity, role-based access, forecasting, CRM, a workflow engine, and a fail-closed
+gate, all on your own machine.
 
-## Status — read this first
+## What this is and why it's here
 
-<!-- docs-sync:start -->
-**Released v0.9.0 (local simulation candidate).** This tag marks the published code on the `release/simulated-production-2026-11` branch. 2,107 automated tests pass on local Python 3.12 against synthetic fixtures, and hosted CI now runs on the repository. **This is not production-ready:** it is a simulation classification on synthetic data — no real customer pilot, no independent audit, no certification, no verified revenue — and nine production-only gates remain red by design (signed evidence, certified isolation, external security/privacy review, deployment/DR evidence, named operations/on-call ownership). See [SHIPMENT_READINESS.md](SHIPMENT_READINESS.md) for the full evidence record.
-<!-- docs-sync:end -->
+On a live contact-centre floor, the difference between a system people can trust and
+one that quietly fails is not cleverness — it is **honesty, boundaries, and a human
+who is still in charge**. Automation that decides staffing, churn, or money without a
+recorded reason behind it is a breach waiting to happen, not a quirk.
 
-## What it is
+Helix Prime was built to close that gap. It is the one place where identity,
+role-based access, the Erlang C forecasting engine, the CRM, the workflow engine, and
+a fail-closed gate all live behind a single enforced surface — so a decision is gated,
+recorded, and inspectable **before** it runs. No generative model sits in the
+execution path: a deterministic gate decides and records every decision, and when
+something is missing — a signature, an authority, a confidence level — the system says
+*no* instead of guessing.
 
-Helix Prime is the one place where identity, role-based access, the Erlang C forecasting engine, the CRM, the workflow engine, and a fail-closed gate all live behind a single enforced surface — so a decision is gated, recorded, and inspectable **before** it runs.
+It is the core of the Helix Codex / Helix Prime body of work. Every other portfolio
+repository is a separate codebase by design; satellites talk to it through published,
+versioned contracts — never shared source. **Blue Waves** is the one repository that
+consumes it as a live external client over those contracts.
 
-## What it does
+## What you get
 
-- **Six engines** — WFM (Erlang C staffing), RTA, CX churn, B2B onboarding, personnel, CRM — routed by content across governed role seats.
-- **Tenant identity and deny-by-default authorization**, plus a workflow state machine with approvals, retries, and dead-letter handling.
-- **A fail-closed gate** that checks cost, data classification, confidence, and ownership before any execution — and reports a held state instead of forcing a run.
-- **An append-only, hash-chained audit ledger** and an exportable governance evidence pack.
-- **Read-only connectors** for Zendesk, Salesforce, and Clay — live writes are intentionally disabled.
+- **Six engines** — WFM (Erlang C staffing), RTA, CX churn, B2B onboarding, personnel,
+  CRM — routed by content across governed role seats.
+- **Tenant identity and deny-by-default authorization**, plus a workflow state machine
+  with approvals, retries, and dead-letter handling.
+- **A fail-closed gate** that checks cost, data classification, confidence, and
+  ownership before any execution — and reports a held state instead of forcing a run.
+- **An append-only, hash-chained audit ledger** and an exportable governance evidence
+  pack, so any decision can be inspected afterwards.
+- **Read-only connectors** for Zendesk, Salesforce, and Clay — live writes are
+  intentionally disabled.
+- **Runs entirely on your machine.** No cloud dependency; Ollama is optional, and
+  without it the system runs in deterministic offline mode and says so.
 
-## Who it's for, and how it fits
-
-If you run a contact centre or back-office operation, Helix Prime is the core that decides what automation is allowed to do and proves it afterwards. It is the core of the Helix Codex / Helix Prime body of work. Every other portfolio repository is a separate codebase by design; satellites talk to it through published, versioned contracts — never shared source. **Blue Waves** is the one repository that consumes it as a live external client over those contracts.
-
-## Honest boundary
-
-No generative model sits in the execution path — on a live floor a hallucinated action is an SLA breach, not a quirky output, so a deterministic gate decides and records every decision. Demo data is synthetic by design; a local drill is not customer acceptance, and a passing pipeline is not a production claim.
-
-## Get it and run it
+## How to use it
 
 ```bash
 pip install 'helix-codex-os[web]'     # or: pip install -r requirements.txt
@@ -54,19 +65,48 @@ helix-app                             # the demo app, binds 127.0.0.1:8100
 helix-cockpit                         # read-only diagnostic dashboard, 127.0.0.1:8501
 ```
 
-The API refuses to boot in the `production` profile without the external gate inputs. The passwordless demo endpoint must never be enabled on a deployed instance.
+- **`helix-api`** is where the governance happens — every engine call is gated and
+  recorded here first. It refuses to boot in the `production` profile without the
+  external gate inputs.
+- **`helix-app`** gives you the demo: six engines, nine governed role seats, and the
+  gate surface, on synthetic data.
+- **`helix-cockpit`** is a read-only dashboard for checking system health without
+  touching anything.
 
-## Documentation
+The passwordless demo endpoint must never be enabled on a deployed instance.
 
-The deep evidence — full test records, the simulated-production topology, the nine open production gates, and the claims register — lives in [`SHIPMENT_READINESS.md`](SHIPMENT_READINESS.md) and [`docs/PRODUCTION_STATUS.md`](docs/PRODUCTION_STATUS.md). A reviewer can reproduce the test suite and `ruff` without the install.
+## The rules we build by
 
-## Author
+This project obeys `CONSTITUTION.md`: **fail closed** (a missing input or missing
+authority is a refusal, never a guess), **evidence before claims** (every published
+number carries a command, a date, and an artifact), **local-first and offline by
+default**, **a human is always in charge**, and **honest about limits** — simulated
+data is labelled simulated, and production gates stay red until real external evidence
+is in hand.
 
-Built by Hatem Shalaby, Contact Centre Operations & AI Implementation Lead | WFM & CX Transformation. Background: https://github.com/Hatemshalaby15071979
+## Current status
 
-## Licence
+<!-- docs-sync:start -->
+**Released v0.9.0 (local simulation candidate).** This tag marks the published code on the `release/simulated-production-2026-11` branch. 2,107 automated tests pass on local Python 3.12 against synthetic fixtures, and hosted CI now runs on the repository. **This is not production-ready:** it is a simulation classification on synthetic data — no real customer pilot, no independent audit, no certification, no verified revenue — and nine production-only gates remain red by design (signed evidence, certified isolation, external security/privacy review, deployment/DR evidence, named operations/on-call ownership). See [SHIPMENT_READINESS.md](SHIPMENT_READINESS.md) for the full evidence record.
+<!-- docs-sync:end -->
 
-MIT
+## Where things live
+
+- [SHIPMENT_READINESS.md](SHIPMENT_READINESS.md) — the dated evidence record and the
+  nine open production gates.
+- [docs/PRODUCTION_STATUS.md](docs/PRODUCTION_STATUS.md) — what is claimed and what is
+  not, with dates.
+- [docs/MASTER_STORY.md](docs/MASTER_STORY.md) — the verified-reality record.
+- [docs/](docs/) — architecture, production-readiness, and portfolio references;
+  historical plans and superseded constitutions live in [docs/archive/](docs/archive/).
+- [tests/](tests/) — the suite CI runs (`pytest -m "not smoke"` with coverage floors).
+- [GOVERNANCE.md](GOVERNANCE.md) — the directory map and operating policy.
+
+## Licence & contact
+
+MIT. Built by Hatem Shalaby, Contact Centre Operations & AI Implementation Lead |
+WFM & CX Transformation. Background: [github.com/Hatemshalaby15071979](https://github.com/Hatemshalaby15071979) ·
+[Hatem Shalaby on LinkedIn](https://www.linkedin.com/in/hatem-shalaby-202902127/)
 
 <!-- HELIX_ROLE_MATRIX:START -->
 ## Canonical RoleSpec matrix (generated)

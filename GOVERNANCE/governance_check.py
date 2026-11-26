@@ -12,8 +12,8 @@ from pathlib import Path
 from typing import Iterable
 
 ROOT = Path(__file__).resolve().parent.parent
-CONSTITUTION = ROOT / "00_CONSTITUTION.md"
-MASTER_STORY = ROOT / "MASTER_STORY.md"
+CONSTITUTION = ROOT / "docs" / "archive" / "constitution-000-helix-codex.md"
+MASTER_STORY = ROOT / "docs" / "MASTER_STORY.md"
 
 REQUIRED_CONSTITUTION_LINES = (
     "Identity must precede implementation.",
@@ -30,7 +30,7 @@ def _read(path: Path) -> str:
 
 def check_constitution() -> dict[str, object]:
     if not CONSTITUTION.exists():
-        return {"ok": False, "detail": "missing 00_CONSTITUTION.md"}
+        return {"ok": False, "detail": "missing docs/archive/constitution-000-helix-codex.md"}
     text = _read(CONSTITUTION)
     missing = [line for line in REQUIRED_CONSTITUTION_LINES if line not in text]
     if missing:
@@ -40,11 +40,11 @@ def check_constitution() -> dict[str, object]:
 
 def check_master_story_authority() -> dict[str, object]:
     if not MASTER_STORY.exists():
-        return {"ok": False, "detail": "missing MASTER_STORY.md"}
+        return {"ok": False, "detail": "missing docs/MASTER_STORY.md"}
     text = _read(MASTER_STORY)
     if "00_CONSTITUTION.md" not in text:
-        return {"ok": False, "detail": "MASTER_STORY.md does not reference 00_CONSTITUTION.md"}
-    return {"ok": True, "detail": "MASTER_STORY.md references Constitution 000"}
+        return {"ok": False, "detail": "docs/MASTER_STORY.md does not reference 00_CONSTITUTION.md"}
+    return {"ok": True, "detail": "docs/MASTER_STORY.md references Constitution 000"}
 
 
 def check_stale_authority_references(paths: Iterable[Path] | None = None) -> dict[str, object]:
@@ -52,8 +52,8 @@ def check_stale_authority_references(paths: Iterable[Path] | None = None) -> dic
         paths
         or [
             ROOT / "README.md",
-            ROOT / "CONTRIBUTING.md",
-            ROOT / "MASTER_STORY.md",
+            ROOT / "docs" / "archive" / "CONTRIBUTING.md",
+            ROOT / "docs" / "MASTER_STORY.md",
             ROOT / "GOVERNANCE",
         ]
     )
