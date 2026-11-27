@@ -143,3 +143,21 @@ they are point-in-time records; their old-file references are historical. Local
 (da39c3c, 359de14) remain only in the reflog.
 Sensitive: git push of governance docs to release/simulated-production-2026-11,
 authorised by owner 2026-11-26.
+
+## [2026-11-27 05:12 EET] — sami (Claude), portfolio governance subagent
+STATUS: SIGN-IN
+
+Task: Mirror the root-document assertion the owner approved in Assay on 2026-11-27
+(`scripts/check-scaffold.py`) into Helix-Codex, then fix what it finds. Sign in before any
+write to this repository.
+
+Touched (planned): `scripts/check_root_docs.py` (new); `GOVERNANCE.md` (section 2 table row
+for `SIMULATION_DISCLOSURE.md`, and the section 1 root set that omits it); 
+`.github/workflows/ci.yml` (new step); `AGENTS.md` (this entry and the sign-out).
+
+Why: GOVERNANCE.md section 2 says "No stray `.md`/`.txt` at the root", but nothing asserted
+the *absence* direction — only that the known documents were present. That is how the
+2026-11-26 pass could archive reports while the root set still looked satisfied.
+
+Sensitive: `git push origin release/simulated-production-2026-11` (owner's instruction in
+chat, 2026-11-27). No force push, no history rewrite, no PR or issue writes, no secrets.
