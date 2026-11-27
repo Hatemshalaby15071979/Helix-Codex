@@ -237,3 +237,21 @@ after an interrupted session; the entry is back-filled, not a pre-write sign-in.
 
 Sensitive: `git push origin release/simulated-production-2026-11` (owner's instruction in
 chat, 2026-11-27). No force push, no history rewrite, no PR or issue writes, no secrets.
+
+## [2026-11-27 07:59 EET] — sami (OpenMausBot), owner-authorised resume/portfolio consistency pass
+STATUS: SIGN-OUT (landing complete)
+
+Task: Same as the 06:56 sign-in. Done: "How this was built" section inserted before
+`## Current status`, with no number changes.
+
+Touched: `README.md` (one new section, 16 lines); `AGENTS.md` (sign-in back-fill and this
+sign-out). No code, no gate, no test or CI change, no file moved or renamed.
+
+Verification: no root document added or removed, so the `check_root_docs` gate is
+structurally unaffected; pushed as `217de88` on the release branch — the CI run on that
+push is the record of the gate and the suite on a clean runner.
+
+Left undone: nothing failing.
+
+Sensitive: `git push origin release/simulated-production-2026-11` (owner's instruction in
+chat, 2026-11-27). No force push, no history rewrite, no PR or issue writes, no secrets.
