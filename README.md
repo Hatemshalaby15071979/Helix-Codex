@@ -84,6 +84,22 @@ default**, **a human is always in charge**, and **honest about limits** — simu
 data is labelled simulated, and production gates stay red until real external evidence
 is in hand.
 
+## How this was built
+
+This repository is AI-assisted, and `AGENTS.md` says so. Stated plainly:
+
+- **Designed and decided by the owner.** Hatem Shalaby designed the system — the six
+  engines, the nine governed role seats, the fail-closed gate, the hash-chained audit
+  ledger, and the evidence standard — and he made every public-number decision in it.
+- **Implemented with AI coding agents.** Day-to-day implementation, test authoring and
+  documentation were carried out by large language models in CLI coding assistants
+  (Claude-family agents, Codex/CodeBuddy, and OpenMausBot multi-agent setups that also
+  keep the ledger and the cross-repo governance in step). The agents write the code;
+  they do not write the claims.
+- **Verified by the repo itself.** Every number below is reproducible: the test suite
+  runs under a pinned command, CI runs on every push, and evidence packs carry dates.
+  Where a number cannot be reproduced, the record says so and the figure is dropped.
+
 ## Current status
 
 <!-- docs-sync:start -->

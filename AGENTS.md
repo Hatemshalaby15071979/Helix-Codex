@@ -215,3 +215,25 @@ Left undone: nothing failing.
 
 Sensitive: `git push origin release/simulated-production-2026-11` (owner's instruction in
 chat, 2026-11-27). No force push, no history rewrite, no PR or issue writes, no secrets.
+
+## [2026-11-27 06:56 EET] — sami (OpenMausBot), owner-authorised resume/portfolio consistency pass
+STATUS: SIGN-IN
+
+Task: Owner instruction (2026-11-27 audit note): add a "How this was built" section to the README
+that names the AI-assisted process honestly — designed by the owner, implemented by AI coding
+agents, verified by the repository. No public numbers change: the 2,107-test figure already
+published in the README stays, and the new section points at the pinned test command and CI
+as the reproduction path.
+
+Touched (planned): `README.md` (new "How this was built" section, inserted directly before
+`## Current status`); `AGENTS.md` (this entry and the sign-out). No code, no gates, no history rewrite.
+
+Why: The owner is applying for a role; a reviewer will reconcile the resume against this
+repository. The AI-assisted history is stated by us, not discovered by the reviewer, and every
+number remains reproducible.
+
+Note: the section edit ran at 06:56–07:02 EET and this sign-in was appended at 07:55 EET,
+after an interrupted session; the entry is back-filled, not a pre-write sign-in.
+
+Sensitive: `git push origin release/simulated-production-2026-11` (owner's instruction in
+chat, 2026-11-27). No force push, no history rewrite, no PR or issue writes, no secrets.
