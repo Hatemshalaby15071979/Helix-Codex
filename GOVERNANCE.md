@@ -18,6 +18,7 @@ Any file you add, move, rename, or delete gets reflected here in the same landin
 | `README.md` | Single source of truth (house style; carries docs-sync + generated role-matrix blocks). |
 | `SHIPMENT_READINESS.md` | The status file: full evidence record, the nine red production gates. Stays at root. |
 | `CHANGELOG.md`, `LICENSE.md`, `SECURITY.md`, `requirements.txt`, `requirements-dev.txt` | Standard root set. |
+| `SIMULATION_DISCLOSURE.md` | The SIMULATION ONLY disclosure carried in the release evidence pack. Stays at root — `release/simulation.py` lists it in the pack. |
 | `index.html` | House-style landing page (mirrors the README). |
 | `_docs_profile.json` | Facts + status templates for the `docs-sync` CI engine (kept at root; engine reads it there). |
 | `docs/` | Living reference: `PRODUCTION_STATUS.md`, `PROJECT_ARCHITECTURE.md`, `SYSTEM_ARCHITECTURE.md`, `PRODUCT_DEFINITION.md`, `COMMERCIAL_STORY.md`, `DOCUMENTATION_STATUS.md`, `MASTER_STORY.md` (verified-reality record), `HELIX_CODEX_OS_MASTER_BLUEPRINT.md` (architecture authority), `architecture/`, `portfolio/`, `release/`, `operations/`, `legal/`, `verification/`, `onboarding/`. |
@@ -51,6 +52,7 @@ Any file you add, move, rename, or delete gets reflected here in the same landin
 | `LICENSE` / `LICENSE.md` | standard | MIT, unless the repo states otherwise. |
 | `SECURITY.md` | standard | Threat model, vulnerability reporting, secret handling. |
 | `SHIPMENT_READINESS.md` | status file | The honest, dated evidence record and gate table. Must stay at root. |
+| `SIMULATION_DISCLOSURE.md` | status file | The SIMULATION ONLY disclosure shipped with the release evidence pack: what a `SIMULATED_PRODUCTION_READY` result is not. Must stay at root — `release/simulation.py` requires it there. |
 
 **Everything else lives in `docs/`** — reports, audit logs, execution plans, research
 notes, ADRs, runbooks, anything dated or one-off. No stray `.md`/`.txt` at the root.
