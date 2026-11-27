@@ -161,3 +161,57 @@ the *absence* direction — only that the known documents were present. That is 
 
 Sensitive: `git push origin release/simulated-production-2026-11` (owner's instruction in
 chat, 2026-11-27). No force push, no history rewrite, no PR or issue writes, no secrets.
+
+## [2026-11-27 05:20 EET] — sami (Claude), portfolio governance subagent
+STATUS: SIGN-OUT (landing complete)
+
+Task: Mirror Assay's root-document assertion (approved by the owner 2026-11-27) into
+Helix-Codex, then fix what it found. Done.
+
+Touched: `scripts/check_root_docs.py` (new — byte-identical to the copy landed in Assay,
+createlee, Helix-Matrix and Helix-Solutions); `GOVERNANCE.md` (a section 2 table row for
+`SIMULATION_DISCLOSURE.md`, and the section 1 root set that omitted it);
+`.github/workflows/ci.yml` (new "Root-document hygiene (GOVERNANCE.md section 2)" step);
+`AGENTS.md` (this entry and the sign-in above). No file moved, renamed or deleted.
+
+Why: section 2 says "No stray `.md`/`.txt` at the root", but nothing asserted the *absence*
+direction — only that the known documents were present, which is how the 2026-11-26 pass
+could archive reports while the root set still looked satisfied. The gate asserts both
+directions, and parses the allowed set out of GOVERNANCE.md so the policy keeps one source
+of truth. `requirements.txt` and `requirements-dev.txt` are treated as package manifests,
+not documents, and are reported as acknowledged non-documents.
+
+What the gate found, and why the fix is a doc row rather than an archive: `SIMULATION_DISCLOSURE.md`
+sits at the root but appears in neither section 1 nor the section 2 table. It is
+load-bearing — `release/simulation.py` lists it in the release evidence pack,
+`tests/test_simulation_review_artifacts.py` reads it from the root, and
+`docs/PRODUCTION_STATUS.md`, `docs/release/release-boundary.md` and
+`docs/legal/privacy-review-simulated.md` link to it. Moving it to satisfy a table that
+simply omitted it would have broken the release gate and three living documents, so the
+table now names it as a status file that must stay at root. That is the same treatment
+`SHIPMENT_READINESS.md` already had.
+
+Correction to the record, offered without rewriting history: the 2026-11-26 entry above
+lists `SIMULATION_DISCLOSURE.md` among the files moved to `docs/archive/`. Git says
+otherwise. The file was added at the root on 2026-11-03 (`5a5ef1b`) and never existed under
+`docs/archive/` in any commit, and the governance pass's own commit (`2f649d6`) does not
+touch it. The move was recorded but did not happen. Nothing is lost — the right state is
+the root one — but the entry should not be read as evidence, and the section 1/2 tables now
+say what is actually true.
+
+Verification: `python scripts/check_root_docs.py` → "check_root_docs: OK -- Helix-Codex/
+holds only the GOVERNANCE.md section 2 set" (9 table rows, 9 allowed root documents, 2
+acknowledged package manifests). `--self-test` → "7/7 cases behaved". Negative test on the
+real tree: moving `SIMULATION_DISCLOSURE.md` aside made the gate fail with "missing root
+document: SIMULATION_DISCLOSURE.md (status file, GOVERNANCE.md section 2)", and restoring it
+returned it to green — so the new row is enforced, not decorative. The repository's own
+gates re-run green: `ruff check scripts/` clean, `ruff format --check .` "476 files already
+formatted", `scripts/check_claims_drift.py` PASS (no unqualified production claim),
+`scripts/verify_agent_instruction_files.py` ME-15 PASS, `GOVERNANCE/governance_check.py check`
+governance=PASS, and `tests/test_simulation_review_artifacts.py` 2 passed (run with pyyaml on
+the path locally; CI installs the full set).
+
+Left undone: nothing failing.
+
+Sensitive: `git push origin release/simulated-production-2026-11` (owner's instruction in
+chat, 2026-11-27). No force push, no history rewrite, no PR or issue writes, no secrets.
